@@ -1,0 +1,55 @@
+{
+  "key": "general_settings",
+  "libraryName": "Vidya Library",
+  "tagline": "Your Space to Grow • Premium Study Lounge",
+  "phone": "9303961613",
+  "email": "admin@vidyalibrary.com",
+  "address": "66W8+4FH, Gayatri Nagar, Gwalior",
+  "upiId": "vidyalibrary@upi",
+  "openingTime": "06:00 AM",
+  "closingTime": "11:00 PM",
+  "morningRate": "800",
+  "eveningRate": "800",
+  "nightRate": "900",
+  "fullDayRate": "1200",
+  "reservedSurcharge": "200",
+  "wifiSSID": "Vidya_HighSpeed_5G",
+  "wifiPassword": "StudyHard@2026",
+  "gracePeriodDays": "3",
+  "totalSeatsCapacity": "164",
+  "lockerFee": "150",
+  "adminName": "Amit",
+  "adminEmail": "admin@gmail.com",
+  "adminPhone": "9303961613",
+  "multiMonthDiscounts": [
+    {
+      "id": "disc_3",
+      "months": 3,
+      "discountType": "percentage",
+      "discountValue": 10,
+      "label": "3 Months Advance (10% OFF)",
+      "isActive": true
+    },
+    {
+      "id": "disc_6",
+      "months": 6,
+      "discountType": "percentage",
+      "discountValue": 10,
+      "label": "6 Months Advance (10% OFF)",
+      "isActive": true
+    },
+    {
+      "id": "disc_12",
+      "months": 12,
+      "discountType": "percentage",
+      "discountValue": 15,
+      "label": "12 Months Advance (15% OFF)",
+      "isActive": true
+    }
+  ],
+  "_id": "6ad45a8a4b88c75736a298fb",
+  "createdAt": "2026-10-18T05:35:06.967Z",
+  "updatedAt": "2026-10-18T06:40:47.938Z",
+  "__v": 0,
+  "id": "6ad45a8a4b88c75736a298fb"
+}

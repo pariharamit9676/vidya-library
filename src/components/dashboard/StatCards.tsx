@@ -1,0 +1,101 @@
+import React from 'react';
+import { Users, Armchair, IndianRupee, Clock } from 'lucide-react';
+import { useDashboardStats } from '../../services/useLibraryQueries';
+
+export const StatCards: React.FC = () => {
+  const { data: stats, isLoading } = useDashboardStats();
+
+  const totalStudents = stats?.students?.total ?? 5;
+  const regularStudents = stats?.students?.regular ?? 5;
+  const demoStudents = stats?.students?.demo ?? 0;
+
+  const totalSeats = stats?.seats?.total ?? 164;
+  const occupiedSeats = stats?.seats?.occupied ?? 5;
+  const availableSeats = stats?.seats?.available ?? 159;
+
+  const monthlyCollection = stats?.financials?.monthlyCollection ?? 11600;
+  const totalTransactions = stats?.financials?.totalTransactions ?? 17;
+
+  const pendingDuesCount = stats?.students?.totalWithDues ?? ((stats?.students?.overdue ?? 0) + (stats?.students?.dueSoon ?? 0));
+  const pendingDuesAmount = stats?.financials?.pendingDues ?? 800;
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+      {/* 1. Total Students */}
+      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-[#EDF1F7] shadow-xs flex items-center justify-between min-w-0 hover:shadow-md transition-shadow">
+        <div className="min-w-0 pr-1">
+          <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
+            Total Students
+          </span>
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
+            {isLoading ? '...' : totalStudents}
+          </div>
+          <div className="text-[10px] sm:text-[11px] font-bold text-[#00A97A] mt-0.5 truncate">
+            <span>{regularStudents} reg</span> • <span>{demoStudents} demo</span>
+          </div>
+        </div>
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+          <Users size={16} className="sm:hidden" />
+          <Users size={22} className="hidden sm:block" />
+        </div>
+      </div>
+
+      {/* 2. Total Seats */}
+      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-[#EDF1F7] shadow-xs flex items-center justify-between min-w-0 hover:shadow-md transition-shadow">
+        <div className="min-w-0 pr-1">
+          <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
+            Total Seats
+          </span>
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
+            {isLoading ? '...' : totalSeats}
+          </div>
+          <div className="text-[10px] sm:text-[11px] font-medium text-[#8F9BB3] mt-0.5 truncate">
+            {occupiedSeats} occ • {availableSeats} avail
+          </div>
+        </div>
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#EAF2FE] text-[#2F80ED] flex items-center justify-center shrink-0">
+          <Armchair size={16} className="sm:hidden" />
+          <Armchair size={22} className="hidden sm:block" />
+        </div>
+      </div>
+
+      {/* 3. Monthly Collection */}
+      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-[#EDF1F7] shadow-xs flex items-center justify-between min-w-0 hover:shadow-md transition-shadow">
+        <div className="min-w-0 pr-1">
+          <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
+            Monthly Collection
+          </span>
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 truncate">
+            {isLoading ? '...' : `₹${monthlyCollection.toLocaleString('en-IN')}`}
+          </div>
+          <div className="text-[10px] sm:text-[11px] font-bold text-[#00A97A] mt-0.5 truncate">
+            <span>{totalTransactions} recorded</span>
+          </div>
+        </div>
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#F3EBF9] text-[#9B51E0] flex items-center justify-center shrink-0">
+          <IndianRupee size={16} className="sm:hidden" />
+          <IndianRupee size={22} className="hidden sm:block" />
+        </div>
+      </div>
+
+      {/* 4. Pending Dues */}
+      <div className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-[#EDF1F7] shadow-xs flex items-center justify-between min-w-0 hover:shadow-md transition-shadow">
+        <div className="min-w-0 pr-1">
+          <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
+            Pending Dues
+          </span>
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
+            {isLoading ? '...' : pendingDuesCount}
+          </div>
+          <div className="text-[10px] sm:text-[11px] font-bold text-[#FA8C16] mt-0.5 truncate">
+            ₹{pendingDuesAmount.toLocaleString('en-IN')} pending
+          </div>
+        </div>
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#FFF6E9] text-[#FA8C16] flex items-center justify-center shrink-0">
+          <Clock size={16} className="sm:hidden" />
+          <Clock size={22} className="hidden sm:block" />
+        </div>
+      </div>
+    </div>
+  );
+};

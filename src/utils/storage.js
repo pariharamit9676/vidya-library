@@ -1,0 +1,151 @@
+// Storage & Formatting Utilities for Vidya Library
+import { INITIAL_STUDENTS } from "../data/initialData";
+
+const STORAGE_KEY = "vidya_library_students_v2";
+const SETTINGS_KEY = "vidya_library_settings_v2";
+
+export const getStoredStudents = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_STUDENTS));
+      return INITIAL_STUDENTS;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to load students", e);
+    return INITIAL_STUDENTS;
+  }
+};
+
+export const saveStudents = (students) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+  } catch (e) {
+    console.error("Failed to save students", e);
+  }
+};
+
+export const getStoredSettings = () => {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) {
+      const defaultSettings = {
+        libraryName: "Vidya Library & Study Lounge",
+        tagline: "Knowledge Bestows Humility • Premier Reading Hall",
+        address: "Near Metro Gate 2, Main Market, New Delhi",
+        phone: "+91 98765 43210",
+        upiId: "vidyalibrary@upi"
+      };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(defaultSettings));
+      return defaultSettings;
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    return {
+      libraryName: "Vidya Library & Study Lounge",
+      tagline: "Knowledge Bestows Humility • Premier Reading Hall",
+      address: "Near Metro Gate 2, Main Market, New Delhi",
+      phone: "+91 98765 43210",
+      upiId: "vidyalibrary@upi"
+    };
+  }
+};
+
+export const saveSettings = (settings) => {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (e) {
+    console.error("Failed to save settings", e);
+  }
+};
+
+export const calculateDuration = (startTime, endTime = new Date().toISOString()) => {
+  if (!startTime) return "0m";
+  const start = new Date(startTime).getTime();
+  const end = new Date(endTime).getTime();
+  const diffMs = Math.max(0, end - start);
+
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(diffMinutes / 60);
+  const minutes = diffMinutes % 60;
+
+  if (hours === 0) return `${minutes}m`;
+  return `${hours}h ${minutes}m`;
+};
+
+export const formatTimeOnly = (isoString) => {
+  if (!isoString) return "-";
+  const d = new Date(isoString);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
+export const formatDateOnly = (dateStr) => {
+  if (!dateStr) return "-";
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
+export const computeFeeStatus = (nextDueDate) => {
+  if (!nextDueDate) return "PAID";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const due = new Date(nextDueDate);
+  due.setHours(0, 0, 0, 0);
+
+  const diffTime = due.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < -40) {
+    return "INACTIVE";
+  } else if (diffDays < 0) {
+    return "OVERDUE";
+  } else if (diffDays <= 5) {
+    return "DUE_SOON";
+  } else {
+    return "PAID";
+  }
+};
+
+export const exportStudentsToCSV = (students) => {
+  const headers = [
+    "Student ID",
+    "Name",
+    "Phone",
+    "Seat No",
+    "Shift",
+    "Monthly Fee (INR)",
+    "Fee Status",
+    "Next Due Date",
+    "Currently Inside",
+    "Last Stay Duration",
+    "Last Check-In",
+    "Last Check-Out"
+  ];
+
+  const rows = students.map((s) => [
+    `"${s.id}"`,
+    `"${s.name}"`,
+    `"${s.phone}"`,
+    `"${s.seatNo}"`,
+    `"${s.shift}"`,
+    s.monthlyFee,
+    s.feeStatus,
+    s.nextFeeDueDate || "N/A",
+    s.isCheckedIn ? "YES" : "NO",
+    s.lastStay ? `"${s.lastStay.formattedDuration}"` : "N/A",
+    s.lastStay ? `"${formatTimeOnly(s.lastStay.checkIn)}"` : "N/A",
+    s.lastStay ? `"${formatTimeOnly(s.lastStay.checkOut)}"` : "N/A"
+  ]);
+
+  const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", `vidya_library_records_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};

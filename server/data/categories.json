@@ -1,0 +1,20 @@
+{
+  "Premium": {
+    "category": "Premium",
+    "rate": 800,
+    "description": "Ergonomic leather chair, personal charging station, reading light",
+    "totalSeats": 12
+  },
+  "Locker": {
+    "category": "Locker",
+    "rate": 700,
+    "description": "Standard comfortable desk with secure storage locker space",
+    "totalSeats": 11
+  },
+  "Normal": {
+    "category": "Normal",
+    "rate": 600,
+    "description": "Quiet study pod, high speed fiber Wi-Fi, power plug access",
+    "totalSeats": 25
+  }
+}

@@ -1,0 +1,188 @@
+/**
+ * Viya Library - API Client Service
+ * Centralized, production-grade service communicating with the backend APIs.
+ */
+
+const API_BASE = ((import.meta as any).env?.VITE_API_URL || '/api').replace(/\/$/, '');
+
+interface ApiResponse<T = any> {
+  success: boolean;
+  message?: string;
+  data: T;
+  count?: number;
+}
+
+async function request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  const token = localStorage.getItem('viya_auth_token');
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string> || {})
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed with status ${response.status}`);
+    }
+
+    return data;
+  } catch (error: any) {
+    console.error(`[API Error] ${endpoint}:`, error.message);
+    throw error;
+  }
+}
+
+// 1. Auth Service
+export const authService = {
+  login: (identifier: string, password: string, role?: string) =>
+    request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ identifier, email: identifier, password, role })
+    }),
+
+  getProfile: () => request('/auth/me')
+};
+
+// 2. Dashboard Service
+export const dashboardService = {
+  getStats: () => request('/dashboard/stats'),
+  getCharts: () => request('/dashboard/charts')
+};
+
+// 3. Student Service
+export const studentService = {
+  getAll: (filters: Record<string, string> = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return request(`/students${params ? `?${params}` : ''}`);
+  },
+
+  getById: (id: string) => request(`/students/${id}`),
+
+  create: (studentData: any) =>
+    request('/students', {
+      method: 'POST',
+      body: JSON.stringify(studentData)
+    }),
+
+  update: (id: string, updates: any) =>
+    request(`/students/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates)
+    }),
+
+  delete: (id: string) =>
+    request(`/students/${id}`, {
+      method: 'DELETE'
+    }),
+
+  bulkDelete: async (ids: string[]) => {
+    try {
+      return await request('/students/bulk-delete', {
+        method: 'POST',
+        body: JSON.stringify({ ids })
+      });
+    } catch (_err) {
+      // Fallback: delete each student in parallel via standard delete endpoint
+      const results = await Promise.all(ids.map((id) => studentService.delete(id)));
+      return { success: true, count: results.length, data: results };
+    }
+  },
+
+  toggleCheckIn: (id: string) =>
+    request(`/students/${id}/check-in`, {
+      method: 'POST'
+    }),
+
+  recordPayment: (id: string, paymentData: any) =>
+    request(`/students/${id}/payments`, {
+      method: 'POST',
+      body: JSON.stringify(paymentData)
+    }),
+
+  changePassword: (id: string, payload: { currentPassword?: string; newPassword: string }) =>
+    request(`/students/${id}/change-password`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+};
+
+// 4. Seat Service
+export const seatService = {
+  getLayout: () => request('/seats/layout'),
+
+  saveLayout: (layoutData: { rows: number; cols: number; cells: any[] }) =>
+    request('/seats/layout', {
+      method: 'PUT',
+      body: JSON.stringify(layoutData)
+    }),
+
+  updateDimensions: (rows: number, cols: number) =>
+    request('/seats/dimensions', {
+      method: 'PUT',
+      body: JSON.stringify({ rows, cols })
+    }),
+
+  updateCell: (cellId: string, updates: any) =>
+    request(`/seats/cells/${cellId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates)
+    }),
+
+  assignStudent: (cellId: string, studentId: string) =>
+    request(`/seats/cells/${cellId}/assign`, {
+      method: 'POST',
+      body: JSON.stringify({ studentId })
+    }),
+
+  unassignStudent: (cellId: string) =>
+    request(`/seats/cells/${cellId}/unassign`, {
+      method: 'POST'
+    })
+};
+
+// 5. Category Service
+export const categoryService = {
+  getAll: () => request('/categories'),
+
+  updateAll: (rates: Record<string, any>) =>
+    request('/categories', {
+      method: 'PUT',
+      body: JSON.stringify(rates)
+    })
+};
+
+// 6. Fee Service
+export const feeService = {
+  getReceipts: () => request('/fees/receipts'),
+
+  getDues: () => request('/fees/dues'),
+
+  recordPayment: (paymentData: any) =>
+    request('/fees/payments', {
+      method: 'POST',
+      body: JSON.stringify(paymentData)
+    })
+};
+
+// 7. Settings Service
+export const settingsService = {
+  get: () => request('/settings'),
+
+  update: (settingsData: any) =>
+    request('/settings', {
+      method: 'PUT',
+      body: JSON.stringify(settingsData)
+    })
+};
+
