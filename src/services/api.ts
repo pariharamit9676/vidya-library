@@ -3,7 +3,10 @@
  * Centralized, production-grade service communicating with the backend APIs.
  */
 
-const API_BASE = ((import.meta as any).env?.VITE_API_URL || '/api').replace(/\/$/, '');
+const API_BASE = (
+  (import.meta as any).env?.VITE_API_URL ||
+  ((import.meta as any).env?.PROD ? 'https://vidya-library.onrender.com/api' : '/api')
+).replace(/\/$/, '');
 
 interface ApiResponse<T = any> {
   success: boolean;
