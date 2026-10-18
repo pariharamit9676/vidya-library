@@ -53,22 +53,59 @@ export class PaymentModel {
     if (isMongoConnected()) {
       try {
         const docs = await PaymentMongo.find({}).sort({ createdAt: -1 }).lean();
-        if (docs && docs.length > 0) {
-          return docs.map((d) => ({
-            ...d,
-            id: d.id || String(d._id)
-          }));
-        }
+        return (docs || []).map((d) => ({
+          ...d,
+          id: d.id || String(d._id)
+        }));
       } catch (err) {
         console.error('Mongo read payments error, fallback to JSON:', err.message);
       }
     }
-    return readJsonFile(FILE_NAME, DEFAULT_PAYMENTS);
+    return readJsonFile(FILE_NAME, []);
   }
 
   static async getById(id) {
     const all = await this.getAll();
     return all.find((p) => p.id === id || p.receiptNo === id || p._id === id) || null;
+  }
+
+  static async delete(id) {
+    if (isMongoConnected()) {
+      try {
+        await PaymentMongo.deleteOne({ $or: [{ id }, { _id: id }, { receiptNo: id }] });
+      } catch (err) {
+        console.error('Mongo delete payment error:', err.message);
+      }
+    }
+    const currentLocal = readJsonFile(FILE_NAME, []);
+    const filtered = currentLocal.filter((p) => p.id !== id && p._id !== id && p.receiptNo !== id);
+    writeJsonFile(FILE_NAME, filtered);
+    return true;
+  }
+
+  static async deleteByStudentId(studentId, studentRefId, name) {
+    if (isMongoConnected()) {
+      try {
+        const orConditions = [];
+        if (studentId) orConditions.push({ studentId });
+        if (studentRefId) orConditions.push({ studentId: studentRefId }, { studentRefId });
+        if (name) orConditions.push({ studentName: name });
+        if (orConditions.length > 0) {
+          await PaymentMongo.deleteMany({ $or: orConditions });
+        }
+      } catch (err) {
+        console.error('Mongo delete payments error:', err.message);
+      }
+    }
+    const currentLocal = readJsonFile(FILE_NAME, []);
+    const filtered = currentLocal.filter((p) => {
+      if (studentId && p.studentId === studentId) return false;
+      if (studentRefId && (p.studentId === studentRefId || p.studentRefId === studentRefId)) return false;
+      if (name && p.studentName === name) return false;
+      return true;
+    });
+    writeJsonFile(FILE_NAME, filtered);
+    return true;
   }
 
   static async create(paymentData) {

@@ -249,6 +249,13 @@ export class StudentController {
         name: deleted.name
       });
 
+      // Also clean up payment receipts associated with this deleted student
+      await PaymentModel.deleteByStudentId(
+        deleted.id || (deleted._id ? String(deleted._id) : id),
+        deleted.studentId,
+        deleted.name
+      );
+
       return res.status(200).json({
         success: true,
         message: `Student "${deleted.name}" removed and seat freed.`,
@@ -280,6 +287,11 @@ export class StudentController {
             phone: deleted.phone,
             name: deleted.name
           });
+          await PaymentModel.deleteByStudentId(
+            deleted.id || (deleted._id ? String(deleted._id) : id),
+            deleted.studentId,
+            deleted.name
+          );
           deletedStudents.push(deleted);
         }
       }

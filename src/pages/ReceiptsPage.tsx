@@ -40,14 +40,10 @@ export const ReceiptsPage: React.FC = () => {
     endDate: ''
   });
 
-  // Effective Students list (API + Context)
+  // Effective Students list (API)
   const studentsList = useMemo(() => {
-    return Array.isArray(rawStudents) && rawStudents.length > 0
-      ? rawStudents
-      : Array.isArray(contextStudents)
-      ? contextStudents
-      : [];
-  }, [rawStudents, contextStudents]);
+    return Array.isArray(rawStudents) ? rawStudents : [];
+  }, [rawStudents]);
 
   // Unified, Stable, Deduplicated Receipt Records
   const allReceipts: ReceiptRecordItem[] = useMemo(() => {
