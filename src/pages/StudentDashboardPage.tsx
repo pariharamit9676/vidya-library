@@ -379,6 +379,15 @@ export const StudentDashboardPage: React.FC = () => {
     return allAttendanceLogs.slice(start, start + ATTENDANCE_PAGE_SIZE);
   }, [allAttendanceLogs, attendancePage]);
 
+  // Clean Seat Number representation
+  const seatLabel = useMemo(() => {
+    if (!studentData?.seatNo || studentData.seatNo === '-') return 'Unassigned Desk';
+    const raw = String(studentData.seatNo).trim();
+    if (/^seat\s*#/i.test(raw)) return raw;
+    if (/^seat/i.test(raw)) return `Seat #${raw.replace(/^seat\s*/i, '').replace(/^#+/, '')}`;
+    return `Seat #${raw.replace(/^#+/, '')}`;
+  }, [studentData?.seatNo]);
+
   return (
     <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-24 sm:pb-12">
       
@@ -466,8 +475,11 @@ export const StudentDashboardPage: React.FC = () => {
                       <span>•</span>
                       <span>{studentData?.phone || 'No phone'}</span>
                     </div>
-                    <div className="text-[10px] text-[#8F9BB3] mt-1">
-                      Seat: <strong className="text-[#192038]">{studentData?.seatNo ? `Seat #${studentData.seatNo}` : 'Unassigned'}</strong>
+                    <div className="text-[10px] text-[#8F9BB3] mt-1.5 flex items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EEF0FD] text-[#544bec] font-bold text-[10px] border border-[#544bec]/20">
+                        <Armchair size={11} />
+                        <span>{seatLabel}</span>
+                      </span>
                     </div>
                   </div>
 
@@ -606,12 +618,19 @@ export const StudentDashboardPage: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs text-[#8F9BB3] mt-2 flex-wrap font-medium">
-                  <span>📱 {studentData?.phone || 'No phone'}</span>
+                <div className="flex items-center gap-2.5 text-xs text-[#8F9BB3] mt-2.5 flex-wrap font-medium">
+                  <span className="inline-flex items-center gap-1.5 text-[#6B778C]">
+                    <Phone size={13} className="text-[#8F9BB3]" />
+                    <span>{studentData?.phone || 'No phone'}</span>
+                  </span>
+
                   <span>•</span>
-                  <span>🪑 Seat: <strong className="text-[#192038]">{studentData?.seatNo ? `Seat #${studentData.seatNo}` : 'Unassigned'}</strong></span>
-                  <span>•</span>
-                  <span>⏰ Shift: <strong className="text-[#192038]">{studentData?.shift || 'Full Day (24/7)'}</strong></span>
+
+                  {/* Highlighted Seat Badge */}
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#EEF0FD] text-[#544bec] font-black text-xs border border-[#544bec]/25 shadow-2xs">
+                    <Armchair size={13} className="text-[#544bec]" />
+                    <span>{seatLabel}</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -824,7 +843,7 @@ export const StudentDashboardPage: React.FC = () => {
                 </div>
                 <div className="text-xs font-black text-[#192038] truncate">
                   {!isInactive && studentData?.seatNo && studentData.seatNo !== '-'
-                    ? `Seat #${studentData.seatNo}`
+                    ? seatLabel
                     : 'No Seat'}
                 </div>
                 <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">

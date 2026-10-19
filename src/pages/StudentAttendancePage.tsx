@@ -201,11 +201,11 @@ export const StudentAttendancePage: React.FC = () => {
                 <Armchair size={14} />
               </div>
             </div>
-            <div className="text-sm sm:text-base font-black text-[#192038]">
-              {studentData?.seatNo ? `Seat #${studentData.seatNo}` : 'No Assigned Seat'}
+            <div className="text-sm sm:text-base font-black text-[#544bec]">
+              {studentData?.seatNo ? (String(studentData.seatNo).startsWith('Seat') ? studentData.seatNo : `Seat #${studentData.seatNo}`) : 'No Assigned Desk'}
             </div>
             <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
-              Shift: {studentData?.shift || 'Full Day (24/7)'}
+              Dedicated Study Desk
             </div>
           </div>
 
