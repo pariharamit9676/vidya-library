@@ -31,10 +31,10 @@ export const getStoredSettings = () => {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) {
       const defaultSettings = {
-        libraryName: "Vidya Library & Study Lounge",
-        tagline: "Knowledge Bestows Humility • Premier Reading Hall",
-        address: "Near Metro Gate 2, Main Market, New Delhi",
-        phone: "+91 98765 43210",
+        libraryName: "Vidya Library",
+        tagline: "Pin Drop Silence • Premier Air-Conditioned Reading Lounge",
+        address: "66W8+4FH, Gayatri Nagar, Gwalior, MP 474005",
+        phone: "9303961613",
         upiId: "vidyalibrary@upi"
       };
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(defaultSettings));
@@ -43,10 +43,10 @@ export const getStoredSettings = () => {
     return JSON.parse(raw);
   } catch (e) {
     return {
-      libraryName: "Vidya Library & Study Lounge",
-      tagline: "Knowledge Bestows Humility • Premier Reading Hall",
-      address: "Near Metro Gate 2, Main Market, New Delhi",
-      phone: "+91 98765 43210",
+      libraryName: "Vidya Library",
+      tagline: "Pin Drop Silence • Premier Air-Conditioned Reading Lounge",
+      address: "66W8+4FH, Gayatri Nagar, Gwalior, MP 474005",
+      phone: "9303961613",
       upiId: "vidyalibrary@upi"
     };
   }

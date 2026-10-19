@@ -52,6 +52,11 @@
 .border-primary { border-color: var(--primary); }
 .border-primary-subtle { border-color: var(--primary-border); }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
 * {
   box-sizing: border-box;
 }

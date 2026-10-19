@@ -36,9 +36,9 @@ export const SettingsPage: React.FC = () => {
   const [formData, setFormData] = useState({
     libraryName: settings?.libraryName || 'Vidya Library',
     tagline: settings?.tagline || 'Your Space to Grow • Premium Study Lounge',
-    phone: settings?.phone || '+91 98765 43210',
+    phone: settings?.phone || '9303961613',
     email: settings?.email || 'admin@vidyalibrary.com',
-    address: settings?.address || 'Near Metro Gate 2, Main Market, New Delhi',
+    address: settings?.address || '66W8+4FH, Gayatri Nagar, Gwalior, MP 474005',
     upiId: settings?.upiId || 'vidyalibrary@upi',
 
     // Operating hours & shifts
@@ -60,7 +60,7 @@ export const SettingsPage: React.FC = () => {
     // Admin Credentials
     adminName: settings?.adminName || 'Admin',
     adminEmail: settings?.adminEmail || 'admin@vidyalibrary.com',
-    adminPhone: settings?.adminPhone || settings?.phone || '+91 98765 43210',
+    adminPhone: settings?.adminPhone || settings?.phone || '9303961613',
 
     // Multi-Month Discounts
     multiMonthDiscounts: (settings?.multiMonthDiscounts && settings.multiMonthDiscounts.length > 0)
@@ -306,9 +306,9 @@ export const SettingsPage: React.FC = () => {
       const defaults = {
         libraryName: 'Vidya Library',
         tagline: 'Your Space to Grow • Premium Study Lounge',
-        phone: '+91 98765 43210',
+        phone: '9303961613',
         email: 'admin@vidyalibrary.com',
-        address: 'Near Metro Gate 2, Main Market, New Delhi',
+        address: '66W8+4FH, Gayatri Nagar, Gwalior, MP 474005',
         upiId: 'vidyalibrary@upi',
         openingTime: '06:00 AM',
         closingTime: '11:00 PM',
@@ -324,7 +324,7 @@ export const SettingsPage: React.FC = () => {
         lockerFee: '150',
         adminName: 'Admin',
         adminEmail: 'admin@vidyalibrary.com',
-        adminPhone: '+91 98765 43210',
+        adminPhone: '9303961613',
         multiMonthDiscounts: DEFAULT_DISCOUNTS
       };
       setFormData(defaults);
@@ -475,7 +475,7 @@ export const SettingsPage: React.FC = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+91 98765 43210"
+                  placeholder="e.g. 9303961613"
                   className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>

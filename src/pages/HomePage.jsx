@@ -119,6 +119,48 @@ export const HomePage = () => {
       : DEFAULT_DISCOUNTS;
   }, [settings?.multiMonthDiscounts]);
 
+  // Dynamic Contact Phone fetched from MongoDB Settings
+  const contactPhone = useMemo(() => {
+    const p1 = (settings?.phone || '').trim();
+    const p2 = (settings?.adminPhone || '').trim();
+
+    const candidates = [];
+    if (p1) candidates.push(p1);
+    if (p2 && p2 !== p1) candidates.push(p2);
+    if (candidates.length === 0) candidates.push('9303961613');
+
+    const flat = [];
+    candidates.forEach((str) => {
+      str.split(/[\/,]/).forEach((part) => {
+        const item = part.trim();
+        if (item && !flat.includes(item)) flat.push(item);
+      });
+    });
+
+    const formattedList = flat.map((num) => {
+      if (num.startsWith('+')) return num;
+      const digits = num.replace(/[^0-9]/g, '');
+      if (digits.length === 10) return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
+      return `+91 ${num}`;
+    });
+
+    const display = formattedList.join(' / ');
+    const primaryClean = (flat[0] || '9303961613').replace(/[^0-9]/g, '').slice(-10);
+    return {
+      display,
+      tel: `tel:+91${primaryClean}`
+    };
+  }, [settings?.phone, settings?.adminPhone]);
+
+  // Smooth scroll handler for anchor links
+  const handleNavClick = (e, targetId) => {
+    e.preventDefault();
+    const elem = document.querySelector(targetId);
+    if (elem) {
+      elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   // Dynamic monthly seat rates configured by Admin in Database / Seat Management
   const dynamicRates = useMemo(() => {
     return {
@@ -312,10 +354,10 @@ export const HomePage = () => {
     <div className="min-h-screen flex flex-col bg-[#F8FAFD] text-[#192038] selection:bg-[#544bec] selection:text-white font-sans">
       
       {/* ===================================================================== */}
-      {/* 1. MODERN GLASS NAVBAR (NON-FLOATING ON MOBILE, FLOATING ON DESKTOP) */}
+      {/* 1. MODERN GLASS NAVBAR (100% FULL-WIDTH, FLUSH AT TOP) */}
       {/* ===================================================================== */}
-      <header className="sticky top-0 sm:top-3 z-50 w-full sm:max-w-7xl sm:mx-auto sm:px-6 transition-all">
-        <div className="backdrop-blur-xl bg-white/95 border-b sm:border border-[#E2E8F0] rounded-none sm:rounded-3xl shadow-xs sm:shadow-lg sm:shadow-slate-900/5 px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
+      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-xl border-b border-[#E2E8F0] shadow-xs transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
           {/* Logo & Tagline */}
           <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#544bec] to-teal-400 flex items-center justify-center text-white shadow-md shadow-[#544bec]/25 group-hover:scale-105 transition-transform shrink-0">
@@ -338,15 +380,23 @@ export const HomePage = () => {
 
           {/* Clean Navigation Links */}
           <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-[#64748B]">
-            <a href="#amenities" className="hover:text-[#544bec] transition-colors">Amenities</a>
-            <a href="#plans" className="hover:text-[#544bec] transition-colors font-extrabold text-[#544bec]">Plans & Pricing</a>
-            <a href="#reviews" className="hover:text-[#544bec] transition-colors">Ranker Reviews</a>
-            <a href="#faqs" className="hover:text-[#544bec] transition-colors">FAQs</a>
-            <a href="#contact" className="hover:text-[#544bec] transition-colors">Location</a>
+            <a href="#amenities" onClick={(e) => handleNavClick(e, '#amenities')} className="hover:text-[#544bec] transition-colors">Amenities</a>
+            <a href="#plans" onClick={(e) => handleNavClick(e, '#plans')} className="hover:text-[#544bec] transition-colors font-extrabold text-[#544bec]">Plans & Pricing</a>
+            <a href="#reviews" onClick={(e) => handleNavClick(e, '#reviews')} className="hover:text-[#544bec] transition-colors">Ranker Reviews</a>
+            <a href="#faqs" onClick={(e) => handleNavClick(e, '#faqs')} className="hover:text-[#544bec] transition-colors">FAQs</a>
+            <a href="#contact" onClick={(e) => handleNavClick(e, '#contact')} className="hover:text-[#544bec] transition-colors">Location</a>
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <a
+              href={contactPhone.tel}
+              className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold text-[#192038] hover:text-[#544bec] transition-colors"
+              title="Call Front Desk Helpline"
+            >
+              <Phone size={13} className="text-[#544bec]" />
+              <span>{contactPhone.display.split('/')[0].trim()}</span>
+            </a>
             <Link
               to="/login?role=student"
               className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold border border-[#544bec]/30 bg-[#EEF0FD] text-[#544bec] hover:bg-[#d8f4ea] transition-all cursor-pointer whitespace-nowrap shadow-xs"
@@ -446,6 +496,7 @@ export const HomePage = () => {
 
               <a
                 href="#plans"
+                onClick={(e) => handleNavClick(e, '#plans')}
                 className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#544bec]/40 text-[#192038] font-bold text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition-all shadow-2xs hover:bg-slate-50"
               >
                 <Clock size={15} className="text-[#544bec]" />
@@ -1196,15 +1247,14 @@ export const HomePage = () => {
               >
                 <MapPin size={16} className="text-[#544bec] shrink-0 mt-0.5" />
                 <span>
-                  <strong className="block text-white">66W8+4FH, Gayatri Nagar,</strong>
-                  Gwalior, Madhya Pradesh 474005
+                  <strong className="block text-white">{settings?.address || '66W8+4FH, Gayatri Nagar, Gwalior, MP 474005'}</strong>
                   <span className="block text-[11px] text-emerald-400 font-bold mt-0.5 group-hover:underline">Open in Google Maps ↗</span>
                 </span>
               </a>
 
               <div className="flex items-center gap-2 text-slate-300">
                 <Phone size={15} className="text-[#544bec] shrink-0" />
-                <a href="tel:+919876543210" className="hover:text-emerald-400 transition-colors">+91 98765 43210 / +91 98234 56789</a>
+                <a href={contactPhone.tel} className="hover:text-emerald-400 transition-colors">{contactPhone.display}</a>
               </div>
 
               <div className="flex items-center gap-2 text-slate-300">
