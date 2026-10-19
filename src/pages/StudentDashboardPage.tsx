@@ -388,6 +388,17 @@ export const StudentDashboardPage: React.FC = () => {
     return `Seat #${raw.replace(/^#+/, '')}`;
   }, [studentData?.seatNo]);
 
+  // Two-letter Student initials for avatar (e.g. "Amit Parihar" -> "AP", "Amit" -> "AM")
+  const studentInitials = useMemo(() => {
+    const name = (studentData?.name || '').trim();
+    if (!name) return 'S';
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }, [studentData?.name]);
+
   return (
     <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-24 sm:pb-12">
       
@@ -441,8 +452,8 @@ export const StudentDashboardPage: React.FC = () => {
                 }`}
                 title="Account Menu"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#544bec] text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
-                  {(studentData?.name || 'S').charAt(0).toUpperCase()}
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#544bec] text-white font-black text-[11px] sm:text-xs flex items-center justify-center shadow-xs shrink-0 tracking-tight">
+                  {studentInitials}
                 </div>
                 
                 <div className="hidden sm:flex flex-col text-left leading-tight">
@@ -572,8 +583,8 @@ export const StudentDashboardPage: React.FC = () => {
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#544bec] to-[#6d64f7] text-white text-3xl font-black flex items-center justify-center shadow-lg shadow-[#544bec]/25 shrink-0">
-                  {(studentData?.name || 'S').charAt(0).toUpperCase()}
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#544bec] to-[#6d64f7] text-white text-3xl font-black flex items-center justify-center shadow-lg shadow-[#544bec]/25 shrink-0 tracking-wide">
+                  {studentInitials}
                 </div>
                 <div
                   className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${
@@ -705,7 +716,7 @@ export const StudentDashboardPage: React.FC = () => {
         {/* ======================================================== */}
         <div className="sm:hidden space-y-3.5">
           {/* 1. Primary Emerald App Header (Flat bottom, no rounded bottom corners) */}
-          <div className="bg-gradient-to-br from-[#544bec] via-[#483ed8] to-[#3730a3] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-10 shadow-md relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#544bec] via-[#483ed8] to-[#3730a3] text-white -mx-3.5 -mt-4 px-4 pt-6 pb-14 min-h-[125px] shadow-md relative overflow-hidden">
             {/* Ambient Background Circles */}
             <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -left-10 bottom-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
@@ -714,23 +725,23 @@ export const StudentDashboardPage: React.FC = () => {
             <div className="flex items-center justify-between gap-2.5 relative z-10">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative shrink-0">
-                  <div className="w-11 h-11 rounded-full border-2 border-white/50 bg-white text-[#544bec] font-black text-base flex items-center justify-center shadow-md shadow-black/20">
-                    {(studentData?.name || 'S').charAt(0).toUpperCase()}
+                  <div className="w-12 h-12 rounded-full border-2 border-white/60 bg-white text-[#544bec] font-black text-sm tracking-wide flex items-center justify-center shadow-md shadow-black/20">
+                    {studentInitials}
                   </div>
                   <div
-                    className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#483ed8] flex items-center justify-center ${
+                    className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-[#483ed8] flex items-center justify-center ${
                       isCheckedIn ? 'bg-white' : 'bg-slate-300'
                     }`}
                   >
-                    <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-[#544bec] animate-pulse' : 'bg-slate-500'}`} />
+                    <div className={`w-2 h-2 rounded-full ${isCheckedIn ? 'bg-[#544bec] animate-pulse' : 'bg-slate-500'}`} />
                   </div>
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-sm font-black text-white m-0 truncate tracking-tight">
+                  <h1 className="text-base font-black text-white m-0 truncate tracking-tight">
                     Hello, {studentData?.name || 'Student'} 👋
                   </h1>
-                  <p className="text-[11px] text-white/80 font-medium m-0 mt-0.5 truncate">
+                  <p className="text-xs text-white/80 font-medium m-0 mt-0.5 truncate">
                     {getGreeting()} • ID #{cleanStudentId}
                   </p>
                 </div>
@@ -768,7 +779,7 @@ export const StudentDashboardPage: React.FC = () => {
           </div>
 
           {/* 2. Overlapping Floating Overview Card (Dribbble Overview Card) */}
-          <div className="-mt-7 bg-white rounded-2xl border border-[#EDF1F7] shadow-xl shadow-slate-900/5 p-3.5 relative z-20">
+          <div className="-mt-8 bg-white rounded-2xl border border-[#EDF1F7] shadow-xl shadow-slate-900/5 p-3.5 relative z-20">
             <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-[#EDF1F7]/80">
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-black text-[#192038] tracking-tight">
