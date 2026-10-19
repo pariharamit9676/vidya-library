@@ -100,7 +100,7 @@ export const StudentAttendancePage: React.FC = () => {
               <img
                 src="/vidya-library-logo.png"
                 alt="Vidya Library Logo"
-                className="w-9 h-9 rounded-xl object-cover shadow-2xs border border-[#EDF1F7] shrink-0"
+                className="h-8 w-auto object-contain shrink-0"
               />
               <div>
                 <h1 className="text-sm sm:text-base font-black text-[#192038] m-0 leading-tight">

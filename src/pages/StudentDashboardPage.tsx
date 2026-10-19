@@ -400,7 +400,7 @@ export const StudentDashboardPage: React.FC = () => {
             <img
               src="/vidya-library-logo.png"
               alt="Vidya Library Logo"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-md shadow-[#544bec]/25 shrink-0 border border-[#EDF1F7]"
+              className="h-8 sm:h-9 w-auto object-contain shrink-0"
             />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
@@ -716,7 +716,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <img
                   src="/vidya-library-logo.png"
                   alt="Vidya Library Logo"
-                  className="w-9 h-9 rounded-xl object-cover shadow-sm border border-white/25 shrink-0"
+                  className="h-9 w-auto object-contain shrink-0"
                 />
                 <div>
                   <h2 className="text-lg font-black text-white tracking-tight m-0 leading-tight">

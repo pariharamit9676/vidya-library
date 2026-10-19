@@ -364,7 +364,7 @@ export const HomePage = () => {
             <img
               src={vidyaLogo}
               alt="Vidya Library Logo"
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl object-cover shadow-md shadow-[#544bec]/25 group-hover:scale-105 transition-transform shrink-0 border border-[#EDF1F7]"
+              className="h-8 sm:h-10 w-auto object-contain group-hover:scale-105 transition-transform shrink-0"
             />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
@@ -1229,7 +1229,7 @@ export const HomePage = () => {
               <img
                 src={vidyaLogo}
                 alt="Vidya Library Logo"
-                className="w-9 h-9 rounded-xl object-cover shadow-md border border-white/10 shrink-0"
+                className="h-9 w-auto object-contain shrink-0"
               />
               <h3 className="text-lg font-black text-white m-0">Vidya Library</h3>
             </div>

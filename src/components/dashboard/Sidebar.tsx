@@ -63,7 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <img
                 src="/vidya-library-logo.png"
                 alt="Vidya Library Logo"
-                className="w-9 h-9 rounded-xl object-cover shadow-sm border border-[#EDF1F7] shrink-0"
+                className="h-9 w-auto object-contain shrink-0"
               />
               <div>
                 <h1 className="text-base font-extrabold tracking-tight text-[#192038] m-0 leading-tight">

@@ -126,7 +126,7 @@ export const LoginPage = () => {
           <img
             src="/vidya-library-logo.png"
             alt="Vidya Library Logo"
-            className="w-10 h-10 rounded-xl object-cover shadow-md shadow-[#544bec]/30 group-hover:scale-105 transition-all border border-[#EDF1F7] shrink-0"
+            className="h-10 w-auto object-contain group-hover:scale-105 transition-all shrink-0"
           />
           <div>
             <div className="text-base sm:text-lg font-black tracking-tight text-[#192038]">
