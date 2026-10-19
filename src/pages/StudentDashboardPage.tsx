@@ -142,11 +142,28 @@ export const StudentDashboardPage: React.FC = () => {
 
   const dueDate = studentData?.nextDueDate || studentData?.nextFeeDueDate;
   const daysLeft = getDaysUntilDue(dueDate);
-  const isInactive = (daysLeft !== null && daysLeft < -40) || (studentData?.status === 'Inactive' && daysLeft !== null && daysLeft < 0);
+  const isInactive = (studentData?.status === 'Inactive') || (daysLeft !== null && daysLeft < -40);
   const calculatedFeeStatus = isDemo ? 'PAID' : (studentData?.feeStatus || computeFeeStatus(dueDate, dueAmt, studentData?.status));
   const isOverdue = !isInactive && !isDemo && (calculatedFeeStatus === 'OVERDUE' || studentData?.status === 'Overdue' || (daysLeft !== null && daysLeft < 0));
   const isDueSoon = !isInactive && !isOverdue && (calculatedFeeStatus === 'DUE_SOON' || (daysLeft !== null && daysLeft >= 0 && daysLeft <= 5));
-  const isPunchBlocked = !isDemo && (isOverdue || isInactive);
+  
+  // Punch is locked ONLY for Inactive accounts, NEVER for Overdue accounts!
+  const isPunchBlocked = !isDemo && isInactive;
+
+  // Maximum 3 check-ins per day per student
+  const todayStr = useMemo(() => new Date().toDateString(), []);
+  const todayCheckInCount = useMemo(() => {
+    if (!studentData?.attendanceHistory || !Array.isArray(studentData.attendanceHistory)) {
+      return 0;
+    }
+    return studentData.attendanceHistory.filter((item: any) => {
+      const itemDate = item.checkInTime ? new Date(item.checkInTime) : (item.date ? new Date(item.date) : null);
+      return itemDate && !isNaN(itemDate.getTime()) && itemDate.toDateString() === todayStr;
+    }).length;
+  }, [studentData?.attendanceHistory, todayStr]);
+
+  const isDailyLimitReached = !isCheckedIn && todayCheckInCount >= 3;
+
   const renewalFee = Number(studentData?.planAmount) || 600;
   const feeDisplayAmount = dueAmt > 0 ? dueAmt : renewalFee;
 
@@ -155,9 +172,15 @@ export const StudentDashboardPage: React.FC = () => {
     if (isPunchBlocked) {
       setFeedbackMsg({
         type: 'error',
-        text: isInactive
-          ? `Locked: Account is inactive • Admin Helpline: ${adminPhone}`
-          : `Locked: Fee overdue • Admin Helpline: ${adminPhone}`
+        text: `Locked: Account is inactive • Admin Helpline: ${adminPhone}`
+      });
+      return;
+    }
+
+    if (isDailyLimitReached) {
+      setFeedbackMsg({
+        type: 'error',
+        text: `Daily Limit Reached: Maximum 3 check-ins allowed per day. You have already completed 3 check-ins today.`
       });
       return;
     }
@@ -520,7 +543,7 @@ export const StudentDashboardPage: React.FC = () => {
                 onClick={handleTogglePunch}
                 disabled={punchLoading}
                 className={`py-3.5 px-6 rounded-2xl font-black text-xs transition-all shadow-md flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 hover:-translate-y-0.5 ${
-                  isPunchBlocked
+                  isPunchBlocked || isDailyLimitReached
                     ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
                     : isCheckedIn
                     ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/25'
@@ -534,8 +557,13 @@ export const StudentDashboardPage: React.FC = () => {
                   </>
                 ) : isPunchBlocked ? (
                   <>
-                    <Lock size={16} className="text-rose-500" />
-                    <span>Punch In / Out Locked ({isInactive ? 'Inactive' : 'Fee Overdue'})</span>
+                    <Lock size={16} className="text-slate-500" />
+                    <span>Punch In / Out Locked (Inactive)</span>
+                  </>
+                ) : isDailyLimitReached ? (
+                  <>
+                    <Lock size={16} className="text-amber-500" />
+                    <span>Daily Limit Reached (3/3 Used)</span>
                   </>
                 ) : isCheckedIn ? (
                   <>
@@ -545,17 +573,21 @@ export const StudentDashboardPage: React.FC = () => {
                 ) : (
                   <>
                     <CalendarCheck size={16} />
-                    <span>Punch In to Library</span>
+                    <span>Punch In to Library ({todayCheckInCount}/3 today)</span>
                   </>
                 )}
               </button>
 
               <div className="text-[11px] font-medium text-right">
                 {isPunchBlocked ? (
-                  <span className={`${isInactive ? 'text-slate-600' : 'text-rose-600'} font-bold flex items-center gap-1.5 justify-end`}>
-                    <span>{isInactive ? 'Locked: Account is inactive' : 'Locked: Fee overdue'}</span>
+                  <span className="text-slate-600 font-bold flex items-center gap-1.5 justify-end">
+                    <span>Locked: Account is inactive</span>
                     <span>•</span>
-                    <span>Admin Helpline: <a href={`tel:${adminPhone}`} className={`underline ${isInactive ? 'hover:text-slate-800' : 'hover:text-rose-700'}`}>{adminPhone}</a></span>
+                    <span>Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800">{adminPhone}</a></span>
+                  </span>
+                ) : isDailyLimitReached ? (
+                  <span className="text-amber-600 font-bold flex items-center gap-1.5 justify-end">
+                    <span>Daily limit reached (3 of 3 check-ins used today)</span>
                   </span>
                 ) : isCheckedIn ? (
                   <span className="text-[#00A97A] font-bold flex items-center gap-1.5 justify-end">
@@ -563,7 +595,7 @@ export const StudentDashboardPage: React.FC = () => {
                     Checked in {formatLiveCheckInTime(checkInTime)}
                   </span>
                 ) : (
-                  <span className="text-[#8F9BB3]">Currently checked out</span>
+                  <span className="text-[#8F9BB3]">Currently checked out • {Math.max(0, 3 - todayCheckInCount)} check-in{3 - todayCheckInCount === 1 ? '' : 's'} remaining today</span>
                 )}
               </div>
             </div>
@@ -611,7 +643,7 @@ export const StudentDashboardPage: React.FC = () => {
               onClick={handleTogglePunch}
               disabled={punchLoading}
               className={`w-full py-3.5 px-4 rounded-xl font-black text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 ${
-                isPunchBlocked
+                isPunchBlocked || isDailyLimitReached
                   ? 'bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-300'
                   : isCheckedIn
                   ? 'bg-rose-500 active:bg-rose-600 text-white shadow-rose-500/25'
@@ -625,8 +657,13 @@ export const StudentDashboardPage: React.FC = () => {
                 </>
               ) : isPunchBlocked ? (
                 <>
-                  <Lock size={15} className="text-rose-500" />
-                  <span>Punch In / Out Locked ({isInactive ? 'Inactive' : 'Fee Overdue'})</span>
+                  <Lock size={15} className="text-slate-500" />
+                  <span>Punch In / Out Locked (Inactive)</span>
+                </>
+              ) : isDailyLimitReached ? (
+                <>
+                  <Lock size={15} className="text-amber-500" />
+                  <span>Daily Limit Reached (3/3 Used)</span>
                 </>
               ) : isCheckedIn ? (
                 <>
@@ -636,7 +673,7 @@ export const StudentDashboardPage: React.FC = () => {
               ) : (
                 <>
                   <CalendarCheck size={15} />
-                  <span>Punch In to Library</span>
+                  <span>Punch In to Library ({todayCheckInCount}/3)</span>
                 </>
               )}
             </button>
@@ -644,8 +681,12 @@ export const StudentDashboardPage: React.FC = () => {
             {/* Mobile Status Subtext */}
             <div className="text-[11px] text-center font-medium">
               {isPunchBlocked ? (
-                <span className={`${isInactive ? 'text-slate-600' : 'text-rose-600'} font-bold`}>
-                  {isInactive ? 'Locked: Account is inactive' : 'Locked: Fee overdue'} • Admin Helpline: <a href={`tel:${adminPhone}`} className={`underline ${isInactive ? 'hover:text-slate-800' : 'hover:text-rose-700'}`}>{adminPhone}</a>
+                <span className="text-slate-600 font-bold">
+                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800">{adminPhone}</a>
+                </span>
+              ) : isDailyLimitReached ? (
+                <span className="text-amber-600 font-bold">
+                  Daily limit reached (3 of 3 check-ins used today)
                 </span>
               ) : isCheckedIn ? (
                 <span className="text-[#00A97A] font-bold flex items-center justify-center gap-1.5">
@@ -653,7 +694,7 @@ export const StudentDashboardPage: React.FC = () => {
                   Live Checked In ({formatDisplayTime(checkInTime) || 'Active'})
                 </span>
               ) : (
-                <span className="text-[#8F9BB3]">Tap to mark your arrival in the library</span>
+                <span className="text-[#8F9BB3]">Tap to mark arrival • {Math.max(0, 3 - todayCheckInCount)} check-ins remaining</span>
               )}
             </div>
           </div>

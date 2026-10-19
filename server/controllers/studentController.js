@@ -317,27 +317,37 @@ export class StudentController {
         });
       }
 
-      // Check if student is Inactive or Overdue (fee not cleared)
+      // Check if student is Inactive (Punch locked ONLY for Inactive, NOT for Overdue)
       const dueDate = student.nextDueDate || student.nextFeeDueDate;
-      const dueAmt = Number(student.dueAmount) || 0;
-      const isDemo = student.studentType === 'Demo' || student.status === 'Demo';
       const daysLeft = getDaysUntilDue(dueDate);
-      const isOverdue = !isDemo && (
-        student.feeStatus === 'OVERDUE' ||
-        student.status === 'Overdue' ||
-        student.status === 'Inactive' ||
-        (daysLeft !== null && daysLeft < 0)
-      );
+      const isInactive = student.status === 'Inactive' || (daysLeft !== null && daysLeft < -40);
 
-      if (isOverdue || student.status === 'Inactive') {
+      if (isInactive) {
         const settings = await SettingModel.get();
         const adminPhone = settings.phone || settings.adminPhone || '9685912333';
         return res.status(403).json({
           success: false,
           blocked: true,
           adminPhone,
-          message: `Attendance Punch Locked: Fee is overdue. Please deposit your fee or call Admin at ${adminPhone}.`
+          message: `Attendance Punch Locked: Account is inactive. Please contact Admin at ${adminPhone}.`
         });
+      }
+
+      // Condition: Max 3 check-ins per day per student (only applies when checking in, never blocks check-out)
+      if (!student.isCheckedIn) {
+        const todayStr = new Date().toDateString();
+        const todayCheckIns = (student.attendanceHistory || []).filter((item) => {
+          const itemDate = item.checkInTime ? new Date(item.checkInTime) : (item.date ? new Date(item.date) : null);
+          return itemDate && !isNaN(itemDate.getTime()) && itemDate.toDateString() === todayStr;
+        }).length;
+
+        if (todayCheckIns >= 3) {
+          return res.status(400).json({
+            success: false,
+            limitReached: true,
+            message: `Daily Limit Reached: Maximum 3 check-ins allowed per day. You have already completed 3 check-in sessions today.`
+          });
+        }
       }
 
       const updated = await StudentModel.toggleCheckIn(id);
