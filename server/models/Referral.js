@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { readJsonFile, writeJsonFile } from '../utils/fileStorage.js';
 import { isMongoConnected } from '../config/database.js';
 import { ReferralMongo } from './schemas/ReferralSchema.js';
@@ -267,8 +268,11 @@ export class ReferralModel {
     let updated = null;
     if (isMongoConnected()) {
       try {
-        const orConditions = [{ id: payoutId }];
-        if (payoutId.length === 24) orConditions.push({ _id: payoutId });
+        const orConditions = [];
+        if (mongoose.Types.ObjectId.isValid(payoutId)) {
+          orConditions.push({ _id: payoutId });
+        }
+        orConditions.push({ id: payoutId });
 
         updated = await PayoutMongo.findOneAndUpdate(
           { $or: orConditions },
@@ -308,8 +312,11 @@ export class ReferralModel {
     let updated = null;
     if (isMongoConnected()) {
       try {
-        const orConditions = [{ id: referralId }];
-        if (referralId.length === 24) orConditions.push({ _id: referralId });
+        const orConditions = [];
+        if (mongoose.Types.ObjectId.isValid(referralId)) {
+          orConditions.push({ _id: referralId });
+        }
+        orConditions.push({ id: referralId });
 
         updated = await ReferralMongo.findOneAndUpdate(
           { $or: orConditions },

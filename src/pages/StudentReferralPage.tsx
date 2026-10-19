@@ -39,6 +39,7 @@ export const StudentReferralPage: React.FC = () => {
   // Referral stats & records
   const [referralStats, setReferralStats] = useState({
     myReferrals: [] as ReferralRecord[],
+    payouts: [] as PayoutRequest[],
     totalCount: 0,
     approvedCount: 0,
     pendingCount: 0,
@@ -64,6 +65,11 @@ export const StudentReferralPage: React.FC = () => {
   const referralCode = useMemo(() => {
     return dbReferralCode || user?.referralCode || getStudentReferralCode(user);
   }, [dbReferralCode, user]);
+
+  // Check if student has a currently pending payout request
+  const pendingPayout = useMemo(() => {
+    return (referralStats.payouts || []).find((p) => p.status === 'Pending') || null;
+  }, [referralStats.payouts]);
 
   // Load stats from MongoDB
   const reloadStats = async () => {
@@ -226,9 +232,9 @@ export const StudentReferralPage: React.FC = () => {
       setIsWithdrawModalOpen(false);
       setWithdrawFeedback({
         type: 'success',
-        text: `🎉 ₹${withdrawAmount} withdrawal requested! Admin will transfer to ${upiId}.`
+        text: `🎉 ₹${withdrawAmount} withdrawal scheduled with Pending status! Wallet balance is now ₹0. Admin will verify and transfer to ${upiId}.`
       });
-      setTimeout(() => setWithdrawFeedback(null), 5000);
+      setTimeout(() => setWithdrawFeedback(null), 6000);
     } catch (err: any) {
       setWithdrawFeedback({ type: 'error', text: err?.message || 'Failed to submit withdrawal request.' });
     } finally {
@@ -344,25 +350,56 @@ export const StudentReferralPage: React.FC = () => {
           {/* Card A: Available Balance */}
           <div className="bg-white rounded-2xl border border-[#EDF1F7] p-4.5 sm:p-5 shadow-xs flex flex-col justify-between">
             <div>
-              <span className="text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider block">
-                Available Wallet Balance
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider block">
+                  Available Wallet Balance
+                </span>
+                {pendingPayout && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
+                    <Clock size={11} className="animate-spin text-amber-600" />
+                    <span>Scheduled</span>
+                  </span>
+                )}
+              </div>
               <div className="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">
                 ₹{referralStats.availableBalance}
               </div>
-              <p className="text-[11px] text-[#8F9BB3] mt-1 m-0">
-                Can be deducted from next fee or withdrawn via UPI
-              </p>
+
+              {pendingPayout ? (
+                <div className="mt-2.5 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200 text-xs space-y-1">
+                  <div className="flex items-center justify-between font-bold text-amber-900">
+                    <span>Scheduled Payout:</span>
+                    <span className="font-mono text-sm">₹{pendingPayout.amount}</span>
+                  </div>
+                  <div className="text-[11px] text-amber-800 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse inline-block" />
+                    <span>Status: <strong>Pending Admin Transfer</strong></span>
+                  </div>
+                  <div className="text-[10px] text-amber-800 font-mono truncate">
+                    UPI: <strong>{pendingPayout.upiId}</strong>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-[11px] text-[#8F9BB3] mt-1 m-0">
+                  Can be deducted from next fee or withdrawn via UPI
+                </p>
+              )}
             </div>
 
             <div className="pt-4">
               <button
                 onClick={handleOpenWithdraw}
-                disabled={referralStats.availableBalance <= 0}
+                disabled={referralStats.availableBalance <= 0 || !!pendingPayout}
                 className="w-full py-2.5 rounded-xl text-xs font-bold bg-[#544bec] hover:bg-[#4338ca] text-white shadow-2xs transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
               >
                 <IndianRupee size={14} />
-                <span>Withdraw to UPI</span>
+                <span>
+                  {pendingPayout
+                    ? `₹${pendingPayout.amount} Withdrawal Scheduled`
+                    : referralStats.availableBalance <= 0
+                    ? 'Withdraw to UPI (₹0 Balance)'
+                    : 'Withdraw to UPI'}
+                </span>
               </button>
             </div>
           </div>
@@ -568,6 +605,97 @@ export const StudentReferralPage: React.FC = () => {
               <div className="font-bold text-[#192038]">No friends referred yet</div>
               <p className="text-[11px] text-[#8F9BB3] max-w-xs mx-auto mt-0.5">
                 Share your referral code <strong>{referralCode}</strong> with your friends preparing for competitive exams to start earning rewards!
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* 5. UPI Withdrawal Requests & History */}
+        <div className="bg-white rounded-2xl border border-[#EDF1F7] p-4.5 sm:p-5 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-black text-[#192038] m-0 flex items-center gap-1.5">
+                <IndianRupee size={15} className="text-[#544bec]" />
+                <span>UPI Withdrawal Requests & History ({referralStats.payouts?.length || 0})</span>
+              </h3>
+              <p className="text-[11px] text-[#8F9BB3] m-0">
+                Live status of your requested bank transfers via UPI
+              </p>
+            </div>
+          </div>
+
+          {(referralStats.payouts && referralStats.payouts.length > 0) ? (
+            <div className="space-y-2.5 pt-1">
+              {referralStats.payouts.map((item) => {
+                const isPending = item.status === 'Pending';
+                const isCompleted = item.status === 'Completed';
+                const isRejected = item.status === 'Rejected';
+
+                return (
+                  <div
+                    key={item.id}
+                    className={`p-3.5 rounded-xl border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 transition-colors ${
+                      isPending
+                        ? 'border-amber-200 bg-amber-50/40'
+                        : isRejected
+                        ? 'border-rose-200 bg-rose-50/30'
+                        : 'border-[#EDF1F7] bg-[#F8FAFD]'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-black text-base text-[#192038]">
+                          ₹{item.amount}
+                        </span>
+                        <span className="font-mono text-xs font-semibold text-[#544bec] bg-white px-2 py-0.5 rounded border border-[#EDF1F7]">
+                          {item.upiId}
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-[#8F9BB3]">
+                        Requested on {formatDisplayDate(item.requestedAt)}
+                        {item.processedAt && ` • Processed on ${formatDisplayDate(item.processedAt)}`}
+                      </div>
+                      {isRejected && (
+                        <div className="text-[11px] text-rose-700 font-medium">
+                          💡 <strong>Refunded:</strong> ₹{item.amount} has been refunded back to your wallet balance.
+                          {item.adminNote && ` (Reason: ${item.adminNote})`}
+                        </div>
+                      )}
+                      {isCompleted && item.utrRef && (
+                        <div className="text-[11px] text-emerald-800 font-mono">
+                          Bank UTR / Ref: <strong>{item.utrRef}</strong>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="self-start sm:self-auto">
+                      {isPending ? (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 inline-flex items-center gap-1.5">
+                          <Clock size={12} className="animate-spin text-amber-600" />
+                          <span>Scheduled (Pending Transfer)</span>
+                        </span>
+                      ) : isCompleted ? (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1.5">
+                          <CheckCircle2 size={12} className="text-emerald-600" />
+                          <span>Transferred to UPI</span>
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1.5">
+                          <AlertCircle size={12} className="text-rose-600" />
+                          <span>Rejected & Refunded</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-xs text-[#8F9BB3] bg-[#F8FAFD] rounded-xl border border-dashed border-[#EDF1F7]">
+              <IndianRupee size={28} className="mx-auto text-slate-300 mb-1.5" />
+              <div className="font-bold text-[#192038]">No withdrawal requests yet</div>
+              <p className="text-[11px] text-[#8F9BB3] max-w-xs mx-auto mt-0.5">
+                Earned referral balance can be withdrawn anytime to your UPI ID or deducted from your next fee.
               </p>
             </div>
           )}

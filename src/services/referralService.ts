@@ -306,8 +306,13 @@ export const referralService = {
     const pending = myReferrals.filter((r) => r.status === 'Pending');
     const totalEarned = approved.reduce((sum, r) => sum + (r.rewardAmount || DEFAULT_REWARD_AMOUNT), 0);
 
-    // Get payouts requested by this student
-    const payouts = referralService.getPayoutRequests().filter((p) => String(p.studentId) === cleanId);
+    // Get payouts requested by this student (supporting #STU001 or STU001)
+    const unhashId = cleanId.replace(/^#+/, '');
+    const payouts = referralService.getPayoutRequests().filter((p) => {
+      const pid = String(p.studentId || '').trim();
+      return pid === cleanId || pid === `#${unhashId}` || pid.replace(/^#+/, '') === unhashId;
+    });
+
     const totalWithdrawn = payouts
       .filter((p) => p.status === 'Completed' || p.status === 'Pending')
       .reduce((sum, p) => sum + p.amount, 0);
@@ -316,6 +321,7 @@ export const referralService = {
 
     return {
       myReferrals,
+      payouts,
       totalCount: myReferrals.length,
       approvedCount: approved.length,
       pendingCount: pending.length,

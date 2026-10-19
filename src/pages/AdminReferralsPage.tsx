@@ -211,15 +211,20 @@ export const AdminReferralsPage: React.FC = () => {
     if (showConfirm) {
       const ok = await showConfirm({
         title: 'Reject Payout Request?',
-        message: `Are you sure you want to reject this withdrawal request of ₹${payout.amount}? The amount will be refunded back to ${payout.studentName}'s wallet.`,
+        message: `Are you sure you want to reject this withdrawal request of ₹${payout.amount}? The ₹${payout.amount} will be refunded back to ${payout.studentName}'s wallet balance immediately.`,
         confirmText: 'Yes, Reject & Refund',
         cancelText: 'Cancel',
         variant: 'danger'
       });
       if (!ok) return;
     }
+    try {
+      await referralApiService.updatePayoutStatus(payout.id, 'Rejected', '', 'Declined by Admin');
+    } catch (e) {
+      console.warn('API payout reject notice:', e);
+    }
     referralService.rejectPayout(payout.id, 'Declined by Admin');
-    reloadData();
+    await reloadData();
     if (showToast) {
       showToast(`Payout request rejected. ₹${payout.amount} refunded to student wallet.`, 'info');
     }
@@ -626,16 +631,18 @@ export const AdminReferralsPage: React.FC = () => {
                             setUtrRef('');
                             setPayoutNote('');
                           }}
-                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] transition-all cursor-pointer shadow-2xs"
+                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-all cursor-pointer shadow-2xs flex items-center gap-1"
                         >
-                          Mark as Paid
+                          <Check size={13} />
+                          <span>Pay & Approve</span>
                         </button>
                         <button
                           onClick={() => handleRejectPayout(p)}
-                          className="p-1 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors"
-                          title="Reject Request"
+                          className="px-2 py-1 rounded-lg text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 transition-colors flex items-center gap-1"
+                          title="Reject and refund to student wallet"
                         >
-                          <X size={15} />
+                          <X size={13} />
+                          <span>Reject</span>
                         </button>
                       </>
                     ) : (
@@ -661,7 +668,7 @@ export const AdminReferralsPage: React.FC = () => {
                   <IndianRupee size={16} />
                 </div>
                 <h3 className="text-base font-extrabold text-[#192038] m-0">
-                  Confirm UPI Payout
+                  Transfer & Approve Payout
                 </h3>
               </div>
               <button
@@ -675,7 +682,7 @@ export const AdminReferralsPage: React.FC = () => {
             <div className="p-3.5 bg-[#F8FAFD] rounded-xl space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="text-[#8F9BB3]">Student:</span>
-                <span className="font-bold text-[#192038]">{selectedPayout.studentName}</span>
+                <span className="font-bold text-[#192038]">{selectedPayout.studentName} ({selectedPayout.studentPhone})</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[#8F9BB3]">Amount to Transfer:</span>
@@ -684,10 +691,23 @@ export const AdminReferralsPage: React.FC = () => {
                 </span>
               </div>
               <div className="flex items-center justify-between pt-1 border-t border-[#EDF1F7]">
-                <span className="text-[#8F9BB3]">Target UPI ID:</span>
-                <span className="font-mono font-bold text-[#544bec] bg-white px-2 py-0.5 rounded border border-[#EDF1F7]">
-                  {selectedPayout.upiId}
-                </span>
+                <span className="text-[#8F9BB3]">Send To UPI ID:</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono font-bold text-[#544bec] bg-white px-2 py-0.5 rounded border border-[#EDF1F7]">
+                    {selectedPayout.upiId}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedPayout.upiId);
+                      if (showToast) showToast(`Copied UPI ID: ${selectedPayout.upiId}`, 'success');
+                    }}
+                    className="p-1 text-[#8F9BB3] hover:text-[#192038] transition-colors"
+                    title="Copy UPI ID"
+                  >
+                    <Copy size={13} />
+                  </button>
+                </div>
               </div>
             </div>
 
