@@ -347,11 +347,11 @@ export class StudentController {
           );
         }).length;
 
-        if (todayCheckIns >= 3) {
+        if (todayCheckIns >= 10) {
           return res.status(400).json({
             success: false,
             limitReached: true,
-            message: `Daily Limit Reached: Maximum 3 check-ins allowed per day. You have already completed 3 check-in sessions today.`
+            message: `Daily Limit Reached: Maximum 10 check-ins allowed per day. You have already completed 10 check-in sessions today.`
           });
         }
       }

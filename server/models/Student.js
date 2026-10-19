@@ -383,20 +383,21 @@ export class StudentModel {
 
   static async resetTodayAttendance(id = 'all') {
     const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    const isToday = (item) => {
+      const raw = item.checkInTime || item.timestamp || item.date;
+      if (!raw) return false;
+      const rawStr = String(raw);
+      if (rawStr.includes(todayIST)) return true;
+      const d = new Date(raw);
+      if (!isNaN(d.getTime()) && d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST) return true;
+      return false;
+    };
 
     if (id && id !== 'all') {
       const student = await this.getById(id);
       if (!student) return null;
 
-      const filtered = (student.attendanceHistory || []).filter((item) => {
-        const itemRaw = item.checkInTime || item.timestamp || item.date;
-        if (!itemRaw) return false;
-        const itemDate = new Date(itemRaw);
-        return !(
-          !isNaN(itemDate.getTime()) &&
-          itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
-        );
-      });
+      const filtered = (student.attendanceHistory || []).filter((item) => !isToday(item));
 
       return await this.update(id, {
         isCheckedIn: false,
@@ -412,15 +413,7 @@ export class StudentModel {
         const students = await StudentMongo.find({}).lean();
         for (const s of students) {
           const history = s.attendanceHistory || [];
-          const filtered = history.filter((item) => {
-            const itemRaw = item.checkInTime || item.timestamp || item.date;
-            if (!itemRaw) return false;
-            const itemDate = new Date(itemRaw);
-            return !(
-              !isNaN(itemDate.getTime()) &&
-              itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
-            );
-          });
+          const filtered = history.filter((item) => !isToday(item));
           if (filtered.length !== history.length || s.isCheckedIn) {
             await StudentMongo.updateOne(
               { _id: s._id },
@@ -445,15 +438,7 @@ export class StudentModel {
       ...s,
       isCheckedIn: false,
       currentCheckInTime: null,
-      attendanceHistory: (s.attendanceHistory || []).filter((item) => {
-        const itemRaw = item.checkInTime || item.timestamp || item.date;
-        if (!itemRaw) return false;
-        const itemDate = new Date(itemRaw);
-        return !(
-          !isNaN(itemDate.getTime()) &&
-          itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
-        );
-      })
+      attendanceHistory: (s.attendanceHistory || []).filter((item) => !isToday(item))
     }));
     writeJsonFile(FILE_NAME, updatedLocal);
 
