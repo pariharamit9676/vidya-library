@@ -11,6 +11,8 @@ router.put('/:id', StudentController.update);
 router.delete('/:id', StudentController.delete);
 
 router.post('/:id/check-in', StudentController.toggleCheckIn);
+router.post('/reset-all-attendance', StudentController.resetTodayAttendance);
+router.post('/:id/reset-attendance', StudentController.resetTodayAttendance);
 router.post('/:id/payments', StudentController.recordPayment);
 router.post('/:id/change-password', StudentController.changePassword);
 

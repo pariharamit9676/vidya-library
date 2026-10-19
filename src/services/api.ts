@@ -118,6 +118,11 @@ export const studentService = {
     request(`/students/${id}/change-password`, {
       method: 'POST',
       body: JSON.stringify(payload)
+    }),
+
+  resetTodayAttendance: (id: string = 'all') =>
+    request(`/students/${id}/reset-attendance`, {
+      method: 'POST'
     })
 };
 

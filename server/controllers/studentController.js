@@ -464,4 +464,19 @@ export class StudentController {
       next(err);
     }
   }
+
+  static async resetTodayAttendance(req, res, next) {
+    try {
+      const { id } = req.params;
+      const targetId = id || req.body?.id || 'all';
+      const result = await StudentModel.resetTodayAttendance(targetId);
+      return res.status(200).json({
+        success: true,
+        message: 'Today check-in count successfully reset to 0. You now have 3 check-ins available today.',
+        data: result
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }

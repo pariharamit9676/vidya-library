@@ -381,6 +381,85 @@ export class StudentModel {
     return await this.update(id, updates);
   }
 
+  static async resetTodayAttendance(id = 'all') {
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+    if (id && id !== 'all') {
+      const student = await this.getById(id);
+      if (!student) return null;
+
+      const filtered = (student.attendanceHistory || []).filter((item) => {
+        const itemRaw = item.checkInTime || item.timestamp || item.date;
+        if (!itemRaw) return false;
+        const itemDate = new Date(itemRaw);
+        return !(
+          !isNaN(itemDate.getTime()) &&
+          itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
+        );
+      });
+
+      return await this.update(id, {
+        isCheckedIn: false,
+        currentCheckInTime: null,
+        attendanceHistory: filtered
+      });
+    }
+
+    // Reset for all students
+    let count = 0;
+    if (isMongoConnected()) {
+      try {
+        const students = await StudentMongo.find({}).lean();
+        for (const s of students) {
+          const history = s.attendanceHistory || [];
+          const filtered = history.filter((item) => {
+            const itemRaw = item.checkInTime || item.timestamp || item.date;
+            if (!itemRaw) return false;
+            const itemDate = new Date(itemRaw);
+            return !(
+              !isNaN(itemDate.getTime()) &&
+              itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
+            );
+          });
+          if (filtered.length !== history.length || s.isCheckedIn) {
+            await StudentMongo.updateOne(
+              { _id: s._id },
+              {
+                $set: {
+                  isCheckedIn: false,
+                  currentCheckInTime: null,
+                  attendanceHistory: filtered
+                }
+              }
+            );
+            count++;
+          }
+        }
+      } catch (err) {
+        console.error('Mongo resetTodayAttendance error:', err.message);
+      }
+    }
+
+    const localStudents = readJsonFile(FILE_NAME, []);
+    const updatedLocal = localStudents.map((s) => ({
+      ...s,
+      isCheckedIn: false,
+      currentCheckInTime: null,
+      attendanceHistory: (s.attendanceHistory || []).filter((item) => {
+        const itemRaw = item.checkInTime || item.timestamp || item.date;
+        if (!itemRaw) return false;
+        const itemDate = new Date(itemRaw);
+        return !(
+          !isNaN(itemDate.getTime()) &&
+          itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
+        );
+      })
+    }));
+    writeJsonFile(FILE_NAME, updatedLocal);
+
+    return { resetCount: count };
+  }
+
   static async addPayment(id, paymentRecord) {
     const student = await this.getById(id);
     if (!student) return null;

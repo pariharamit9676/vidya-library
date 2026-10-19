@@ -50,6 +50,7 @@ export const StudentDashboardPage: React.FC = () => {
   const [studentData, setStudentData] = useState<any>(user || null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [punchLoading, setPunchLoading] = useState<boolean>(false);
+  const [isResettingLimit, setIsResettingLimit] = useState<boolean>(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Admin contact phone fetched from database settings
@@ -273,6 +274,34 @@ export const StudentDashboardPage: React.FC = () => {
       });
     } finally {
       setPunchLoading(false);
+    }
+  };
+
+  // Handle Reset Today's Check-in Limit (Reset count to 0/3)
+  const handleResetTodayLimit = async () => {
+    const sId = studentData?.id || studentData?._id || user?.id;
+    if (!sId) return;
+
+    try {
+      setIsResettingLimit(true);
+      const res: any = await studentService.resetTodayAttendance(sId);
+      if (res && res.success) {
+        if (res.data) {
+          setStudentData(res.data);
+        }
+        await fetchStudentProfile();
+        setFeedbackMsg({
+          type: 'success',
+          text: 'Check-in limit reset! You now have 3 check-ins available today.'
+        });
+      }
+    } catch (err: any) {
+      setFeedbackMsg({
+        type: 'error',
+        text: err.message || 'Unable to reset check-in limit right now.'
+      });
+    } finally {
+      setIsResettingLimit(false);
     }
   };
 
@@ -695,9 +724,21 @@ export const StudentDashboardPage: React.FC = () => {
                     <span>Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800">{adminPhone}</a></span>
                   </span>
                 ) : isDailyLimitReached ? (
-                  <span className="text-amber-600 font-bold flex items-center gap-1.5 justify-end">
-                    <span>Daily limit reached (Maximum 3 check-ins per day)</span>
-                  </span>
+                  <div className="flex items-center gap-2 justify-end">
+                    <span className="text-amber-600 font-bold">
+                      Daily limit reached (3/3 used)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleResetTodayLimit}
+                      disabled={isResettingLimit}
+                      className="px-2.5 py-0.5 rounded-lg text-[10px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors cursor-pointer border border-amber-300 flex items-center gap-1 shadow-2xs"
+                      title="Reset check-in limit to 0/3 for today"
+                    >
+                      <RefreshCw size={10} className={isResettingLimit ? 'animate-spin' : ''} />
+                      <span>{isResettingLimit ? 'Resetting...' : 'Reset Limit (0/3)'}</span>
+                    </button>
+                  </div>
                 ) : isCheckedIn ? (
                   <span className="text-[#544bec] font-bold flex items-center gap-1.5 justify-end">
                     <span className="w-2 h-2 rounded-full bg-[#544bec] animate-ping" />
@@ -931,9 +972,21 @@ export const StudentDashboardPage: React.FC = () => {
                   Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-[#544bec]">{adminPhone}</a>
                 </span>
               ) : isDailyLimitReached ? (
-                <span className="text-amber-700 font-bold block text-center">
-                  Daily limit reached (Maximum 3 check-ins per day)
-                </span>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-amber-700 font-bold block text-center">
+                    Daily limit reached (Maximum 3 check-ins per day)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetTodayLimit}
+                    disabled={isResettingLimit}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 transition-colors cursor-pointer border border-amber-300 shadow-2xs"
+                    title="Reset check-in limit to 0/3 for today"
+                  >
+                    <RefreshCw size={11} className={isResettingLimit ? 'animate-spin' : ''} />
+                    <span>{isResettingLimit ? 'Resetting Limit...' : 'Reset Check-in Limit (0/3)'}</span>
+                  </button>
+                </div>
               ) : isCheckedIn ? (
                 <span className="text-[#544bec] font-bold flex items-center justify-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#544bec] animate-ping" />

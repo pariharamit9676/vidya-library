@@ -7,6 +7,8 @@ import apiRoutes from './routes/index.js';
 import { requestLogger } from './middlewares/logger.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
+import { StudentModel } from './models/Student.js';
+
 const app = express();
 
 // Global Middlewares
@@ -43,6 +45,12 @@ const startServer = async () => {
   const isConnected = await connectDB();
   if (isConnected) {
     await seedMongoIfEmpty();
+    try {
+      await StudentModel.resetTodayAttendance('all');
+      console.log('🍃 [Attendance] Today check-in limits successfully reset to 0/3.');
+    } catch (resetErr) {
+      console.error('🍃 [Attendance Reset Error]:', resetErr.message);
+    }
   }
 
   const server = app.listen(ENV.PORT, () => {
