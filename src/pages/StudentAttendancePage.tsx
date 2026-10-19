@@ -8,20 +8,13 @@ import {
 } from '../utils/dateFormatter';
 import {
   CalendarCheck,
-  Clock,
   ArrowLeft,
   Calendar,
-  CheckCircle2,
   RefreshCw,
-  Search,
-  Filter,
   ChevronLeft,
   ChevronRight,
-  Armchair,
   Home,
-  FileText,
-  Phone,
-  Sparkles
+  Phone
 } from 'lucide-react';
 
 export const StudentAttendancePage: React.FC = () => {
@@ -30,10 +23,9 @@ export const StudentAttendancePage: React.FC = () => {
 
   const [studentData, setStudentData] = useState<any>(user || null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [adminPhone, setAdminPhone] = useState<string>('9685912333');
-  const [searchDate, setSearchDate] = useState<string>('');
+  const [adminPhone, setAdminPhone] = useState<string>('9303961613');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
 
   // Fetch full student profile
   const fetchStudentProfile = async () => {
@@ -70,7 +62,6 @@ export const StudentAttendancePage: React.FC = () => {
       .catch(() => {});
   }, []);
 
-  const isCheckedIn = Boolean(studentData?.isCheckedIn);
   const cleanStudentId = (studentData?.studentId || 'STU001').replace(/^#+/, '');
 
   // Attendance history logs (newest first)
@@ -81,31 +72,19 @@ export const StudentAttendancePage: React.FC = () => {
     return [...studentData.attendanceHistory].reverse();
   }, [studentData?.attendanceHistory]);
 
-  // Filtered by search query (date or time)
-  const filteredLogs = useMemo(() => {
-    if (!searchDate.trim()) return allLogs;
-    const q = searchDate.toLowerCase().trim();
-    return allLogs.filter((log: any) => {
-      const d = (log.date || '').toLowerCase();
-      const inT = (log.checkInTime || log.checkIn || '').toLowerCase();
-      const outT = (log.checkOutTime || log.checkOut || '').toLowerCase();
-      return d.includes(q) || inT.includes(q) || outT.includes(q);
-    });
-  }, [allLogs, searchDate]);
-
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(allLogs.length / PAGE_SIZE));
   const paginatedLogs = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredLogs.slice(start, start + PAGE_SIZE);
-  }, [filteredLogs, currentPage]);
+    return allLogs.slice(start, start + PAGE_SIZE);
+  }, [allLogs, currentPage]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-24 sm:pb-16">
       
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#EDF1F7] px-4 sm:px-8 py-3 shadow-2xs">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           
           {/* Back Button & Title */}
           <div className="flex items-center gap-3">
@@ -148,273 +127,196 @@ export const StudentAttendancePage: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Container */}
-      <main className="max-w-5xl mx-auto px-3.5 sm:px-8 pt-4 sm:pt-6 space-y-4">
-
-        {/* Top Summary Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          
-          {/* Card 1: Current Status */}
-          <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-bold text-[#8F9BB3]">Current Status</span>
-              <div className="w-7 h-7 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
-                <CheckCircle2 size={14} />
-              </div>
-            </div>
-            <div className="text-sm sm:text-base font-black text-[#192038] flex items-center gap-1.5">
-              {isCheckedIn ? (
-                <>
-                  <span className="w-2 h-2 rounded-full bg-[#544bec] animate-ping" />
-                  <span className="text-[#544bec]">Inside Library</span>
-                </>
-              ) : (
-                <span className="text-[#6B778C]">Outside Library</span>
-              )}
-            </div>
-            <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
-              {isCheckedIn ? 'Session Active' : 'Currently Checked Out'}
-            </div>
+      {/* Main Container - Focused purely on Attendance Logs */}
+      <main className="max-w-4xl mx-auto px-3.5 sm:px-6 pt-4 sm:pt-6 space-y-4">
+        
+        {/* Attendance List Header */}
+        <div className="flex items-center justify-between px-1">
+          <div>
+            <h2 className="text-sm font-black text-[#192038] m-0">
+              Attendance History
+            </h2>
+            <p className="text-[11px] text-[#8F9BB3] m-0">
+              All recorded study punch-in and punch-out sessions
+            </p>
           </div>
-
-          {/* Card 2: Total Records */}
-          <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-bold text-[#8F9BB3]">Total Sessions</span>
-              <div className="w-7 h-7 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
-                <CalendarCheck size={14} />
-              </div>
-            </div>
-            <div className="text-sm sm:text-base font-black text-[#192038]">
-              {allLogs.length} Records
-            </div>
-            <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
-              Lifetime Attendance
-            </div>
-          </div>
-
-          {/* Card 3: Seat Info (hidden on very small screen or 3-col) */}
-          <div className="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-bold text-[#8F9BB3]">Assigned Seat</span>
-              <div className="w-7 h-7 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
-                <Armchair size={14} />
-              </div>
-            </div>
-            <div className="text-sm sm:text-base font-black text-[#544bec]">
-              {studentData?.seatNo ? (String(studentData.seatNo).startsWith('Seat') ? studentData.seatNo : `Seat #${studentData.seatNo}`) : 'No Assigned Desk'}
-            </div>
-            <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
-              Dedicated Study Desk
-            </div>
-          </div>
-
+          <span className="text-[11px] font-bold text-[#544bec] bg-[#EEF0FD] px-2.5 py-1 rounded-lg border border-[#544bec]/20">
+            {allLogs.length} Records
+          </span>
         </div>
 
-        {/* Search & Filter Header */}
-        <div className="bg-white rounded-2xl border border-[#EDF1F7] p-3 sm:p-4 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          <div className="relative flex-1">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8F9BB3]" />
-            <input
-              type="text"
-              value={searchDate}
-              onChange={(e) => {
-                setSearchDate(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search by date (e.g. 19 Oct 2026, Oct, morning...)"
-              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#F8FAFD] border border-[#EDF1F7] text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
-            />
-            {searchDate && (
-              <button
-                onClick={() => setSearchDate('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between sm:justify-end gap-2 text-xs text-[#8F9BB3] font-bold">
-            <span>
-              Showing {filteredLogs.length} of {allLogs.length} records
-            </span>
-          </div>
-        </div>
-
-        {/* Attendance Records List / Table */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-4 sm:p-6 shadow-xs">
-          
-          {filteredLogs.length > 0 ? (
-            <>
-              {/* Desktop View Table */}
-              <div className="hidden sm:block overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-[#EDF1F7] text-[#8F9BB3]">
-                      <th className="pb-3 font-bold">#</th>
-                      <th className="pb-3 font-bold">Date</th>
-                      <th className="pb-3 font-bold">Punch In</th>
-                      <th className="pb-3 font-bold">Punch Out</th>
-                      <th className="pb-3 font-bold">Duration</th>
-                      <th className="pb-3 font-bold text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EDF1F7]">
-                    {paginatedLogs.map((record: any, idx: number) => {
-                      const rowNum = (currentPage - 1) * PAGE_SIZE + idx + 1;
-                      return (
-                        <tr key={record.id || idx} className="hover:bg-[#F8FAFD] transition-colors">
-                          <td className="py-3 text-[#8F9BB3] font-mono text-[11px]">
-                            {rowNum}
-                          </td>
-                          <td className="py-3 font-bold text-[#192038] flex items-center gap-1.5">
-                            <Calendar size={13} className="text-[#8F9BB3]" />
-                            <span>{formatDisplayDate(record.date)}</span>
-                          </td>
-                          <td className="py-3 text-[#544bec] font-bold font-mono">
-                            {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
-                          </td>
-                          <td className="py-3 text-[#6B778C] font-semibold font-mono">
-                            {record.checkOutTime || record.checkOut ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active In Library'}
-                          </td>
-                          <td className="py-3 font-mono font-bold text-[#192038]">
-                            {record.duration || 'In session'}
-                          </td>
-                          <td className="py-3 text-right">
-                            <span
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                record.checkOutTime || record.checkOut
-                                  ? 'bg-[#F1F4F9] text-[#6B778C]'
-                                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              }`}
-                            >
-                              {record.checkOutTime || record.checkOut ? 'Completed' : 'Currently Active'}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile Card List View */}
-              <div className="sm:hidden space-y-2.5">
-                {paginatedLogs.map((record: any, idx: number) => {
-                  const isCompleted = Boolean(record.checkOutTime || record.checkOut);
-                  return (
-                    <div
-                      key={record.id || idx}
-                      className="p-3.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl flex items-center justify-between gap-2.5"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <div className="text-xs font-black text-[#192038] flex items-center gap-1.5 truncate">
-                          <Calendar size={13} className="text-[#544bec] shrink-0" />
+        {/* Attendance Records */}
+        {allLogs.length > 0 ? (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden sm:block bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-5 shadow-xs overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[#EDF1F7] text-[#8F9BB3]">
+                    <th className="pb-3 font-bold">#</th>
+                    <th className="pb-3 font-bold">Date</th>
+                    <th className="pb-3 font-bold">Punch In</th>
+                    <th className="pb-3 font-bold">Punch Out</th>
+                    <th className="pb-3 font-bold">Study Duration</th>
+                    <th className="pb-3 font-bold text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#EDF1F7]">
+                  {paginatedLogs.map((record: any, idx: number) => {
+                    const rowNum = (currentPage - 1) * PAGE_SIZE + idx + 1;
+                    const isCompleted = Boolean(record.checkOutTime || record.checkOut);
+                    return (
+                      <tr key={record.id || idx} className="hover:bg-[#F8FAFD] transition-colors">
+                        <td className="py-3 text-[#8F9BB3] font-mono text-[11px]">
+                          {rowNum}
+                        </td>
+                        <td className="py-3 font-bold text-[#192038] flex items-center gap-1.5">
+                          <Calendar size={13} className="text-[#8F9BB3]" />
                           <span>{formatDisplayDate(record.date)}</span>
-                        </div>
-                        <div className="text-[11px] text-[#6B778C] mt-1.5 flex items-center gap-2 flex-wrap">
-                          <span>
-                            In: <strong className="text-[#544bec] font-mono">{record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}</strong>
+                        </td>
+                        <td className="py-3 text-[#544bec] font-bold font-mono">
+                          {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
+                        </td>
+                        <td className="py-3 text-[#6B778C] font-semibold font-mono">
+                          {isCompleted ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active In Library'}
+                        </td>
+                        <td className="py-3 font-mono font-bold text-[#192038]">
+                          {record.duration || 'Session in progress'}
+                        </td>
+                        <td className="py-3 text-right">
+                          <span
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                              isCompleted
+                                ? 'bg-[#F1F4F9] text-[#6B778C]'
+                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            }`}
+                          >
+                            {isCompleted ? 'Completed' : 'Currently Active'}
                           </span>
-                          <span>•</span>
-                          <span>
-                            Out: <strong className="font-mono">{isCompleted ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active'}</strong>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards View - Clean, Card-based Attendance Session */}
+            <div className="sm:hidden space-y-3">
+              {paginatedLogs.map((record: any, idx: number) => {
+                const isCompleted = Boolean(record.checkOutTime || record.checkOut);
+                const sessionNum = allLogs.length - ((currentPage - 1) * PAGE_SIZE + idx);
+                return (
+                  <div
+                    key={record.id || idx}
+                    className="bg-white rounded-2xl border border-[#EDF1F7] p-3.5 shadow-2xs flex flex-col gap-2.5"
+                  >
+                    {/* Top Date & Status Badge */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
+                          <Calendar size={14} />
+                        </div>
+                        <div>
+                          <span className="text-xs font-black text-[#192038] block leading-tight">
+                            {formatDisplayDate(record.date)}
+                          </span>
+                          <span className="text-[10px] text-[#8F9BB3] font-medium">
+                            Session #{sessionNum}
                           </span>
                         </div>
                       </div>
 
-                      <div className="text-right shrink-0">
-                        <span className="font-mono text-xs font-black text-[#192038] block">
-                          {record.duration || 'In Library'}
+                      <span
+                        className={`inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-0.5 rounded-full ${
+                          isCompleted
+                            ? 'bg-[#F1F4F9] text-[#6B778C]'
+                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        }`}
+                      >
+                        {!isCompleted && <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />}
+                        {isCompleted ? 'Completed' : 'Active'}
+                      </span>
+                    </div>
+
+                    {/* Middle Punch Times & Duration Grid */}
+                    <div className="grid grid-cols-3 gap-2 text-center bg-[#F8FAFD] rounded-xl p-2.5 border border-[#EDF1F7]">
+                      {/* Punch In */}
+                      <div className="border-r border-[#EDF1F7] pr-1">
+                        <span className="text-[9px] font-bold text-[#8F9BB3] uppercase tracking-wider block mb-0.5">
+                          Punch In
                         </span>
-                        <span
-                          className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded mt-0.5 ${
-                            isCompleted ? 'bg-[#EDF1F7] text-[#6B778C]' : 'bg-[#EEF0FD] text-[#544bec]'
-                          }`}
-                        >
-                          {isCompleted ? 'Done' : 'Active'}
+                        <span className="text-xs font-black text-[#544bec] font-mono block">
+                          {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
+                        </span>
+                      </div>
+
+                      {/* Punch Out */}
+                      <div className="border-r border-[#EDF1F7] pr-1">
+                        <span className="text-[9px] font-bold text-[#8F9BB3] uppercase tracking-wider block mb-0.5">
+                          Punch Out
+                        </span>
+                        <span className="text-xs font-black text-[#192038] font-mono block truncate">
+                          {isCompleted ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active'}
+                        </span>
+                      </div>
+
+                      {/* Duration */}
+                      <div>
+                        <span className="text-[9px] font-bold text-[#8F9BB3] uppercase tracking-wider block mb-0.5">
+                          Duration
+                        </span>
+                        <span className="text-xs font-black text-[#192038] font-mono block">
+                          {record.duration || 'Studying...'}
                         </span>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="mt-5 pt-3.5 border-t border-[#EDF1F7] flex items-center justify-between gap-2">
-                  <div className="text-[11px] text-[#8F9BB3] font-medium">
-                    Page <strong className="text-[#192038]">{currentPage}</strong> of{' '}
-                    <strong className="text-[#192038]">{totalPages}</strong>
                   </div>
+                );
+              })}
+            </div>
 
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage <= 1}
-                      className="px-3 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
-                    >
-                      <ChevronLeft size={13} />
-                      <span>Prev</span>
-                    </button>
-
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage >= totalPages}
-                      className="px-3 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Next</span>
-                      <ChevronRight size={13} />
-                    </button>
-                  </div>
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-4 pt-3 border-t border-[#EDF1F7] flex items-center justify-between gap-2 px-1">
+                <div className="text-[11px] text-[#8F9BB3] font-medium">
+                  Page <strong className="text-[#192038]">{currentPage}</strong> of{' '}
+                  <strong className="text-[#192038]">{totalPages}</strong>
                 </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-10 text-xs text-[#8F9BB3] border border-dashed border-[#EDF1F7] rounded-2xl p-6">
-              <CalendarCheck size={32} className="mx-auto text-slate-300 mb-2" />
-              <div className="font-bold text-[#192038] text-sm mb-1">
-                {searchDate ? 'No matching attendance records' : 'No attendance logs recorded yet'}
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="px-3 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer shadow-2xs"
+                  >
+                    <ChevronLeft size={13} />
+                    <span>Prev</span>
+                  </button>
+
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage >= totalPages}
+                    className="px-3 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer shadow-2xs"
+                  >
+                    <span>Next</span>
+                    <ChevronRight size={13} />
+                  </button>
+                </div>
               </div>
-              <p className="text-[11px] text-[#8F9BB3] max-w-sm mx-auto">
-                {searchDate
-                  ? 'Try searching with another date format or clearing the search box.'
-                  : 'Your daily check-in and check-out punches will be recorded here automatically.'}
-              </p>
-              {searchDate && (
-                <button
-                  onClick={() => setSearchDate('')}
-                  className="mt-3 px-3 py-1.5 rounded-lg bg-[#EEF0FD] text-[#544bec] font-bold text-xs cursor-pointer"
-                >
-                  Clear Search
-                </button>
-              )}
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12 text-xs text-[#8F9BB3] bg-white border border-[#EDF1F7] rounded-2xl p-6 shadow-xs">
+            <CalendarCheck size={36} className="mx-auto text-slate-300 mb-2" />
+            <div className="font-black text-[#192038] text-sm mb-1">
+              No Attendance Records Yet
             </div>
-          )}
-
-        </div>
-
-        {/* Footer Support Card */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#192038] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-1.5 text-[#6d64f7] text-xs font-black">
-              <Sparkles size={14} />
-              <span>Need help with attendance?</span>
-            </div>
-            <p className="text-[11px] text-slate-300 m-0">
-              Contact Vidya Library administration desk for attendance correction or queries.
+            <p className="text-[11px] text-[#8F9BB3] max-w-sm mx-auto">
+              Your daily library check-in and check-out records will appear here as soon as you punch in.
             </p>
           </div>
-
-          <a
-            href={`tel:${adminPhone}`}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-sm flex items-center justify-center gap-1.5 transition-all"
-          >
-            <Phone size={13} />
-            <span>Call Admin ({adminPhone})</span>
-          </a>
-        </div>
+        )}
 
       </main>
 
