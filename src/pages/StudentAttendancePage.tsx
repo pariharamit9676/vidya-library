@@ -22,7 +22,7 @@ export const StudentAttendancePage: React.FC = () => {
   const navigate = useNavigate();
 
   const [studentData, setStudentData] = useState<any>(user || null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [adminPhone, setAdminPhone] = useState<string>('9303961613');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const PAGE_SIZE = 10;
@@ -140,13 +140,59 @@ export const StudentAttendancePage: React.FC = () => {
               All recorded study punch-in and punch-out sessions
             </p>
           </div>
-          <span className="text-[11px] font-bold text-[#544bec] bg-[#EEF0FD] px-2.5 py-1 rounded-lg border border-[#544bec]/20">
-            {allLogs.length} Records
+          <span className="text-[11px] font-bold text-[#544bec] bg-[#EEF0FD] px-2.5 py-1 rounded-lg border border-[#544bec]/20 min-w-[75px] text-center inline-block">
+            {isLoading ? (
+              <span className="inline-block w-8 h-2.5 bg-[#544bec]/20 rounded animate-pulse" />
+            ) : (
+              `${allLogs.length} Records`
+            )}
           </span>
         </div>
 
         {/* Attendance Records */}
-        {allLogs.length > 0 ? (
+        {isLoading ? (
+          <div className="space-y-3">
+            {/* Desktop Skeleton Table */}
+            <div className="hidden sm:block bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-5 shadow-xs overflow-hidden">
+              <div className="space-y-4">
+                <div className="h-4 bg-slate-100 rounded w-1/4 animate-pulse" />
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0 animate-pulse">
+                    <div className="h-4 bg-slate-100 rounded w-6" />
+                    <div className="h-4 bg-slate-100 rounded w-28" />
+                    <div className="h-4 bg-slate-100 rounded w-20" />
+                    <div className="h-4 bg-slate-100 rounded w-24" />
+                    <div className="h-4 bg-slate-100 rounded w-20" />
+                    <div className="h-5 bg-slate-100 rounded-md w-18 ml-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mobile Skeleton Cards */}
+            <div className="sm:hidden space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-white rounded-2xl border border-[#EDF1F7] p-3.5 shadow-2xs space-y-2.5 animate-pulse">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-slate-100" />
+                      <div className="space-y-1.5">
+                        <div className="h-3.5 bg-slate-100 rounded w-24" />
+                        <div className="h-2.5 bg-slate-100 rounded w-16" />
+                      </div>
+                    </div>
+                    <div className="h-5 bg-slate-100 rounded-md w-16" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 p-2 bg-[#F8FAFD] rounded-xl">
+                    <div className="h-7 bg-slate-100 rounded" />
+                    <div className="h-7 bg-slate-100 rounded" />
+                    <div className="h-7 bg-slate-100 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : allLogs.length > 0 ? (
           <>
             {/* Desktop Table View */}
             <div className="hidden sm:block bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-5 shadow-xs overflow-x-auto">

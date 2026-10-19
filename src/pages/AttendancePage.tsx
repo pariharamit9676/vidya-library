@@ -225,9 +225,15 @@ export const AttendancePage: React.FC = () => {
             <div className="text-[10px] sm:text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider truncate">
               Currently Inside
             </div>
-            <div className="text-base sm:text-2xl font-black text-[#544bec] mt-0.5 flex items-center gap-1.5">
-              <span>{insideStudents.length}</span>
-              <span className="w-2 h-2 rounded-full bg-[#544bec] inline-block" />
+            <div className="text-base sm:text-2xl font-black text-[#544bec] mt-0.5 flex items-center gap-1.5 min-h-[28px] sm:min-h-[32px]">
+              {isLoading ? (
+                <div className="h-6 sm:h-7 w-12 bg-slate-200/80 rounded-md animate-pulse my-0.5" />
+              ) : (
+                <>
+                  <span>{insideStudents.length}</span>
+                  <span className="w-2 h-2 rounded-full bg-[#544bec] inline-block" />
+                </>
+              )}
             </div>
             <div className="text-[10px] sm:text-[11px] text-[#544bec] font-semibold mt-0.5 truncate">
               Active sessions
@@ -244,8 +250,12 @@ export const AttendancePage: React.FC = () => {
             <div className="text-[10px] sm:text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider truncate">
               Currently Outside
             </div>
-            <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5">
-              {outsideStudents.length}
+            <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5 min-h-[28px] sm:min-h-[32px] flex items-center">
+              {isLoading ? (
+                <div className="h-6 sm:h-7 w-12 bg-slate-200/80 rounded-md animate-pulse my-0.5" />
+              ) : (
+                outsideStudents.length
+              )}
             </div>
             <div className="text-[10px] sm:text-[11px] text-[#8F9BB3] font-medium mt-0.5 truncate">
               Away from lounge
@@ -262,11 +272,19 @@ export const AttendancePage: React.FC = () => {
             <div className="text-[10px] sm:text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider truncate">
               Total Enrolled
             </div>
-            <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5">
-              {students.length}
+            <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5 min-h-[28px] sm:min-h-[32px] flex items-center">
+              {isLoading ? (
+                <div className="h-6 sm:h-7 w-12 bg-slate-200/80 rounded-md animate-pulse my-0.5" />
+              ) : (
+                students.length
+              )}
             </div>
             <div className="text-[10px] sm:text-[11px] text-[#544bec] font-semibold mt-0.5 truncate">
-              {Math.round((insideStudents.length / (students.length || 1)) * 100)}% occupancy
+              {isLoading ? (
+                <div className="h-3 w-16 bg-slate-100 rounded animate-pulse" />
+              ) : (
+                `${Math.round((insideStudents.length / (students.length || 1)) * 100)}% occupancy`
+              )}
             </div>
           </div>
           <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-primary-light text-primary flex items-center justify-center shadow-2xs shrink-0">
@@ -280,8 +298,12 @@ export const AttendancePage: React.FC = () => {
             <div className="text-[10px] sm:text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider truncate">
               Total Sessions
             </div>
-            <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5">
-              {allStayLogs.length}
+            <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5 min-h-[28px] sm:min-h-[32px] flex items-center">
+              {isLoading ? (
+                <div className="h-6 sm:h-7 w-12 bg-slate-200/80 rounded-md animate-pulse my-0.5" />
+              ) : (
+                allStayLogs.length
+              )}
             </div>
             <div className="text-[10px] sm:text-[11px] text-[#8F9BB3] font-medium mt-0.5 truncate">
               Recorded study logs
@@ -337,6 +359,7 @@ export const AttendancePage: React.FC = () => {
         <CommonTable
           data={filteredStayLogs}
           emptyMessage="No stay session logs found."
+          isLoading={isLoading}
           pagination={true}
           initialPageSize={10}
           minWidth="840px"
@@ -448,11 +471,20 @@ export const AttendancePage: React.FC = () => {
                       <button
                         onClick={() => handleToggleCheckIn(sId)}
                         disabled={isActionLoading}
-                        className="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-all inline-flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                        className="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                         title="Punch Out"
                       >
-                        <LogOut size={12} />
-                        <span>{isActionLoading ? '...' : 'Punch Out'}</span>
+                        {isActionLoading ? (
+                          <>
+                            <span className="inline-block w-3 h-3 rounded-full border-2 border-rose-500 border-t-transparent animate-spin" />
+                            <span>Out...</span>
+                          </>
+                        ) : (
+                          <>
+                            <LogOut size={12} />
+                            <span>Punch Out</span>
+                          </>
+                        )}
                       </button>
                     )}
                   </div>
@@ -525,10 +557,19 @@ export const AttendancePage: React.FC = () => {
                     <button
                       onClick={() => handleToggleCheckIn(sId)}
                       disabled={isActionLoading}
-                      className="px-3 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 inline-flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                      className="px-3 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
-                      <LogOut size={13} />
-                      <span>{isActionLoading ? '...' : 'Punch Out'}</span>
+                      {isActionLoading ? (
+                        <>
+                          <span className="inline-block w-3 h-3 rounded-full border-2 border-rose-500 border-t-transparent animate-spin" />
+                          <span>Out...</span>
+                        </>
+                      ) : (
+                        <>
+                          <LogOut size={13} />
+                          <span>Punch Out</span>
+                        </>
+                      )}
                     </button>
                   )}
                 </div>

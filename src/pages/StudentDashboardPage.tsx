@@ -44,11 +44,23 @@ import {
 } from 'lucide-react';
 
 export const StudentDashboardPage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
-  const [studentData, setStudentData] = useState<any>(user || null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [studentData, setStudentData] = useState<any>(() => {
+    try {
+      const stored = localStorage.getItem('vidya_current_user');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed.isCheckedIn === 'boolean') {
+          return parsed;
+        }
+      }
+    } catch {}
+    return user || null;
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
   const [punchLoading, setPunchLoading] = useState<boolean>(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -121,11 +133,15 @@ export const StudentDashboardPage: React.FC = () => {
       const res = await studentService.getById(lookupId);
       if (res.success && res.data) {
         setStudentData(res.data);
+        if (updateUser) {
+          updateUser(res.data);
+        }
       }
     } catch {
       // Keep using auth context state
     } finally {
       setIsLoading(false);
+      setIsInitialLoad(false);
     }
   };
 
@@ -259,6 +275,9 @@ export const StudentDashboardPage: React.FC = () => {
       const res: any = await studentService.toggleCheckIn(sId);
       if (res && res.success && res.data) {
         setStudentData(res.data);
+        if (updateUser) {
+          updateUser(res.data);
+        }
         const isNowIn = Boolean(res.data.isCheckedIn);
         setFeedbackMsg({
           type: 'success',
@@ -648,16 +667,23 @@ export const StudentDashboardPage: React.FC = () => {
             <div className="flex flex-col items-end gap-2 shrink-0">
               <button
                 onClick={handleTogglePunch}
-                disabled={punchLoading}
+                disabled={punchLoading || (isInitialLoad && studentData?.isCheckedIn === undefined)}
                 className={`py-3.5 px-6 rounded-2xl font-black text-xs transition-all shadow-md flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 hover:-translate-y-0.5 ${
-                  isPunchBlocked || isDailyLimitReached
+                  isInitialLoad && studentData?.isCheckedIn === undefined
+                    ? 'bg-slate-100 text-slate-500 border border-slate-200'
+                    : isPunchBlocked || isDailyLimitReached
                     ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
                     : isCheckedIn
                     ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/25'
                     : 'bg-[#544bec] hover:bg-[#4338ca] text-white shadow-[#544bec]/30'
                 }`}
               >
-                {punchLoading ? (
+                {isInitialLoad && studentData?.isCheckedIn === undefined ? (
+                  <>
+                    <span className="w-3.5 h-3.5 rounded-full border-2 border-slate-400 border-t-[#544bec] animate-spin" />
+                    <span>Syncing Status...</span>
+                  </>
+                ) : punchLoading ? (
                   <>
                     <RefreshCw size={16} className="animate-spin" />
                     <span>Processing Punch...</span>
@@ -686,7 +712,9 @@ export const StudentDashboardPage: React.FC = () => {
               </button>
 
               <div className="text-[11px] font-medium text-right">
-                {isPunchBlocked ? (
+                {isInitialLoad && studentData?.isCheckedIn === undefined ? (
+                  <span className="inline-block h-4 w-36 bg-slate-100 rounded animate-pulse" />
+                ) : isPunchBlocked ? (
                   <span className="text-slate-600 font-bold flex items-center gap-1.5 justify-end">
                     <span>Locked: Account is inactive</span>
                     <span>•</span>
@@ -793,7 +821,9 @@ export const StudentDashboardPage: React.FC = () => {
                   <CheckCircle2 size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] flex items-center justify-center gap-1 truncate">
-                  {isCheckedIn ? (
+                  {isInitialLoad && studentData?.isCheckedIn === undefined ? (
+                    <span className="h-3.5 w-12 bg-slate-100 rounded animate-pulse inline-block" />
+                  ) : isCheckedIn ? (
                     <>
                       <span className="w-1.5 h-1.5 rounded-full bg-[#544bec] animate-ping shrink-0" />
                       <span>Inside</span>
@@ -813,7 +843,11 @@ export const StudentDashboardPage: React.FC = () => {
                   <Clock size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] font-mono truncate">
-                  {todayTotalDuration}
+                  {isInitialLoad && studentData?.isCheckedIn === undefined ? (
+                    <span className="h-3.5 w-10 bg-slate-100 rounded animate-pulse inline-block" />
+                  ) : (
+                    todayTotalDuration
+                  )}
                 </div>
                 <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
                   Total Hours
@@ -874,16 +908,23 @@ export const StudentDashboardPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleTogglePunch}
-                  disabled={punchLoading}
+                  disabled={punchLoading || (isInitialLoad && studentData?.isCheckedIn === undefined)}
                   className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
-                    isPunchBlocked || isDailyLimitReached
+                    isInitialLoad && studentData?.isCheckedIn === undefined
+                      ? 'bg-slate-200 text-slate-500 border border-slate-300'
+                      : isPunchBlocked || isDailyLimitReached
                       ? 'bg-slate-200 text-slate-600 border border-slate-300'
                       : isCheckedIn
                       ? 'bg-gradient-to-tr from-rose-500 to-rose-600 text-white shadow-rose-500/30 hover:shadow-rose-500/40'
                       : 'bg-gradient-to-tr from-[#544bec] to-[#6d64f7] text-white shadow-[#544bec]/30 hover:shadow-[#544bec]/40'
                   }`}
                 >
-                  {punchLoading ? (
+                  {isInitialLoad && studentData?.isCheckedIn === undefined ? (
+                    <div className="flex flex-col items-center justify-center gap-1.5 animate-pulse">
+                      <div className="w-5 h-5 rounded-full border-2 border-slate-400 border-t-[#544bec] animate-spin" />
+                      <span className="text-[9px] font-bold tracking-tight text-slate-600">Syncing...</span>
+                    </div>
+                  ) : punchLoading ? (
                     <>
                       <RefreshCw size={20} className="animate-spin text-white" />
                       <span className="text-[10px] font-bold">Wait...</span>
@@ -915,7 +956,9 @@ export const StudentDashboardPage: React.FC = () => {
 
             {/* Bottom status alert / helpline */}
             <div className="mt-3 pt-2.5 border-t border-[#544bec]/20 text-[10px] font-medium">
-              {isPunchBlocked ? (
+              {isInitialLoad && studentData?.isCheckedIn === undefined ? (
+                <span className="block h-3.5 w-36 bg-slate-200/60 rounded animate-pulse mx-auto" />
+              ) : isPunchBlocked ? (
                 <span className="text-slate-600 font-bold block text-center">
                   Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-[#544bec]">{adminPhone}</a>
                 </span>

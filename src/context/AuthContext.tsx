@@ -16,6 +16,9 @@ export interface AdminUser {
   dueAmount?: number;
   paidAmount?: number;
   nextDueDate?: string;
+  isCheckedIn?: boolean;
+  currentCheckInTime?: string | null;
+  attendanceHistory?: any[];
 }
 
 interface AuthContextType {
@@ -23,6 +26,7 @@ interface AuthContextType {
   user: AdminUser | null;
   login: (identifier: string, password: string, role?: string) => Promise<{ success: boolean; message?: string; user?: AdminUser }>;
   logout: () => void;
+  updateUser: (updatedData: Partial<AdminUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -160,6 +164,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUser = (updatedData: Partial<AdminUser>) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const merged = { ...prev, ...updatedData };
+      try {
+        localStorage.setItem('vidya_current_user', JSON.stringify(merged));
+        if (merged.role !== 'student') {
+          localStorage.setItem('vidya_admin_user', JSON.stringify(merged));
+        }
+      } catch {}
+      return merged;
+    });
+  };
+
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
@@ -170,7 +188,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -27,11 +27,19 @@ export const StatCards: React.FC = () => {
           <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
             Total Students
           </span>
-          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
-            {isLoading ? '...' : totalStudents}
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 min-h-[24px] sm:min-h-[32px] flex items-center">
+            {isLoading ? (
+              <span className="inline-block h-5 sm:h-7 w-12 bg-slate-200/80 rounded animate-pulse" />
+            ) : (
+              totalStudents
+            )}
           </div>
           <div className="text-[10px] sm:text-[11px] font-bold text-[#544bec] mt-0.5 truncate">
-            <span>{regularStudents} reg</span> • <span>{demoStudents} demo</span>
+            {isLoading ? (
+              <span className="inline-block h-3 w-20 bg-slate-100 rounded animate-pulse" />
+            ) : (
+              <><span>{regularStudents} reg</span> • <span>{demoStudents} demo</span></>
+            )}
           </div>
         </div>
         <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
@@ -46,11 +54,19 @@ export const StatCards: React.FC = () => {
           <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
             Total Seats
           </span>
-          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
-            {isLoading ? '...' : totalSeats}
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 min-h-[24px] sm:min-h-[32px] flex items-center">
+            {isLoading ? (
+              <span className="inline-block h-5 sm:h-7 w-12 bg-slate-200/80 rounded animate-pulse" />
+            ) : (
+              totalSeats
+            )}
           </div>
           <div className="text-[10px] sm:text-[11px] font-medium text-[#8F9BB3] mt-0.5 truncate">
-            {occupiedSeats} occ • {availableSeats} avail
+            {isLoading ? (
+              <span className="inline-block h-3 w-24 bg-slate-100 rounded animate-pulse" />
+            ) : (
+              `${occupiedSeats} occ • ${availableSeats} avail`
+            )}
           </div>
         </div>
         <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#EAF2FE] text-[#2F80ED] flex items-center justify-center shrink-0">
@@ -65,11 +81,19 @@ export const StatCards: React.FC = () => {
           <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
             Monthly Collection
           </span>
-          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 truncate">
-            {isLoading ? '...' : `₹${monthlyCollection.toLocaleString('en-IN')}`}
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 truncate min-h-[24px] sm:min-h-[32px] flex items-center">
+            {isLoading ? (
+              <span className="inline-block h-5 sm:h-7 w-16 bg-slate-200/80 rounded animate-pulse" />
+            ) : (
+              `₹${monthlyCollection.toLocaleString('en-IN')}`
+            )}
           </div>
           <div className="text-[10px] sm:text-[11px] font-bold text-[#544bec] mt-0.5 truncate">
-            <span>{totalTransactions} recorded</span>
+            {isLoading ? (
+              <span className="inline-block h-3 w-16 bg-slate-100 rounded animate-pulse" />
+            ) : (
+              <span>{totalTransactions} recorded</span>
+            )}
           </div>
         </div>
         <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#F3EBF9] text-[#9B51E0] flex items-center justify-center shrink-0">
@@ -84,11 +108,19 @@ export const StatCards: React.FC = () => {
           <span className="text-[10px] sm:text-xs font-semibold text-[#8F9BB3] block truncate">
             Pending Dues
           </span>
-          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
-            {isLoading ? '...' : pendingDuesCount}
+          <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 min-h-[24px] sm:min-h-[32px] flex items-center">
+            {isLoading ? (
+              <span className="inline-block h-5 sm:h-7 w-12 bg-slate-200/80 rounded animate-pulse" />
+            ) : (
+              pendingDuesCount
+            )}
           </div>
           <div className="text-[10px] sm:text-[11px] font-bold text-[#FA8C16] mt-0.5 truncate">
-            ₹{pendingDuesAmount.toLocaleString('en-IN')} pending
+            {isLoading ? (
+              <span className="inline-block h-3 w-20 bg-slate-100 rounded animate-pulse" />
+            ) : (
+              `₹${pendingDuesAmount.toLocaleString('en-IN')} pending`
+            )}
           </div>
         </div>
         <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#FFF6E9] text-[#FA8C16] flex items-center justify-center shrink-0">

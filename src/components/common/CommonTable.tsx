@@ -17,6 +17,7 @@ export interface CommonTableProps<T> {
   columns: CommonTableColumn<T>[];
   renderMobileCard?: (row: T, index: number) => React.ReactNode;
   emptyMessage?: string;
+  isLoading?: boolean;
   pagination?: boolean;
   initialPageSize?: number;
   pageSizeOptions?: number[];
@@ -34,6 +35,7 @@ export function CommonTable<T>({
   columns = [],
   renderMobileCard,
   emptyMessage = 'No records found.',
+  isLoading = false,
   pagination = true,
   initialPageSize = 10,
   pageSizeOptions = [10, 20, 50],
@@ -91,7 +93,20 @@ export function CommonTable<T>({
       {/* 1. Mobile Cards View (< lg screens) */}
       {/* ========================================================================= */}
       <div className="lg:hidden divide-y divide-[#EDF1F7]">
-        {paginatedData.length === 0 ? (
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={`skel-card-${i}`} className="p-4 space-y-2.5 animate-pulse bg-white">
+              <div className="flex items-center justify-between">
+                <div className="h-4 w-32 bg-slate-100 rounded-md" />
+                <div className="h-5 w-16 bg-slate-100 rounded-full" />
+              </div>
+              <div className="space-y-1.5 pt-1">
+                <div className="h-3 w-48 bg-slate-100 rounded" />
+                <div className="h-3 w-36 bg-slate-100 rounded" />
+              </div>
+            </div>
+          ))
+        ) : paginatedData.length === 0 ? (
           <div className="py-10 px-4 text-center text-xs text-[#8F9BB3]">
             {emptyMessage}
           </div>
@@ -173,7 +188,25 @@ export function CommonTable<T>({
           </thead>
 
           <tbody className="divide-y divide-[#EDF1F7]">
-            {paginatedData.length === 0 ? (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, rIdx) => (
+                <tr key={`skel-row-${rIdx}`} className="animate-pulse bg-white">
+                  {selectable && (
+                    <td className="py-3 px-3 text-center">
+                      <div className="w-3.5 h-3.5 bg-slate-100 rounded mx-auto" />
+                    </td>
+                  )}
+                  {columns.map((_, cIdx) => (
+                    <td key={`skel-col-${cIdx}`} className="py-3.5 px-3">
+                      <div
+                        className="h-3.5 bg-slate-100 rounded"
+                        style={{ width: `${Math.max(40, ((cIdx + 1) * 29) % 75 + 20)}%` }}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : paginatedData.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length + (selectable ? 1 : 0)}
