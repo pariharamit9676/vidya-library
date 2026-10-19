@@ -687,12 +687,21 @@ export class StudentModel {
       throw new Error('Invalid UPI ID format. Example: yourname@oksbi or 9876543210@paytm');
     }
 
+    const cleanId = String(id || '').trim();
+    const unhashId = cleanId.replace(/^#+/, '');
+
     let updated = null;
     if (isMongoConnected()) {
       try {
-        const orConditions = [{ id }, { studentId: id }];
-        if (id && id.length === 24) {
-          orConditions.push({ _id: id });
+        const orConditions = [
+          { studentId: cleanId },
+          { studentId: `#${unhashId}` },
+          { studentId: unhashId },
+          { id: cleanId },
+          { phone: cleanId }
+        ];
+        if (cleanId && cleanId.length === 24) {
+          orConditions.push({ _id: cleanId });
         }
         updated = await StudentMongo.findOneAndUpdate(
           { $or: orConditions },
@@ -705,7 +714,14 @@ export class StudentModel {
     }
 
     const localStudents = readJsonFile(FILE_NAME, []);
-    const idx = localStudents.findIndex(s => s.id === id || s.studentId === id || String(s._id) === id);
+    const idx = localStudents.findIndex(
+      (s) =>
+        s.id === cleanId ||
+        s.studentId === cleanId ||
+        s.studentId === `#${unhashId}` ||
+        s.studentId === unhashId ||
+        String(s._id) === cleanId
+    );
     if (idx !== -1) {
       localStudents[idx].upiId = cleanUpi;
       writeJsonFile(FILE_NAME, localStudents);

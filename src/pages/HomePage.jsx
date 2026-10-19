@@ -298,10 +298,10 @@ export const HomePage = () => {
   const [referralCheckStatus, setReferralCheckStatus] = useState(null); // null | 'valid' | 'invalid'
   const [referralErrorMessage, setReferralErrorMessage] = useState('');
 
-  // Referral code check strictly on focus removal (onBlur)
-  const handleReferralBlur = async () => {
-    const rawCode = trialForm.referralCode?.trim()?.toUpperCase();
-    if (!rawCode) {
+  // Live verification against MongoDB database with production debounce
+  const verifyReferralCodeNow = async (rawInput) => {
+    const rawCode = (rawInput ?? trialForm.referralCode)?.trim()?.toUpperCase();
+    if (!rawCode || rawCode.length < 4) {
       setVerifiedReferrer(null);
       setReferralCheckStatus(null);
       setReferralErrorMessage('');
@@ -310,11 +310,9 @@ export const HomePage = () => {
     }
 
     setIsVerifyingCode(true);
-    setReferralCheckStatus(null);
-    setReferralErrorMessage('');
 
     try {
-      // 1. Direct MongoDB database API verification on focus loss
+      // 1. Direct MongoDB database API verification
       const res = await studentService.verifyReferral(rawCode);
       if (res?.found && res?.data) {
         setVerifiedReferrer(res.data);
@@ -331,7 +329,7 @@ export const HomePage = () => {
         } else {
           setVerifiedReferrer(null);
           setReferralCheckStatus('invalid');
-          setReferralErrorMessage('Referral code not found in database. You can still register without a referral code.');
+          setReferralErrorMessage('Code not recognized in database, but you can still reserve your free trial desk.');
         }
       }
     } catch {
@@ -345,10 +343,35 @@ export const HomePage = () => {
       } else {
         setVerifiedReferrer(null);
         setReferralCheckStatus('invalid');
-        setReferralErrorMessage('Referral code not found in database. You can still register without a referral code.');
+        setReferralErrorMessage('Code not recognized in database, but you can still reserve your free trial desk.');
       }
     } finally {
       setIsVerifyingCode(false);
+    }
+  };
+
+  // Debounced live typing effect - triggers smoothly as user types (350ms after typing stops)
+  useEffect(() => {
+    const code = trialForm.referralCode?.trim()?.toUpperCase();
+    if (!code || code.length < 4) {
+      setVerifiedReferrer(null);
+      setReferralCheckStatus(null);
+      setReferralErrorMessage('');
+      setIsVerifyingCode(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      verifyReferralCodeNow(code);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [trialForm.referralCode, serverStudents, students]);
+
+  // Immediate check on focus out (onBlur)
+  const handleReferralBlur = () => {
+    if (trialForm.referralCode?.trim().length >= 4) {
+      verifyReferralCodeNow(trialForm.referralCode);
     }
   };
 
@@ -1290,10 +1313,11 @@ export const HomePage = () => {
                         onChange={(e) => {
                           const val = e.target.value.toUpperCase();
                           setTrialForm({ ...trialForm, referralCode: val });
-                          if (referralCheckStatus !== null) {
+                          if (!val.trim() || val.length < 4) {
                             setReferralCheckStatus(null);
                             setVerifiedReferrer(null);
                             setReferralErrorMessage('');
+                            setIsVerifyingCode(false);
                           }
                         }}
                         onBlur={handleReferralBlur}

@@ -151,15 +151,23 @@ export const StudentReferralPage: React.FC = () => {
 
     setIsSavingUpi(true);
     try {
-      if (studentId && studentId !== 'STU') {
-        await studentService.updateUpi(studentId, clean);
-      }
+      // 1. Save in local storage store
       referralService.saveStudentUpiId(studentId, clean);
+
+      // 2. Sync to MongoDB database
+      if (studentId && studentId !== 'STU') {
+        try {
+          await studentService.updateUpi(studentId, clean);
+        } catch (apiErr) {
+          console.warn('Backend UPI sync warning:', apiErr);
+        }
+      }
+
       setIsEditingUpi(false);
-      setWithdrawFeedback({ type: 'success', text: 'UPI ID verified and saved in database successfully!' });
+      setWithdrawFeedback({ type: 'success', text: 'UPI ID verified and saved successfully!' });
       setTimeout(() => setWithdrawFeedback(null), 3000);
     } catch (err: any) {
-      setUpiError(err?.message || 'Failed to save UPI ID to database.');
+      setUpiError(err?.message || 'Failed to save UPI ID.');
     } finally {
       setIsSavingUpi(false);
     }

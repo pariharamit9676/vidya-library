@@ -497,9 +497,9 @@ export class StudentController {
 
   static async updateUpi(req, res, next) {
     try {
-      const { id } = req.params;
+      const targetId = req.body?.id || req.body?.studentId || req.params?.id;
       const { upiId } = req.body;
-      const updated = await StudentModel.updateUpi(id, upiId);
+      const updated = await StudentModel.updateUpi(targetId, upiId);
       return res.status(200).json({
         success: true,
         message: 'UPI ID updated successfully in database.',

@@ -33,7 +33,13 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       headers
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data: any = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { message: text.slice(0, 100) };
+    }
 
     if (!response.ok) {
       throw new Error(data.message || `Request failed with status ${response.status}`);
@@ -128,11 +134,13 @@ export const studentService = {
   verifyReferral: (code: string) =>
     request<any>(`/students/verify-referral/${encodeURIComponent(code)}`),
 
-  updateUpi: (id: string, upiId: string) =>
-    request(`/students/${id}/upi`, {
+  updateUpi: (id: string, upiId: string) => {
+    const cleanId = String(id || '').replace(/^#+/, '').trim();
+    return request('/students/upi', {
       method: 'PUT',
-      body: JSON.stringify({ upiId })
-    })
+      body: JSON.stringify({ id: cleanId, studentId: id, upiId })
+    });
+  }
 };
 
 // 4. Seat Service
