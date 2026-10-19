@@ -7,6 +7,7 @@ import {
   ReferralRecord,
   PayoutRequest
 } from '../services/referralService';
+import { studentService } from '../services/api';
 import { formatDisplayDate } from '../utils/dateFormatter';
 import {
   Gift,
@@ -59,7 +60,10 @@ export const StudentReferralPage: React.FC = () => {
   const [withdrawFeedback, setWithdrawFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const studentId = user?.id || user?.studentId || (user as any)?._id || 'STU';
-  const referralCode = useMemo(() => getStudentReferralCode(user), [user]);
+  const [dbReferralCode, setDbReferralCode] = useState<string>(user?.referralCode || '');
+  const referralCode = useMemo(() => {
+    return dbReferralCode || user?.referralCode || getStudentReferralCode(user);
+  }, [dbReferralCode, user]);
 
   // Load stats
   const reloadStats = () => {
@@ -72,6 +76,18 @@ export const StudentReferralPage: React.FC = () => {
     reloadStats();
     if (user?.savedUpiId) {
       setUpiId(user.savedUpiId);
+    }
+    // Fetch latest referralCode and UPI ID from database
+    if (studentId && studentId !== 'STU') {
+      studentService.getById(studentId).then((res: any) => {
+        if (res?.data?.referralCode) {
+          setDbReferralCode(res.data.referralCode);
+        }
+        if (res?.data?.upiId) {
+          setUpiId(res.data.upiId);
+          setIsEditingUpi(false);
+        }
+      }).catch(() => {});
     }
   }, [studentId, referralCode, user]);
 
@@ -96,35 +112,64 @@ export const StudentReferralPage: React.FC = () => {
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
   };
 
-  // UPI ID validation regex (e.g. mobile@upi, username@oksbi, etc.)
-  const UPI_REGEX = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+  // Comprehensive UPI ID validation: format handle@provider (e.g. mobile@upi, username@oksbi, name@paytm)
+  const validateUpiId = (id: string): { isValid: boolean; error?: string } => {
+    const clean = id.trim();
+    if (!clean) {
+      return { isValid: false, error: 'UPI ID cannot be empty.' };
+    }
+    if (/\s/.test(clean)) {
+      return { isValid: false, error: 'UPI ID cannot contain spaces.' };
+    }
+    if (!clean.includes('@')) {
+      return { isValid: false, error: 'UPI ID must contain "@" (e.g. 9876543210@paytm or name@oksbi).' };
+    }
+    const parts = clean.split('@');
+    if (parts.length !== 2 || !parts[0] || !parts[1]) {
+      return { isValid: false, error: 'Invalid UPI format. Must be username@bank (e.g. name@okhdfcbank).' };
+    }
+    const handleRegex = /^[a-zA-Z0-9.\-_]{2,256}$/;
+    const bankRegex = /^[a-zA-Z]{2,64}$/;
+    if (!handleRegex.test(parts[0])) {
+      return { isValid: false, error: 'UPI username can only contain letters, numbers, dots, and hyphens.' };
+    }
+    if (!bankRegex.test(parts[1])) {
+      return { isValid: false, error: 'UPI bank handle should only contain letters (e.g. oksbi, paytm, ybl, axl).' };
+    }
+    return { isValid: true };
+  };
 
-  const handleSaveUpi = (e: React.FormEvent) => {
+  const handleSaveUpi = async (e: React.FormEvent) => {
     e.preventDefault();
     setUpiError('');
     const clean = upiId.trim();
-    if (!clean || !UPI_REGEX.test(clean)) {
-      setUpiError('Please enter a valid UPI ID (e.g. mobile@upi or name@oksbi)');
+    const validation = validateUpiId(clean);
+    if (!validation.isValid) {
+      setUpiError(validation.error || 'Please enter a valid UPI ID');
       return;
     }
 
     setIsSavingUpi(true);
     try {
+      if (studentId && studentId !== 'STU') {
+        await studentService.updateUpi(studentId, clean);
+      }
       referralService.saveStudentUpiId(studentId, clean);
       setIsEditingUpi(false);
-      setWithdrawFeedback({ type: 'success', text: 'UPI ID saved successfully!' });
+      setWithdrawFeedback({ type: 'success', text: 'UPI ID verified and saved in database successfully!' });
       setTimeout(() => setWithdrawFeedback(null), 3000);
-    } catch {
-      setUpiError('Failed to save UPI ID.');
+    } catch (err: any) {
+      setUpiError(err?.message || 'Failed to save UPI ID to database.');
     } finally {
       setIsSavingUpi(false);
     }
   };
 
   const handleOpenWithdraw = () => {
-    if (!upiId || !UPI_REGEX.test(upiId.trim())) {
+    const validation = validateUpiId(upiId);
+    if (!validation.isValid) {
       setIsEditingUpi(true);
-      setUpiError('Please enter and save your UPI ID first before requesting payout.');
+      setUpiError(validation.error || 'Please enter and save your valid UPI ID first before requesting payout.');
       return;
     }
     setWithdrawAmount(referralStats.availableBalance);

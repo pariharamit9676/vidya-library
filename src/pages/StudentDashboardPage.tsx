@@ -457,6 +457,17 @@ export const StudentDashboardPage: React.FC = () => {
           {/* Right: Refresh & Admin-like Profile Dropdown */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             
+            {/* Refer & Earn Quick Button */}
+            <button
+              onClick={() => navigate('/student/referrals')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#EEF0FD] to-emerald-50 hover:from-[#544bec]/10 hover:to-emerald-100 border border-[#544bec]/20 text-[#544bec] hover:text-[#4338ca] text-xs font-black transition-all cursor-pointer shadow-2xs"
+              title="Refer Friends & Earn ₹100"
+            >
+              <Gift size={14} className="text-[#544bec]" />
+              <span className="hidden sm:inline">Refer & Earn</span>
+              <span className="bg-emerald-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">₹100</span>
+            </button>
+
             {/* Quick Refresh Icon */}
             <button
               onClick={fetchStudentProfile}
@@ -512,6 +523,12 @@ export const StudentDashboardPage: React.FC = () => {
                       <span>•</span>
                       <span>{studentData?.phone || 'No phone'}</span>
                     </div>
+                    {studentData?.referralCode && (
+                      <div className="mt-1 text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center justify-between">
+                        <span>Code: {studentData.referralCode}</span>
+                        <span className="text-[9px] text-emerald-600 font-sans">Active</span>
+                      </div>
+                    )}
                     <div className="text-[10px] text-[#8F9BB3] mt-1.5 flex items-center gap-1.5">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EEF0FD] text-[#544bec] font-bold text-[10px] border border-[#544bec]/20">
                         <Armchair size={11} />
@@ -522,6 +539,17 @@ export const StudentDashboardPage: React.FC = () => {
 
                   {/* Menu Options */}
                   <div className="p-1 space-y-0.5">
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        navigate('/student/referrals');
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#192038] hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition-colors cursor-pointer text-left"
+                    >
+                      <Gift size={15} className="text-emerald-600" />
+                      <span>Refer & Earn (₹100)</span>
+                    </button>
+
                     <button
                       onClick={() => {
                         setIsProfileMenuOpen(false);

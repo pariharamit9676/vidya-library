@@ -1,6 +1,6 @@
 import { readJsonFile, writeJsonFile } from '../utils/fileStorage.js';
 import { computeFeeStatus, getDaysUntilDue, formatDate, formatTime, calculateDuration, addMonthsToDate } from '../utils/dateUtils.js';
-import { generateStudentId } from '../utils/idGenerator.js';
+import { generateStudentId, generateReferralCode } from '../utils/idGenerator.js';
 import { isMongoConnected } from '../config/database.js';
 import { StudentMongo } from './schemas/StudentSchema.js';
 import { SeatModel } from './Seat.js';
@@ -187,8 +187,25 @@ export class StudentModel {
     const paidAmount = studentData.paidAmount !== undefined ? Number(studentData.paidAmount) : planAmount;
     const dueAmount = studentData.dueAmount !== undefined ? Number(studentData.dueAmount) : Math.max(0, planAmount - paidAmount);
 
+    const existingCodes = new Set();
+    if (isMongoConnected()) {
+      try {
+        const docs = await StudentMongo.find({}, { referralCode: 1 }).lean();
+        docs.forEach(d => { if (d.referralCode) existingCodes.add(d.referralCode.toUpperCase()); });
+      } catch (e) {}
+    }
+    students.forEach(s => { if (s.referralCode) existingCodes.add(s.referralCode.toUpperCase()); });
+
+    const assignedReferralCode = studentData.referralCode?.trim()
+      ? studentData.referralCode.trim().toUpperCase()
+      : generateReferralCode(studentData.name, studentData.phone, generatedId, existingCodes);
+
     const newStudent = {
       studentId: generatedId,
+      referralCode: assignedReferralCode,
+      referredBy: studentData.referredBy || null,
+      referrerName: studentData.referrerName || null,
+      upiId: studentData.upiId || '',
       name: studentData.name,
       fatherName: studentData.fatherName || '',
       phone: studentData.phone,
@@ -546,5 +563,155 @@ export class StudentModel {
       id: safeStudent.id || String(safeStudent._id),
       role: 'student'
     };
+  }
+
+  /**
+   * Migrate existing students: ensure every student in MongoDB and local store has a valid unique referralCode
+   */
+  static async migrateReferralCodes() {
+    console.log('🔄 Checking students for missing referral codes...');
+    const localStudents = readJsonFile(FILE_NAME, []);
+    let mongoStudents = [];
+    if (isMongoConnected()) {
+      try {
+        mongoStudents = await StudentMongo.find({}).lean();
+      } catch (err) {
+        console.error('Error fetching students for migration:', err.message);
+      }
+    }
+
+    const allStudents = mongoStudents.length > 0 ? mongoStudents : localStudents;
+    const existingCodes = new Set();
+    allStudents.forEach((s) => {
+      if (s.referralCode) existingCodes.add(s.referralCode.toUpperCase());
+    });
+
+    let migratedCount = 0;
+
+    // 1. Migrate Mongo Students
+    if (isMongoConnected()) {
+      for (const s of mongoStudents) {
+        if (!s.referralCode || !s.referralCode.trim()) {
+          const newCode = generateReferralCode(s.name, s.phone, s.studentId, existingCodes);
+          existingCodes.add(newCode);
+          await StudentMongo.updateOne({ _id: s._id }, { $set: { referralCode: newCode } });
+          migratedCount++;
+        }
+      }
+    }
+
+    // 2. Migrate local students.json
+    let localChanged = false;
+    for (const s of localStudents) {
+      if (!s.referralCode || !s.referralCode.trim()) {
+        const newCode = generateReferralCode(s.name, s.phone, s.studentId, existingCodes);
+        existingCodes.add(newCode);
+        s.referralCode = newCode;
+        localChanged = true;
+      }
+    }
+    if (localChanged) {
+      writeJsonFile(FILE_NAME, localStudents);
+    }
+
+    if (migratedCount > 0 || localChanged) {
+      console.log(`✅ [Referrals] Generated and migrated referral codes for students in database.`);
+    }
+  }
+
+  /**
+   * Verify if a referral code exists in the database
+   */
+  static async verifyReferralCode(rawCode) {
+    if (!rawCode || !rawCode.trim()) {
+      return { found: false, message: 'Referral code is required.' };
+    }
+    const cleanCode = rawCode.trim().toUpperCase();
+
+    // 1. Check MongoDB
+    if (isMongoConnected()) {
+      try {
+        const match = await StudentMongo.findOne({
+          $or: [
+            { referralCode: cleanCode },
+            { studentId: cleanCode }
+          ]
+        }).lean();
+
+        if (match) {
+          return {
+            found: true,
+            student: {
+              studentId: match.studentId,
+              name: match.name,
+              phone: match.phone,
+              referralCode: match.referralCode || cleanCode
+            }
+          };
+        }
+      } catch (err) {
+        console.error('Mongo verifyReferralCode error:', err.message);
+      }
+    }
+
+    // 2. Check local store fallback
+    const localStudents = readJsonFile(FILE_NAME, []);
+    const localMatch = localStudents.find(
+      (s) =>
+        (s.referralCode && s.referralCode.toUpperCase() === cleanCode) ||
+        (s.studentId && s.studentId.toUpperCase() === cleanCode)
+    );
+
+    if (localMatch) {
+      return {
+        found: true,
+        student: {
+          studentId: localMatch.studentId,
+          name: localMatch.name,
+          phone: localMatch.phone,
+          referralCode: localMatch.referralCode || cleanCode
+        }
+      };
+    }
+
+    return { found: false, message: 'Referral code not found in database.' };
+  }
+
+  /**
+   * Update student UPI ID in database with validation
+   */
+  static async updateUpi(id, upiId) {
+    const cleanUpi = String(upiId || '').trim();
+    const UPI_REGEX = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+    if (!cleanUpi || !UPI_REGEX.test(cleanUpi)) {
+      throw new Error('Invalid UPI ID format. Example: yourname@oksbi or 9876543210@paytm');
+    }
+
+    let updated = null;
+    if (isMongoConnected()) {
+      try {
+        const orConditions = [{ id }, { studentId: id }];
+        if (id && id.length === 24) {
+          orConditions.push({ _id: id });
+        }
+        updated = await StudentMongo.findOneAndUpdate(
+          { $or: orConditions },
+          { $set: { upiId: cleanUpi } },
+          { returnDocument: 'after' }
+        ).lean();
+      } catch (err) {
+        console.error('Mongo updateUpi error:', err.message);
+      }
+    }
+
+    const localStudents = readJsonFile(FILE_NAME, []);
+    const idx = localStudents.findIndex(s => s.id === id || s.studentId === id || String(s._id) === id);
+    if (idx !== -1) {
+      localStudents[idx].upiId = cleanUpi;
+      writeJsonFile(FILE_NAME, localStudents);
+      if (!updated) updated = localStudents[idx];
+    }
+
+    return updated;
   }
 }

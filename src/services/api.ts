@@ -123,6 +123,15 @@ export const studentService = {
   resetTodayAttendance: (id: string = 'all') =>
     request(`/students/${id}/reset-attendance`, {
       method: 'POST'
+    }),
+
+  verifyReferral: (code: string) =>
+    request<any>(`/students/verify-referral/${encodeURIComponent(code)}`),
+
+  updateUpi: (id: string, upiId: string) =>
+    request(`/students/${id}/upi`, {
+      method: 'PUT',
+      body: JSON.stringify({ upiId })
     })
 };
 

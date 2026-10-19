@@ -53,6 +53,13 @@ const startServer = async () => {
     }
   }
 
+  // Always migrate any student missing a referral code (MongoDB and local store)
+  try {
+    await StudentModel.migrateReferralCodes();
+  } catch (migErr) {
+    console.error('🍃 [Referral Migration Error]:', migErr.message);
+  }
+
   const server = app.listen(ENV.PORT, () => {
     console.log(`===============================================`);
     console.log(`🚀 Viya Library Backend Server running!`);

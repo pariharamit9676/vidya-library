@@ -479,4 +479,37 @@ export class StudentController {
       next(err);
     }
   }
+
+  static async verifyReferralCode(req, res, next) {
+    try {
+      const code = req.params.code || req.query.code;
+      const result = await StudentModel.verifyReferralCode(code);
+      return res.status(200).json({
+        success: true,
+        found: result.found,
+        data: result.student || null,
+        message: result.message || ''
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async updateUpi(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { upiId } = req.body;
+      const updated = await StudentModel.updateUpi(id, upiId);
+      return res.status(200).json({
+        success: true,
+        message: 'UPI ID updated successfully in database.',
+        data: updated
+      });
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message || 'Failed to update UPI ID.'
+      });
+    }
+  }
 }

@@ -4,10 +4,12 @@ import { StudentController } from '../controllers/studentController.js';
 const router = Router();
 
 router.get('/', StudentController.getAll);
+router.get('/verify-referral/:code', StudentController.verifyReferralCode);
 router.post('/bulk-delete', StudentController.bulkDelete);
 router.get('/:id', StudentController.getById);
 router.post('/', StudentController.create);
 router.put('/:id', StudentController.update);
+router.put('/:id/upi', StudentController.updateUpi);
 router.delete('/:id', StudentController.delete);
 
 router.post('/:id/check-in', StudentController.toggleCheckIn);

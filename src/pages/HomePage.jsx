@@ -295,52 +295,62 @@ export const HomePage = () => {
   const [registeredDemoInfo, setRegisteredDemoInfo] = useState(null);
   const [verifiedReferrer, setVerifiedReferrer] = useState(null);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
+  const [referralCheckStatus, setReferralCheckStatus] = useState(null); // null | 'valid' | 'invalid'
+  const [referralErrorMessage, setReferralErrorMessage] = useState('');
 
-  // Live lookup of entered referral code (instant local check + async server API fallback)
-  useEffect(() => {
+  // Referral code check strictly on focus removal (onBlur)
+  const handleReferralBlur = async () => {
     const rawCode = trialForm.referralCode?.trim()?.toUpperCase();
-    if (!rawCode || rawCode.length < 3) {
+    if (!rawCode) {
       setVerifiedReferrer(null);
+      setReferralCheckStatus(null);
+      setReferralErrorMessage('');
       setIsVerifyingCode(false);
       return;
     }
 
-    // 1. Instant check in client-side pools
-    const combinedPool = [...(serverStudents || []), ...(students || [])];
-    const instantMatch = findStudentByReferralCode(rawCode, combinedPool);
-    if (instantMatch) {
-      setVerifiedReferrer(instantMatch);
-      setIsVerifyingCode(false);
-      return;
-    }
-
-    // 2. Asynchronous API search fallback
-    let isCancelled = false;
     setIsVerifyingCode(true);
+    setReferralCheckStatus(null);
+    setReferralErrorMessage('');
 
-    const timer = setTimeout(async () => {
-      try {
-        const res = await studentService.getAll({ search: rawCode });
-        if (!isCancelled) {
-          if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-            const apiMatch = findStudentByReferralCode(rawCode, res.data) || res.data[0];
-            setVerifiedReferrer(apiMatch);
-          } else {
-            setVerifiedReferrer(null);
-          }
+    try {
+      // 1. Direct MongoDB database API verification on focus loss
+      const res = await studentService.verifyReferral(rawCode);
+      if (res?.found && res?.data) {
+        setVerifiedReferrer(res.data);
+        setReferralCheckStatus('valid');
+        setReferralErrorMessage('');
+      } else {
+        // 2. Check local client pool fallback if offline or mock
+        const combinedPool = [...(serverStudents || []), ...(students || [])];
+        const localMatch = findStudentByReferralCode(rawCode, combinedPool);
+        if (localMatch) {
+          setVerifiedReferrer(localMatch);
+          setReferralCheckStatus('valid');
+          setReferralErrorMessage('');
+        } else {
+          setVerifiedReferrer(null);
+          setReferralCheckStatus('invalid');
+          setReferralErrorMessage('Referral code not found in database. You can still register without a referral code.');
         }
-      } catch {
-        if (!isCancelled) setVerifiedReferrer(null);
-      } finally {
-        if (!isCancelled) setIsVerifyingCode(false);
       }
-    }, 250);
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(timer);
-    };
-  }, [trialForm.referralCode, serverStudents, students]);
+    } catch {
+      // Local fallback
+      const combinedPool = [...(serverStudents || []), ...(students || [])];
+      const localMatch = findStudentByReferralCode(rawCode, combinedPool);
+      if (localMatch) {
+        setVerifiedReferrer(localMatch);
+        setReferralCheckStatus('valid');
+        setReferralErrorMessage('');
+      } else {
+        setVerifiedReferrer(null);
+        setReferralCheckStatus('invalid');
+        setReferralErrorMessage('Referral code not found in database. You can still register without a referral code.');
+      }
+    } finally {
+      setIsVerifyingCode(false);
+    }
+  };
 
   const handleTrialSubmit = async (e) => {
     e.preventDefault();
@@ -431,6 +441,8 @@ export const HomePage = () => {
     setRegisteredDemoInfo(null);
     setTrialForm({ name: '', phone: '', referralCode: '' });
     setVerifiedReferrer(null);
+    setReferralCheckStatus(null);
+    setReferralErrorMessage('');
     setIsVerifyingCode(false);
   };
 
@@ -1275,10 +1287,21 @@ export const HomePage = () => {
                         type="text"
                         placeholder="e.g. AMIT2333"
                         value={trialForm.referralCode}
-                        onChange={(e) => setTrialForm({ ...trialForm, referralCode: e.target.value.toUpperCase() })}
+                        onChange={(e) => {
+                          const val = e.target.value.toUpperCase();
+                          setTrialForm({ ...trialForm, referralCode: val });
+                          if (referralCheckStatus !== null) {
+                            setReferralCheckStatus(null);
+                            setVerifiedReferrer(null);
+                            setReferralErrorMessage('');
+                          }
+                        }}
+                        onBlur={handleReferralBlur}
                         className={`w-full px-3.5 py-2.5 rounded-xl border text-xs outline-none uppercase font-mono tracking-wider transition-all ${
-                          verifiedReferrer
+                          referralCheckStatus === 'valid'
                             ? 'border-emerald-500 bg-emerald-50/40 text-emerald-950 font-bold focus:ring-2 focus:ring-emerald-500/20'
+                            : referralCheckStatus === 'invalid'
+                            ? 'border-amber-400 bg-amber-50/30 text-[#192038] focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
                             : 'border-[#CBD5E1] text-[#192038] focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20'
                         }`}
                       />
@@ -1286,21 +1309,21 @@ export const HomePage = () => {
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
                           <span className="w-4 h-4 border-2 border-[#544bec] border-t-transparent rounded-full inline-block animate-spin" />
                         </div>
-                      ) : verifiedReferrer ? (
+                      ) : referralCheckStatus === 'valid' && verifiedReferrer ? (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600">
                           <CheckCircle2 size={18} />
                         </div>
                       ) : null}
                     </div>
 
-                    {/* Dynamic Feedback on Referral Code */}
+                    {/* Feedback strictly after onBlur verification */}
                     {isVerifyingCode ? (
                       <p className="mt-1.5 text-[11px] text-[#544bec] font-medium flex items-center gap-1.5 m-0">
                         <span className="w-3 h-3 border-2 border-[#544bec] border-t-transparent rounded-full animate-spin shrink-0 inline-block" />
-                        <span>Checking referral code...</span>
+                        <span>Verifying code in database...</span>
                       </p>
-                    ) : verifiedReferrer ? (
-                      <div className="mt-2 p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 text-xs text-emerald-950 font-bold flex items-center gap-2.5 shadow-2xs animate-in fade-in duration-200">
+                    ) : referralCheckStatus === 'valid' && verifiedReferrer ? (
+                      <div className="mt-2 p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-300 text-xs text-emerald-950 font-bold flex items-center gap-2.5 shadow-2xs animate-in fade-in duration-200">
                         <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 text-xs font-black shadow-2xs">
                           ✓
                         </div>
@@ -1313,10 +1336,10 @@ export const HomePage = () => {
                           </span>
                         </div>
                       </div>
-                    ) : trialForm.referralCode.trim().length >= 4 && !isVerifyingCode ? (
+                    ) : referralCheckStatus === 'invalid' && referralErrorMessage ? (
                       <div className="mt-1.5 p-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-center gap-1.5">
                         <span className="text-amber-500 font-bold shrink-0">⚠️</span>
-                        <span>Code not recognized, but you can still reserve your free trial desk.</span>
+                        <span>{referralErrorMessage}</span>
                       </div>
                     ) : null}
                   </div>

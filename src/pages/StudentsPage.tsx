@@ -99,6 +99,7 @@ export const StudentsPage: React.FC = () => {
           s.name.toLowerCase().includes(query) ||
           s.studentId.toLowerCase().includes(query) ||
           s.phone.includes(query) ||
+          ((s as any).referralCode && (s as any).referralCode.toLowerCase().includes(query)) ||
           s.seatNo.toLowerCase().includes(query);
         if (!matches) return false;
       }

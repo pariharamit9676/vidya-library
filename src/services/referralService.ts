@@ -100,58 +100,20 @@ export const findStudentByReferralCode = (code: string, allStudents: any[] = [])
   const codeLetters = cleanCode.replace(/[^A-Z]/g, '');
   const codeDigits = cleanCode.replace(/\D/g, '');
 
-  // 1. First pass: Exact match on generated or custom referral code
+  // 1. Exact match on student's stored database referralCode or custom code
   const exactCodeMatch = students.find((s) => {
-    const sCode = getStudentReferralCode(s);
-    const customCode = (s.referralCode || '').toUpperCase();
-    return sCode === cleanCode || customCode === cleanCode;
+    const dbCode = (s.referralCode || '').trim().toUpperCase();
+    const genCode = getStudentReferralCode(s);
+    return (dbCode && dbCode === cleanCode) || genCode === cleanCode;
   });
   if (exactCodeMatch) return exactCodeMatch;
 
-  // 2. Second pass: Match by Student ID (e.g. STU001 or VIDYA101)
+  // 2. Exact match by Student ID (e.g. #STU001, STU001, VIDYA-STU001)
   const idMatch = students.find((s) => {
     const sId = (s.studentId || s.id || '').replace(/^#+/, '').toUpperCase();
     return sId && (sId === cleanCode || `VIDYA-${sId}` === cleanCode || `VIDYA${sId}` === cleanCode);
   });
   if (idMatch) return idMatch;
-
-  // 3. Third pass: Match by Phone Number
-  if (codeDigits.length >= 4) {
-    const phoneMatch = students.find((s) => {
-      const sPhone = String(s.phone || '').replace(/\D/g, '');
-      return sPhone && (sPhone === codeDigits || sPhone.endsWith(codeDigits));
-    });
-    if (phoneMatch) return phoneMatch;
-  }
-
-  // 4. Fourth pass: Flexible fuzzy match on Name + digits (e.g. AMIT2333 -> Amit Parihar)
-  if (codeLetters.length >= 3) {
-    const fuzzyNameMatch = students.find((s) => {
-      const sName = (s.name || '').toUpperCase().trim();
-      const sFirstName = sName.split(' ')[0].replace(/[^A-Z]/g, '');
-      const sPhone = String(s.phone || '').replace(/\D/g, '');
-
-      if (sFirstName && sFirstName.startsWith(codeLetters.slice(0, 4))) {
-        if (!codeDigits) return true;
-        if (sPhone.endsWith(codeDigits) || sPhone.includes(codeDigits)) return true;
-      }
-      return false;
-    });
-    if (fuzzyNameMatch) return fuzzyNameMatch;
-  }
-
-  // 5. Fallback for Amit Parihar if code is AMIT2333 or starts with AMIT
-  if (cleanCode.startsWith('AMIT')) {
-    const amitMatch = students.find((s) => (s.name || '').toLowerCase().includes('amit'));
-    if (amitMatch) return amitMatch;
-    // Default fallback student if testing in dev
-    return {
-      id: 'stu_amit_parihar',
-      name: 'Amit Parihar',
-      phone: '9685912333',
-      studentId: 'AMIT2333'
-    };
-  }
 
   return null;
 };
