@@ -107,7 +107,7 @@ export const StudentAttendancePage: React.FC = () => {
                   Attendance Logs
                 </h1>
                 <p className="text-[10px] sm:text-[11px] text-[#8F9BB3] font-medium m-0">
-                  {studentData?.name || 'Student'} • ID #{cleanStudentId}
+                  {studentData?.name || 'Student'}
                 </p>
               </div>
             </div>

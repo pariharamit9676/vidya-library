@@ -630,9 +630,6 @@ export const StudentDashboardPage: React.FC = () => {
                   <h1 className="text-2xl font-black tracking-tight text-[#192038] m-0">
                     {getGreeting()}, {studentData?.name || 'Student'} 👋
                   </h1>
-                  <span className="px-2.5 py-0.5 rounded-lg bg-[#EEF0FD] border border-[#544bec]/30 text-[#544bec] font-mono font-black text-xs">
-                    {studentData?.studentId || 'STU-ID'}
-                  </span>
                   <span
                     className={`px-2.5 py-0.5 rounded-lg text-xs font-bold ${
                       isDemo
@@ -783,7 +780,7 @@ export const StudentDashboardPage: React.FC = () => {
                     Hello, {studentData?.name || 'Student'} 👋
                   </h1>
                   <p className="text-xs text-white/80 font-medium m-0 mt-0.5 truncate">
-                    {getGreeting()} • ID #{cleanStudentId}
+                    {getGreeting()}
                   </p>
                 </div>
               </div>
