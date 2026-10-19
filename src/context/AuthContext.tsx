@@ -165,16 +165,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateUser = (updatedData: Partial<AdminUser>) => {
+    try {
+      const stored = localStorage.getItem('vidya_current_user');
+      const base = stored ? JSON.parse(stored) : {};
+      const merged = { ...base, ...updatedData };
+      localStorage.setItem('vidya_current_user', JSON.stringify(merged));
+      if (merged.role !== 'student') {
+        localStorage.setItem('vidya_admin_user', JSON.stringify(merged));
+      }
+    } catch {}
+
     setUser((prev) => {
       if (!prev) return null;
-      const merged = { ...prev, ...updatedData };
-      try {
-        localStorage.setItem('vidya_current_user', JSON.stringify(merged));
-        if (merged.role !== 'student') {
-          localStorage.setItem('vidya_admin_user', JSON.stringify(merged));
+      let hasChanged = false;
+      for (const key of Object.keys(updatedData) as (keyof AdminUser)[]) {
+        if (prev[key] !== updatedData[key]) {
+          hasChanged = true;
+          break;
         }
-      } catch {}
-      return merged;
+      }
+      if (!hasChanged) return prev;
+      return { ...prev, ...updatedData };
     });
   };
 

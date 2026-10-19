@@ -122,20 +122,23 @@ export const StudentDashboardPage: React.FC = () => {
     return 'Good evening';
   };
 
+  const studentLookupId = user?.id || user?.studentId || (user as any)?._id;
+
   // Fetch full student details
   const fetchStudentProfile = async () => {
-    if (!user) return;
-    const lookupId = user.id || user.studentId || (user as any)._id;
-    if (!lookupId) return;
+    if (!studentLookupId) return;
 
     try {
       setIsLoading(true);
-      const res = await studentService.getById(lookupId);
+      const res = await studentService.getById(studentLookupId);
       if (res.success && res.data) {
         setStudentData(res.data);
-        if (updateUser) {
-          updateUser(res.data);
-        }
+        // Persist in localStorage directly so future reloads have zero flicker
+        try {
+          const stored = localStorage.getItem('vidya_current_user');
+          const base = stored ? JSON.parse(stored) : {};
+          localStorage.setItem('vidya_current_user', JSON.stringify({ ...base, ...res.data }));
+        } catch {}
       }
     } catch {
       // Keep using auth context state
@@ -146,8 +149,10 @@ export const StudentDashboardPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchStudentProfile();
-  }, [user]);
+    if (studentLookupId) {
+      fetchStudentProfile();
+    }
+  }, [studentLookupId]);
 
   // Load database settings to retrieve live admin contact phone
   useEffect(() => {

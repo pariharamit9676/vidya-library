@@ -27,10 +27,10 @@ export const StudentAttendancePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const PAGE_SIZE = 10;
 
+  const lookupId = user?.id || user?.studentId || (user as any)?._id;
+
   // Fetch full student profile
   const fetchStudentProfile = async () => {
-    if (!user) return;
-    const lookupId = user.id || user.studentId || (user as any)._id;
     if (!lookupId) return;
 
     try {
@@ -47,8 +47,10 @@ export const StudentAttendancePage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchStudentProfile();
-  }, [user]);
+    if (lookupId) {
+      fetchStudentProfile();
+    }
+  }, [lookupId]);
 
   // Load admin settings
   useEffect(() => {
