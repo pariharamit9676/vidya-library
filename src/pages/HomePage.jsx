@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useLibrary } from '../context/LibraryContext';
-import { useCategories } from '../services/useLibraryQueries';
+import { useCategories, useStudents } from '../services/useLibraryQueries';
 import { calculateMultiMonthFee, DEFAULT_DISCOUNTS } from '../utils/discountUtils';
 import waterDropletAudio from '../assets/water-droplet-2.mp3';
 import vidyaLogo from '../assets/vidya-library-logo.png';
@@ -48,6 +48,7 @@ import { referralService, findStudentByReferralCode } from '../services/referral
 export const HomePage = () => {
   const { settings, showToast, students, createStudent } = useLibrary();
   const { data: serverCategories } = useCategories();
+  const { data: serverStudents = [] } = useStudents();
 
   // Ambient "Pin Drop Silence" Audio Player: water-droplet-2.mp3 repeating every 2 seconds until paused
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -292,12 +293,54 @@ export const HomePage = () => {
   const [trialSubmitted, setTrialSubmitted] = useState(false);
   const [isSubmittingTrial, setIsSubmittingTrial] = useState(false);
   const [registeredDemoInfo, setRegisteredDemoInfo] = useState(null);
+  const [verifiedReferrer, setVerifiedReferrer] = useState(null);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
 
-  // Live lookup of entered referral code
-  const verifiedReferrer = useMemo(() => {
-    if (!trialForm.referralCode || trialForm.referralCode.trim().length < 3) return null;
-    return findStudentByReferralCode(trialForm.referralCode, students || []);
-  }, [trialForm.referralCode, students]);
+  // Live lookup of entered referral code (instant local check + async server API fallback)
+  useEffect(() => {
+    const rawCode = trialForm.referralCode?.trim()?.toUpperCase();
+    if (!rawCode || rawCode.length < 3) {
+      setVerifiedReferrer(null);
+      setIsVerifyingCode(false);
+      return;
+    }
+
+    // 1. Instant check in client-side pools
+    const combinedPool = [...(serverStudents || []), ...(students || [])];
+    const instantMatch = findStudentByReferralCode(rawCode, combinedPool);
+    if (instantMatch) {
+      setVerifiedReferrer(instantMatch);
+      setIsVerifyingCode(false);
+      return;
+    }
+
+    // 2. Asynchronous API search fallback
+    let isCancelled = false;
+    setIsVerifyingCode(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await studentService.getAll({ search: rawCode });
+        if (!isCancelled) {
+          if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+            const apiMatch = findStudentByReferralCode(rawCode, res.data) || res.data[0];
+            setVerifiedReferrer(apiMatch);
+          } else {
+            setVerifiedReferrer(null);
+          }
+        }
+      } catch {
+        if (!isCancelled) setVerifiedReferrer(null);
+      } finally {
+        if (!isCancelled) setIsVerifyingCode(false);
+      }
+    }, 250);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
+  }, [trialForm.referralCode, serverStudents, students]);
 
   const handleTrialSubmit = async (e) => {
     e.preventDefault();
@@ -386,6 +429,9 @@ export const HomePage = () => {
     setIsTrialModalOpen(false);
     setTrialSubmitted(false);
     setRegisteredDemoInfo(null);
+    setTrialForm({ name: '', phone: '', referralCode: '' });
+    setVerifiedReferrer(null);
+    setIsVerifyingCode(false);
   };
 
   const reviews = [
@@ -1232,29 +1278,46 @@ export const HomePage = () => {
                         onChange={(e) => setTrialForm({ ...trialForm, referralCode: e.target.value.toUpperCase() })}
                         className={`w-full px-3.5 py-2.5 rounded-xl border text-xs outline-none uppercase font-mono tracking-wider transition-all ${
                           verifiedReferrer
-                            ? 'border-emerald-500 bg-emerald-50/30 text-emerald-900 focus:ring-2 focus:ring-emerald-500/20'
+                            ? 'border-emerald-500 bg-emerald-50/40 text-emerald-950 font-bold focus:ring-2 focus:ring-emerald-500/20'
                             : 'border-[#CBD5E1] text-[#192038] focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20'
                         }`}
                       />
-                      {verifiedReferrer && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600">
-                          <CheckCircle2 size={16} />
+                      {isVerifyingCode ? (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          <span className="w-4 h-4 border-2 border-[#544bec] border-t-transparent rounded-full inline-block animate-spin" />
                         </div>
-                      )}
+                      ) : verifiedReferrer ? (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600">
+                          <CheckCircle2 size={18} />
+                        </div>
+                      ) : null}
                     </div>
 
                     {/* Dynamic Feedback on Referral Code */}
-                    {verifiedReferrer ? (
-                      <div className="mt-1.5 p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 font-bold flex items-center gap-1.5">
-                        <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
-                        <span>
-                          Referral Applied! Referred by <strong>{verifiedReferrer.name}</strong> • ₹100 Benefit on Admission
-                        </span>
-                      </div>
-                    ) : trialForm.referralCode.trim().length >= 4 ? (
-                      <p className="mt-1 text-[11px] text-amber-600 font-medium m-0">
-                        Code not recognized, but you can still reserve your free trial desk.
+                    {isVerifyingCode ? (
+                      <p className="mt-1.5 text-[11px] text-[#544bec] font-medium flex items-center gap-1.5 m-0">
+                        <span className="w-3 h-3 border-2 border-[#544bec] border-t-transparent rounded-full animate-spin shrink-0 inline-block" />
+                        <span>Checking referral code...</span>
                       </p>
+                    ) : verifiedReferrer ? (
+                      <div className="mt-2 p-2.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 text-xs text-emerald-950 font-bold flex items-center gap-2.5 shadow-2xs animate-in fade-in duration-200">
+                        <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0 text-xs font-black shadow-2xs">
+                          ✓
+                        </div>
+                        <div className="leading-tight">
+                          <span className="block text-[10px] uppercase font-bold text-emerald-700 tracking-wider">
+                            Referral Code Verified
+                          </span>
+                          <span className="font-extrabold text-xs text-emerald-950">
+                            Referred by: {verifiedReferrer.name} <span className="text-emerald-700 font-semibold">• ₹100 Benefit</span>
+                          </span>
+                        </div>
+                      </div>
+                    ) : trialForm.referralCode.trim().length >= 4 && !isVerifyingCode ? (
+                      <div className="mt-1.5 p-2 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-800 flex items-center gap-1.5">
+                        <span className="text-amber-500 font-bold shrink-0">⚠️</span>
+                        <span>Code not recognized, but you can still reserve your free trial desk.</span>
+                      </div>
                     ) : null}
                   </div>
                 </div>
