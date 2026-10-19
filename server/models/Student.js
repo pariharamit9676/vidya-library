@@ -512,14 +512,21 @@ export class StudentModel {
 
     // If student was Inactive or due date was in past, cycle starts strictly from today (payment date)
     if (wasInactive || (parsedDue && !isNaN(parsedDue.getTime()) && parsedDue.getTime() <= today.getTime())) {
-      const planStr = paymentRecord.plan || student.plan || 'Monthly';
-      const match = planStr.match(/(\d+)\s*Month/i);
-      const months = match ? parseInt(match[1], 10) : 1;
+    const planStr = paymentRecord.plan || student.plan || 'Monthly';
+    const match = planStr.match(/(\d+)\s*Month/i);
+    const months = match ? parseInt(match[1], 10) : 1;
+    if (wasInactive || (parsedDue && !isNaN(parsedDue.getTime()) && parsedDue.getTime() <= today.getTime())) {
       nextDueDate = addMonthsToDate(formatDate(today), months);
     }
 
+    const regularPlan = (paymentRecord.plan && !paymentRecord.plan.includes('Demo'))
+      ? paymentRecord.plan
+      : (student.plan && !student.plan.includes('Demo') ? student.plan : 'Monthly');
+
     const updates = {
       status: 'Active',
+      studentType: 'Regular',
+      plan: regularPlan,
       nextDueDate,
       dueAmount,
       balanceDueDate,

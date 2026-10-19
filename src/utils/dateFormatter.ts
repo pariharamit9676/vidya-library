@@ -130,8 +130,15 @@ export const computeStudentStatus = (student: {
   nextDueDate?: string | Date | number | null;
   nextFeeDueDate?: string | Date | number | null;
   dueAmount?: number | string | null;
+  paymentHistory?: any[];
+  seatNo?: string | null;
 }): 'Demo' | 'Inactive' | 'Overdue' | 'Due Soon' | 'Active' => {
-  if (student.studentType === 'Demo' || student.status === 'Demo' || student.plan?.includes('Demo')) {
+  // If student has payment history, active seat, or active status, they have converted from Demo!
+  const hasPayments = Array.isArray(student.paymentHistory) && student.paymentHistory.length > 0;
+  const hasAssignedSeat = Boolean(student.seatNo && student.seatNo !== '-');
+  const isConverted = hasPayments || (hasAssignedSeat && student.status === 'Active') || (student.studentType === 'Regular' && student.status !== 'Demo');
+
+  if (!isConverted && (student.studentType === 'Demo' || student.status === 'Demo' || student.plan?.includes('Demo'))) {
     return 'Demo';
   }
 

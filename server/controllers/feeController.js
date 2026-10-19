@@ -1,5 +1,6 @@
 import { PaymentModel } from '../models/Payment.js';
 import { StudentModel } from '../models/Student.js';
+import { ReferralModel } from '../models/Referral.js';
 import { formatDate } from '../utils/dateUtils.js';
 
 export class FeeController {
@@ -88,6 +89,13 @@ export class FeeController {
         seatNo: finalSeatNo,
         seatCategory: finalCategory
       });
+
+      // Auto-approve referral for referrer immediately when referee pays fee
+      try {
+        await ReferralModel.checkAndApproveByReferee(student.phone || student.studentId, finalSeatNo);
+      } catch (refErr) {
+        console.error('Auto approve referral on fee payment warning:', refErr.message);
+      }
 
       return res.status(201).json({
         success: true,

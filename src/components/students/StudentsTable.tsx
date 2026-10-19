@@ -126,9 +126,13 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
     },
     {
       header: 'Plan',
-      render: (student) => (
-        <span className="text-[#6B778C] font-medium">{student.plan}</span>
-      )
+      render: (student) => {
+        const isConverted = (student.status === 'Active' && student.seatNo && student.seatNo !== '-') || (Array.isArray(student.paymentHistory) && student.paymentHistory.length > 0) || student.studentType === 'Regular';
+        const displayPlan = isConverted && student.plan?.includes('Demo') ? 'Monthly' : (student.plan || 'Monthly');
+        return (
+          <span className="text-[#6B778C] font-medium">{displayPlan}</span>
+        );
+      }
     },
     {
       header: 'Admission Date',

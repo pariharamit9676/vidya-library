@@ -225,12 +225,20 @@ export const LibraryProvider = ({ children }) => {
   // Record Fee Payment
   const recordFeePayment = ({ studentId, payment, newDueDate, dueAmount }) => {
     const updated = students.map((s) => {
-      if (s.id !== studentId) return s;
+      if (s.id !== studentId && s.studentId !== studentId) return s;
 
       const history = s.feeHistory || [];
       const remaining = dueAmount !== undefined ? Number(dueAmount) : 0;
+      const regularPlan = (payment.plan && !payment.plan.includes('Demo'))
+        ? payment.plan
+        : (s.plan && !s.plan.includes('Demo') ? s.plan : 'Monthly');
+
       return {
         ...s,
+        status: 'Active',
+        studentType: 'Regular',
+        plan: regularPlan,
+        seatNo: payment.seatNo && payment.seatNo !== '-' ? payment.seatNo : s.seatNo,
         lastFeePaidDate: payment.date,
         nextDueDate: newDueDate,
         nextFeeDueDate: newDueDate,

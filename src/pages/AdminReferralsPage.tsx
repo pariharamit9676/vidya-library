@@ -472,21 +472,30 @@ export const AdminReferralsPage: React.FC = () => {
                   )
               },
               {
-                header: 'Action',
+                header: 'Reward Credit Status',
                 headerAlign: 'right',
                 render: (r) => (
-                  <div className="flex items-center justify-end gap-1.5">
-                    {r.status === 'Pending' ? (
-                      <button
-                        onClick={() => handleManualApprove(r)}
-                        className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 transition-all cursor-pointer inline-flex items-center gap-1"
-                        title="Manually Approve Referral and credit ₹100"
-                      >
-                        <Check size={12} />
-                        <span>Approve & Credit</span>
-                      </button>
+                  <div className="flex flex-col items-end gap-0.5">
+                    {r.status === 'Approved' ? (
+                      <>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1">
+                          <CheckCircle2 size={12} className="text-emerald-700" />
+                          <span>Auto-Credited (+₹{r.rewardAmount || 100})</span>
+                        </span>
+                        <span className="text-[10px] text-[#8F9BB3]">
+                          Enrolled & fee paid
+                        </span>
+                      </>
                     ) : (
-                      <span className="text-[11px] text-[#8F9BB3] font-medium">Credited to wallet</span>
+                      <>
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 inline-flex items-center gap-1">
+                          <Clock size={12} className="text-amber-700" />
+                          <span>Awaiting Fee Payment</span>
+                        </span>
+                        <span className="text-[10px] text-[#8F9BB3]">
+                          Auto-credits ₹{r.rewardAmount || 100} upon fee
+                        </span>
+                      </>
                     )}
                   </div>
                 )
@@ -505,11 +514,11 @@ export const AdminReferralsPage: React.FC = () => {
                   </div>
                   {r.status === 'Approved' ? (
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Approved
+                      Auto-Credited
                     </span>
                   ) : (
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                      Pending
+                      Trial Demo
                     </span>
                   )}
                 </div>
@@ -529,17 +538,13 @@ export const AdminReferralsPage: React.FC = () => {
                     <span className="text-[11px] text-[#8F9BB3]">Date:</span>
                     <span className="text-[#6B778C]">{formatDisplayDate(r.createdAt)}</span>
                   </div>
+                  <div className="flex items-center justify-between pt-1 border-t border-[#EDF1F7]">
+                    <span className="text-[10px] text-[#8F9BB3]">Wallet Status:</span>
+                    <span className="text-[10px] font-bold text-emerald-700">
+                      {r.status === 'Approved' ? '✅ Credited automatically' : '⏳ Auto-credits when fee is paid'}
+                    </span>
+                  </div>
                 </div>
-
-                {r.status === 'Pending' && (
-                  <button
-                    onClick={() => handleManualApprove(r)}
-                    className="w-full py-1.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 transition-all cursor-pointer flex items-center justify-center gap-1"
-                  >
-                    <Check size={13} />
-                    <span>Approve & Credit ₹{r.rewardAmount || 100}</span>
-                  </button>
-                )}
               </div>
             )}
           />
