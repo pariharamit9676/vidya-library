@@ -7,7 +7,8 @@ export const FeeReceiptModal = ({
   isOpen,
   onClose,
   receipt,
-  settings
+  settings,
+  isStudentView = false
 }) => {
   if (!isOpen || !receipt) return null;
 
@@ -159,40 +160,54 @@ export const FeeReceiptModal = ({
 
         {/* Modal Action Buttons */}
         <div className="p-3.5 bg-white border-t border-[#EDF1F7] space-y-2">
-          <div className="grid grid-cols-3 gap-1.5">
-            {/* Download PDF Button */}
+          {isStudentView ? (
+            /* Student View: Only Download PDF (Print & WhatsApp removed) */
             <button
               type="button"
               onClick={handleDownload}
-              className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
-              title="Download official PDF file"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white font-extrabold text-xs inline-flex items-center justify-center gap-2 transition-all shadow-md shadow-[#544bec]/25 cursor-pointer"
+              title="Download official PDF receipt"
             >
-              <Download size={13} className="text-[#544bec]" />
-              <span>PDF</span>
+              <Download size={15} />
+              <span>Download Receipt (PDF)</span>
             </button>
+          ) : (
+            /* Admin View: PDF, Print, WhatsApp */
+            <div className="grid grid-cols-3 gap-1.5">
+              {/* Download PDF Button */}
+              <button
+                type="button"
+                onClick={handleDownload}
+                className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
+                title="Download official PDF file"
+              >
+                <Download size={13} className="text-[#544bec]" />
+                <span>PDF</span>
+              </button>
 
-            {/* Print Button */}
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
-              title="Print or Save as PDF"
-            >
-              <Printer size={13} className="text-[#6B778C]" />
-              <span>Print</span>
-            </button>
+              {/* Print Button */}
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
+                title="Print or Save as PDF"
+              >
+                <Printer size={13} className="text-[#6B778C]" />
+                <span>Print</span>
+              </button>
 
-            {/* WhatsApp Share PDF Button */}
-            <button
-              type="button"
-              onClick={handleWhatsApp}
-              className="py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer shadow-[#25D366]/20"
-              title="Send PDF Receipt on WhatsApp"
-            >
-              <MessageSquare size={13} />
-              <span>WhatsApp</span>
-            </button>
-          </div>
+              {/* WhatsApp Share PDF Button */}
+              <button
+                type="button"
+                onClick={handleWhatsApp}
+                className="py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer shadow-[#25D366]/20"
+                title="Send PDF Receipt on WhatsApp"
+              >
+                <MessageSquare size={13} />
+                <span>WhatsApp</span>
+              </button>
+            </div>
+          )}
 
           <button
             type="button"

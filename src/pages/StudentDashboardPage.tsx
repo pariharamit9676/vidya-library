@@ -1271,6 +1271,7 @@ export const StudentDashboardPage: React.FC = () => {
             setSelectedReceipt(null);
           }}
           receipt={selectedReceipt}
+          isStudentView={true}
           settings={{
             libraryName: 'Vidya Library',
             address: '66W8+4FH, Gayatri Nagar, Gwalior, Madhya Pradesh 474005',
