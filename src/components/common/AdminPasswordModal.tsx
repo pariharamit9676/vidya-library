@@ -95,14 +95,14 @@ export const AdminPasswordModal: React.FC<AdminPasswordModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-[#EDF1F7] flex items-center justify-between bg-gradient-to-r from-emerald-50/50 to-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shadow-xs shrink-0 ring-4 ring-[#E8F8F3]/60">
+            <div className="w-10 h-10 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shadow-xs shrink-0 ring-4 ring-[#EEF0FD]/60">
               <ShieldCheck size={20} />
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-extrabold text-[#192038] m-0">
                 {title}
               </h3>
-              <span className="text-[11px] font-semibold text-[#00A97A] block mt-0.5">
+              <span className="text-[11px] font-semibold text-[#544bec] block mt-0.5">
                 Security Verification
               </span>
             </div>
@@ -146,7 +146,7 @@ export const AdminPasswordModal: React.FC<AdminPasswordModalProps> = ({
                 className={`w-full pl-10 pr-10 py-2.5 bg-[#F7F9FC] border rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:bg-white transition-all ${
                   error
                     ? 'border-rose-400 focus:border-rose-500 ring-2 ring-rose-100'
-                    : 'border-[#EDF1F7] focus:border-[#00A97A]'
+                    : 'border-[#EDF1F7] focus:border-[#544bec]'
                 }`}
               />
               <button
@@ -179,7 +179,7 @@ export const AdminPasswordModal: React.FC<AdminPasswordModalProps> = ({
             <button
               type="submit"
               disabled={isLoading || !password.trim()}
-              className="px-5 py-2.5 rounded-xl bg-[#00A97A] text-white hover:bg-[#008f67] text-xs font-extrabold shadow-sm shadow-[#00A97A]/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-[#544bec] text-white hover:bg-[#4338ca] text-xs font-extrabold shadow-sm shadow-[#544bec]/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
             >
               {isLoading ? (
                 <span>Verifying...</span>

@@ -486,7 +486,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             <div className="space-y-4">
               {!studentToEdit && (
                 <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                  <span className="w-5 h-5 rounded-full bg-[#00A97A] text-white text-[11px] font-bold flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-full bg-[#544bec] text-white text-[11px] font-bold flex items-center justify-center">
                     1
                   </span>
                   <span>Basic Information</span>
@@ -510,7 +510,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter full name"
-                      className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all"
+                      className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
                     />
                   </div>
                 </div>
@@ -537,7 +537,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                       className={`w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:bg-white transition-all ${
                         phone.length > 0 && !isPhoneValid
                           ? 'border-amber-400 focus:border-amber-500'
-                          : 'border-[#EDF1F7] focus:border-[#00A97A]'
+                          : 'border-[#EDF1F7] focus:border-[#544bec]'
                       }`}
                     />
                   </div>
@@ -618,7 +618,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                       setAdmissionDate(newDate);
                       setBalanceDueDate(getFutureDateStr(2, newDate));
                     }}
-                    className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all cursor-pointer"
+                    className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all cursor-pointer"
                   />
                 </div>
               </div>
@@ -633,19 +633,19 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     onClick={() => setStudentType('Regular')}
                     className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2.5 ${
                       studentType === 'Regular'
-                        ? 'border-[#00A97A] bg-[#E8F8F3] text-[#00A97A] shadow-xs'
+                        ? 'border-[#544bec] bg-[#EEF0FD] text-[#544bec] shadow-xs'
                         : 'border-[#EDF1F7] bg-white hover:bg-[#F7F9FC] text-[#6B778C]'
                     }`}
                   >
                     <div
                       className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                         studentType === 'Regular'
-                          ? 'border-[#00A97A] bg-white'
+                          ? 'border-[#544bec] bg-white'
                           : 'border-[#CED4DA]'
                       }`}
                     >
                       {studentType === 'Regular' && (
-                        <div className="w-2 h-2 rounded-full bg-[#00A97A]" />
+                        <div className="w-2 h-2 rounded-full bg-[#544bec]" />
                       )}
                     </div>
                     <div>
@@ -663,19 +663,19 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     onClick={() => setStudentType('Demo')}
                     className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-2.5 ${
                       studentType === 'Demo'
-                        ? 'border-[#00A97A] bg-[#E8F8F3] text-[#00A97A] shadow-xs'
+                        ? 'border-[#544bec] bg-[#EEF0FD] text-[#544bec] shadow-xs'
                         : 'border-[#EDF1F7] bg-white hover:bg-[#F7F9FC] text-[#6B778C]'
                     }`}
                   >
                     <div
                       className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                         studentType === 'Demo'
-                          ? 'border-[#00A97A] bg-white'
+                          ? 'border-[#544bec] bg-white'
                           : 'border-[#CED4DA]'
                       }`}
                     >
                       {studentType === 'Demo' && (
-                        <div className="w-2 h-2 rounded-full bg-[#00A97A]" />
+                        <div className="w-2 h-2 rounded-full bg-[#544bec]" />
                       )}
                     </div>
                     <div>
@@ -715,7 +715,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         {!studentToEdit && studentType === 'Regular' && (
           <div className="space-y-5 pt-4 border-t border-[#EDF1F7] animate-in fade-in duration-200">
             <div className="flex items-center gap-2 text-sm font-bold text-[#192038]">
-                <span className="w-5 h-5 rounded-full bg-[#00A97A] text-white text-[11px] font-bold flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-[#544bec] text-white text-[11px] font-bold flex items-center justify-center">
                   2
                 </span>
                 <span>Seat, Duration & Fee Details</span>
@@ -742,7 +742,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                         onClick={() => handleCategoryChange(catKey)}
                         className={`p-2.5 sm:p-3.5 rounded-2xl border transition-all cursor-pointer relative flex flex-col justify-between text-center sm:text-left ${
                           isSelected
-                            ? 'border-[#00A97A] bg-gradient-to-b from-[#E8F8F3] to-[#F4FCF8] shadow-xs ring-1 ring-[#00A97A]/40'
+                            ? 'border-[#544bec] bg-gradient-to-b from-[#EEF0FD] to-[#F4FCF8] shadow-xs ring-1 ring-[#544bec]/40'
                             : 'border-[#EDF1F7] bg-white hover:bg-[#F7F9FC]'
                         }`}
                       >
@@ -751,7 +751,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                           <div
                             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 mx-auto sm:mx-0 transition-all ${
                               isSelected
-                                ? 'bg-[#00A97A] text-white shadow-xs'
+                                ? 'bg-[#544bec] text-white shadow-xs'
                                 : 'bg-[#F7F9FC] text-[#8F9BB3]'
                             }`}
                           >
@@ -761,12 +761,12 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                           <div
                             className={`w-4 h-4 rounded-full border hidden sm:flex items-center justify-center ${
                               isSelected
-                                ? 'border-[#00A97A] bg-white'
+                                ? 'border-[#544bec] bg-white'
                                 : 'border-[#CED4DA]'
                             }`}
                           >
                             {isSelected && (
-                              <div className="w-2 h-2 rounded-full bg-[#00A97A]" />
+                              <div className="w-2 h-2 rounded-full bg-[#544bec]" />
                             )}
                           </div>
                         </div>
@@ -776,7 +776,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                           <div className="text-[11px] sm:text-xs font-black text-[#192038] truncate">
                             {item.label}
                           </div>
-                          <div className="text-xs sm:text-sm font-black text-[#00A97A] mt-0.5">
+                          <div className="text-xs sm:text-sm font-black text-[#544bec] mt-0.5">
                             ₹{price}<span className="text-[9px] sm:text-[10px] font-medium text-[#8F9BB3]">/mo</span>
                           </div>
                           <div className="text-[10px] text-[#8F9BB3] mt-1 leading-tight hidden sm:block">
@@ -786,7 +786,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
 
                         {/* Mobile Active Selection Check Badge */}
                         {isSelected && (
-                          <div className="sm:hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#00A97A] text-white flex items-center justify-center text-[9px] font-black shadow-xs">
+                          <div className="sm:hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#544bec] text-white flex items-center justify-center text-[9px] font-black shadow-xs">
                             ✓
                           </div>
                         )}
@@ -812,7 +812,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                         required
                         value={seatNo}
                         onChange={(e) => setSeatNo(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all cursor-pointer"
+                        className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all cursor-pointer"
                       >
                         <option value="">
                           {availableSeats.length > 0
@@ -831,15 +831,15 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     </span>
                   </div>
 
-                  <div className="sm:col-span-4 bg-[#E8F8F3] border border-[#00A97A]/30 rounded-xl p-2.5 flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[#00A97A] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="sm:col-span-4 bg-[#EEF0FD] border border-[#544bec]/30 rounded-xl p-2.5 flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#544bec] text-white flex items-center justify-center shrink-0 shadow-xs">
                       <Armchair size={16} />
                     </div>
                     <div className="min-w-0">
                       <span className="text-[10px] font-bold text-[#8F9BB3] block leading-none">
                         Selected Seat
                       </span>
-                      <strong className="text-xs font-extrabold text-[#00A97A] block truncate mt-0.5">
+                      <strong className="text-xs font-extrabold text-[#544bec] block truncate mt-0.5">
                         {seatNo ? `Seat ${seatNo}` : 'Not selected'}
                       </strong>
                     </div>
@@ -905,7 +905,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                         onClick={() => handleDurationChange(m)}
                         className={`py-1.5 px-1 rounded-lg text-xs font-bold transition-all cursor-pointer text-center relative ${
                           isSelected
-                            ? 'bg-[#00A97A] text-white shadow-xs ring-1 ring-[#00A97A]'
+                            ? 'bg-[#544bec] text-white shadow-xs ring-1 ring-[#544bec]'
                             : 'bg-white border border-[#EDF1F7] text-[#6B778C] hover:text-[#192038] hover:bg-slate-50'
                         }`}
                       >
@@ -950,7 +950,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     {feeCalculation.hasDiscount ? (
                       <div className="text-[11px] text-[#8F9BB3] mt-0.5">
                         ₹{monthlyRate}/mo × {durationMonths} mo = <span className="line-through">₹{feeCalculation.originalTotal}</span>{' '}
-                        <strong className="text-[#00A97A]">₹{feeCalculation.finalTotal} Total</strong>{' '}
+                        <strong className="text-[#544bec]">₹{feeCalculation.finalTotal} Total</strong>{' '}
                         <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 ml-1">
                           🎉 {feeCalculation.savingsText}
                         </span>
@@ -965,7 +965,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     <span className="text-[10px] font-bold text-[#8F9BB3] block uppercase tracking-wider">
                       {feeCalculation.hasDiscount ? 'Discounted Fee' : 'Total Plan Fee'}
                     </span>
-                    <span className="text-base font-black text-[#00A97A]">
+                    <span className="text-base font-black text-[#544bec]">
                       ₹{totalPlanFee}
                     </span>
                   </div>
@@ -989,7 +989,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                         required
                         value={paidAmount}
                         onChange={(e) => setPaidAmount(Number(e.target.value))}
-                        className="w-full pl-8 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-extrabold text-[#192038] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all"
+                        className="w-full pl-8 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-extrabold text-[#192038] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
                         placeholder="e.g. 500"
                       />
                     </div>
@@ -1003,7 +1003,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setPaidAmount(totalPlanFee)}
-                      className="px-3 py-2 bg-[#E8F8F3] text-[#00A97A] hover:bg-[#00A97A] hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                      className="px-3 py-2 bg-[#EEF0FD] text-[#544bec] hover:bg-[#544bec] hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
                     >
                       Pay Full (₹{totalPlanFee})
                     </button>
@@ -1060,7 +1060,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             <div className="space-y-3 pt-4 border-t border-[#EDF1F7]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-bold text-[#192038]">
-                  <span className="w-5 h-5 rounded-full bg-[#00A97A] text-white text-[11px] font-bold flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-full bg-[#544bec] text-white text-[11px] font-bold flex items-center justify-center">
                     3
                   </span>
                   <span>Notes (Optional)</span>
@@ -1081,7 +1081,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add any remarks or notes about student payment agreement..."
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all resize-none"
+                  className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all resize-none"
                 />
               </div>
             </div>
@@ -1114,7 +1114,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 disabled={!isFormValid}
                 className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-extrabold text-xs inline-flex items-center justify-center gap-1.5 transition-all shadow-xs ${
                   isFormValid
-                    ? 'bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/25 cursor-pointer'
+                    ? 'bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/25 cursor-pointer'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >

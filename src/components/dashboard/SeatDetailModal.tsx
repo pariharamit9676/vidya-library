@@ -19,8 +19,8 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
     switch (seat.status) {
       case 'occupied':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/30">
-            <span className="w-2 h-2 rounded-full bg-[#00A97A]"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/30">
+            <span className="w-2 h-2 rounded-full bg-[#544bec]"></span>
             Occupied (Confirmed Booking)
           </span>
         );
@@ -33,7 +33,7 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
         );
       case 'available':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-[#00A97A] border border-[#00A97A]/30">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-[#544bec] border border-[#544bec]/30">
             <CheckCircle size={12} />
             Available Now
           </span>
@@ -55,7 +55,7 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
         <div className="px-6 py-4.5 border-b border-[#EDF1F7] flex items-center justify-between bg-[#F8FAFD]">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white ${
-              seat.status === 'occupied' ? 'bg-[#00A97A]' :
+              seat.status === 'occupied' ? 'bg-[#544bec]' :
               seat.status === 'reserved' ? 'bg-amber-500' :
               seat.status === 'maintenance' ? 'bg-rose-500' : 'bg-slate-400'
             }`}>
@@ -94,7 +94,7 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
                     Temporary Hold (Expires in 48h)
                   </span>
                 ) : (
-                  <span className="text-[10px] uppercase font-bold text-[#00A97A] bg-[#00A97A]/10 px-2 py-0.5 rounded">
+                  <span className="text-[10px] uppercase font-bold text-[#544bec] bg-[#544bec]/10 px-2 py-0.5 rounded">
                     Confirmed Membership
                   </span>
                 )}
@@ -102,18 +102,18 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
 
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-[#00A97A] text-white font-bold flex items-center justify-center text-sm shadow-xs">
+                  <div className="w-10 h-10 rounded-full bg-[#544bec] text-white font-bold flex items-center justify-center text-sm shadow-xs">
                     {seat.assignedStudent.name.charAt(0)}
                   </div>
                   {seat.assignedStudent.isCheckedIn && (
-                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#00A97A] border-2 border-white" title="Inside" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#544bec] border-2 border-white" title="Inside" />
                   )}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-[#192038]">{seat.assignedStudent.name}</span>
                     {seat.assignedStudent.isCheckedIn ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/30">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/30">
                         Inside
                       </span>
                     ) : (
@@ -130,7 +130,7 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
               <div className="pt-2 border-t border-[#EDF1F7] flex items-center justify-between text-xs">
                 <span className="text-[#8F9BB3]">Booking Period:</span>
                 <span className="font-semibold text-[#192038] flex items-center gap-1">
-                  <Calendar size={13} className="text-[#00A97A]" />
+                  <Calendar size={13} className="text-[#544bec]" />
                   {seat.assignedStudent.bookingPeriod.start} – {seat.assignedStudent.bookingPeriod.end}
                 </span>
               </div>
@@ -157,7 +157,7 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
                   key={month}
                   className={`p-2.5 rounded-xl border text-center font-medium ${
                     isAvail
-                      ? 'bg-[#E8F8F3] border-[#00A97A]/30 text-[#00A97A]'
+                      ? 'bg-[#EEF0FD] border-[#544bec]/30 text-[#544bec]'
                       : 'bg-slate-50 border-slate-200 text-slate-400'
                   }`}
                 >
@@ -185,7 +185,7 @@ export const SeatDetailModal: React.FC<SeatDetailModalProps> = ({
                 if (onBookSeat) onBookSeat(seat.id);
                 onClose();
               }}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm transition-all cursor-pointer"
             >
               Assign to Student
             </button>

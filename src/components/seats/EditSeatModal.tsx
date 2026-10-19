@@ -66,7 +66,7 @@ export const EditSeatModal: React.FC<EditSeatModalProps> = ({
       >
         <div className="p-5 border-b border-[#EDF1F7] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center font-black text-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF0FD] text-[#544bec] flex items-center justify-center font-black text-sm">
               {cell.seatNumber}
             </div>
             <div>
@@ -98,7 +98,7 @@ export const EditSeatModal: React.FC<EditSeatModalProps> = ({
                   onClick={() => handleCategorySelect(cat)}
                   className={`p-2 rounded-xl border text-center font-bold transition-all cursor-pointer ${
                     category === cat
-                      ? 'border-[#00A97A] bg-[#E8F8F3] text-[#00A97A]'
+                      ? 'border-[#544bec] bg-[#EEF0FD] text-[#544bec]'
                       : 'border-[#EDF1F7] bg-white text-[#6B778C] hover:bg-[#F7F9FC]'
                   }`}
                 >
@@ -135,7 +135,7 @@ export const EditSeatModal: React.FC<EditSeatModalProps> = ({
               value={status}
               disabled={cell.status === 'Occupied'}
               onChange={(e) => setStatus(e.target.value as SeatStatus)}
-              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-semibold text-[#192038] focus:border-[#00A97A] focus:bg-white focus:outline-hidden cursor-pointer"
+              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-semibold text-[#192038] focus:border-[#544bec] focus:bg-white focus:outline-hidden cursor-pointer"
             >
               <option value="Available">Available</option>
               <option value="Maintenance">Maintenance</option>
@@ -158,7 +158,7 @@ export const EditSeatModal: React.FC<EditSeatModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-xs font-extrabold text-white transition-all shadow-xs cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-xs font-extrabold text-white transition-all shadow-xs cursor-pointer"
             >
               Update Seat
             </button>

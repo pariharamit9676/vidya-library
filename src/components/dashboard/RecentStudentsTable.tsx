@@ -16,7 +16,7 @@ export const RecentStudentsTable: React.FC = () => {
       header: 'Student',
       render: (student) => (
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-[#E8F8F3] text-[#00A97A] font-bold text-xs flex items-center justify-center shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#EEF0FD] text-[#544bec] font-bold text-xs flex items-center justify-center shrink-0">
             {(student.name || 'S').charAt(0).toUpperCase()}
           </div>
           <div>
@@ -66,7 +66,7 @@ export const RecentStudentsTable: React.FC = () => {
         </h3>
         <button
           onClick={() => navigate('/admin/students')}
-          className="text-xs font-bold text-[#00A97A] hover:underline cursor-pointer bg-transparent border-0"
+          className="text-xs font-bold text-[#544bec] hover:underline cursor-pointer bg-transparent border-0"
         >
           View All
         </button>
@@ -83,7 +83,7 @@ export const RecentStudentsTable: React.FC = () => {
         renderMobileCard={(student) => (
           <div className="p-3 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#E8F8F3] text-[#00A97A] font-bold text-xs flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#EEF0FD] text-[#544bec] font-bold text-xs flex items-center justify-center shrink-0">
                 {(student.name || 'S').charAt(0).toUpperCase()}
               </div>
               <div>

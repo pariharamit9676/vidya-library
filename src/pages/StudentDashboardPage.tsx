@@ -370,7 +370,7 @@ export const StudentDashboardPage: React.FC = () => {
           
           {/* Left Brand */}
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#00A97A] text-white flex items-center justify-center shadow-md shadow-[#00A97A]/25 shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#544bec] text-white flex items-center justify-center shadow-md shadow-[#544bec]/25 shrink-0">
               <BookOpen size={19} className="sm:w-5 sm:h-5" />
             </div>
             <div className="min-w-0">
@@ -378,7 +378,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <span className="font-extrabold text-sm sm:text-base tracking-tight text-[#192038] truncate">
                   Vidya Library
                 </span>
-                <span className="px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-black bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/20 shrink-0">
+                <span className="px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-black bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20 shrink-0">
                   Student Portal
                 </span>
               </div>
@@ -398,7 +398,7 @@ export const StudentDashboardPage: React.FC = () => {
               className="w-9 h-9 rounded-xl border border-[#EDF1F7] bg-[#F7F9FC] text-[#6B778C] hover:text-[#192038] hover:bg-white flex items-center justify-center transition-all cursor-pointer shadow-2xs"
               title="Refresh Profile"
             >
-              <RefreshCw size={15} className={isLoading ? 'animate-spin text-[#00A97A]' : ''} />
+              <RefreshCw size={15} className={isLoading ? 'animate-spin text-[#544bec]' : ''} />
             </button>
 
             {/* Admin-like Student Profile Pill with Dropdown */}
@@ -407,12 +407,12 @@ export const StudentDashboardPage: React.FC = () => {
                 onClick={() => setIsProfileMenuOpen((prev) => !prev)}
                 className={`flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-xl transition-all cursor-pointer border ${
                   isProfileMenuOpen
-                    ? 'bg-[#E8F8F3] border-[#00A97A]/30 shadow-xs'
+                    ? 'bg-[#EEF0FD] border-[#544bec]/30 shadow-xs'
                     : 'bg-white hover:bg-[#F8FAFD] border-[#EDF1F7] shadow-2xs'
                 }`}
                 title="Account Menu"
               >
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#00A97A] text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#544bec] text-white font-black text-xs flex items-center justify-center shadow-xs shrink-0">
                   {(studentData?.name || 'S').charAt(0).toUpperCase()}
                 </div>
                 
@@ -420,7 +420,7 @@ export const StudentDashboardPage: React.FC = () => {
                   <span className="text-xs font-black text-[#192038] truncate max-w-[110px]">
                     {studentData?.name || 'Student'}
                   </span>
-                  <span className="text-[10px] text-[#00A97A] font-mono font-bold">
+                  <span className="text-[10px] text-[#544bec] font-mono font-bold">
                     {studentData?.studentId || 'STUDENT'}
                   </span>
                 </div>
@@ -428,7 +428,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <ChevronDown
                   size={14}
                   className={`text-[#8F9BB3] transition-transform duration-200 ${
-                    isProfileMenuOpen ? 'rotate-180 text-[#00A97A]' : ''
+                    isProfileMenuOpen ? 'rotate-180 text-[#544bec]' : ''
                   }`}
                 />
               </button>
@@ -442,7 +442,7 @@ export const StudentDashboardPage: React.FC = () => {
                       {studentData?.name || 'Student'}
                     </div>
                     <div className="text-[11px] text-[#6B778C] flex items-center gap-1.5 mt-0.5">
-                      <span className="font-mono font-bold text-[#00A97A]">{studentData?.studentId || 'ID'}</span>
+                      <span className="font-mono font-bold text-[#544bec]">{studentData?.studentId || 'ID'}</span>
                       <span>•</span>
                       <span>{studentData?.phone || 'No phone'}</span>
                     </div>
@@ -458,9 +458,9 @@ export const StudentDashboardPage: React.FC = () => {
                         setIsProfileMenuOpen(false);
                         setIsChangePassOpen(true);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#192038] hover:bg-[#E8F8F3] hover:text-[#00A97A] rounded-xl transition-colors cursor-pointer text-left"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#192038] hover:bg-[#EEF0FD] hover:text-[#544bec] rounded-xl transition-colors cursor-pointer text-left"
                     >
-                      <KeyRound size={15} className="text-[#00A97A]" />
+                      <KeyRound size={15} className="text-[#544bec]" />
                       <span>Change Password</span>
                     </button>
 
@@ -503,7 +503,7 @@ export const StudentDashboardPage: React.FC = () => {
           <div
             className={`p-3.5 sm:p-4 rounded-2xl border text-xs font-bold flex items-center justify-between shadow-2xl backdrop-blur-md ${
               feedbackMsg.type === 'success'
-                ? 'bg-white/95 border-[#00A97A]/30 text-[#00A97A] shadow-[#00A97A]/20'
+                ? 'bg-white/95 border-[#544bec]/30 text-[#544bec] shadow-[#544bec]/20'
                 : 'bg-white/95 border-rose-300 text-rose-600 shadow-rose-500/20'
             }`}
           >
@@ -511,7 +511,7 @@ export const StudentDashboardPage: React.FC = () => {
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-black ${
                   feedbackMsg.type === 'success'
-                    ? 'bg-[#E8F8F3] text-[#00A97A]'
+                    ? 'bg-[#EEF0FD] text-[#544bec]'
                     : 'bg-rose-100 text-rose-600'
                 }`}
               >
@@ -540,12 +540,12 @@ export const StudentDashboardPage: React.FC = () => {
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#00A97A] to-[#00C992] text-white text-3xl font-black flex items-center justify-center shadow-lg shadow-[#00A97A]/25 shrink-0">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#544bec] to-[#6d64f7] text-white text-3xl font-black flex items-center justify-center shadow-lg shadow-[#544bec]/25 shrink-0">
                   {(studentData?.name || 'S').charAt(0).toUpperCase()}
                 </div>
                 <div
                   className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center ${
-                    isCheckedIn ? 'bg-[#00A97A]' : 'bg-slate-300'
+                    isCheckedIn ? 'bg-[#544bec]' : 'bg-slate-300'
                   }`}
                   title={isCheckedIn ? 'Currently Checked In' : 'Checked Out'}
                 >
@@ -558,7 +558,7 @@ export const StudentDashboardPage: React.FC = () => {
                   <h1 className="text-2xl font-black tracking-tight text-[#192038] m-0">
                     {getGreeting()}, {studentData?.name || 'Student'} 👋
                   </h1>
-                  <span className="px-2.5 py-0.5 rounded-lg bg-[#E8F8F3] border border-[#00A97A]/30 text-[#00A97A] font-mono font-black text-xs">
+                  <span className="px-2.5 py-0.5 rounded-lg bg-[#EEF0FD] border border-[#544bec]/30 text-[#544bec] font-mono font-black text-xs">
                     {studentData?.studentId || 'STU-ID'}
                   </span>
                   <span
@@ -606,7 +606,7 @@ export const StudentDashboardPage: React.FC = () => {
                     ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
                     : isCheckedIn
                     ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/25'
-                    : 'bg-[#00A97A] hover:bg-[#008f67] text-white shadow-[#00A97A]/30'
+                    : 'bg-[#544bec] hover:bg-[#4338ca] text-white shadow-[#544bec]/30'
                 }`}
               >
                 {punchLoading ? (
@@ -649,8 +649,8 @@ export const StudentDashboardPage: React.FC = () => {
                     <span>Daily limit reached (Maximum 3 check-ins per day)</span>
                   </span>
                 ) : isCheckedIn ? (
-                  <span className="text-[#00A97A] font-bold flex items-center gap-1.5 justify-end">
-                    <span className="w-2 h-2 rounded-full bg-[#00A97A] animate-ping" />
+                  <span className="text-[#544bec] font-bold flex items-center gap-1.5 justify-end">
+                    <span className="w-2 h-2 rounded-full bg-[#544bec] animate-ping" />
                     Checked in {formatLiveCheckInTime(checkInTime)}
                   </span>
                 ) : (
@@ -666,7 +666,7 @@ export const StudentDashboardPage: React.FC = () => {
         {/* ======================================================== */}
         <div className="sm:hidden space-y-3.5">
           {/* 1. Primary Emerald App Header (Flat bottom, no rounded bottom corners) */}
-          <div className="bg-gradient-to-br from-[#00A97A] via-[#00966C] to-[#007A56] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-10 shadow-md relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#544bec] via-[#483ed8] to-[#3730a3] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-10 shadow-md relative overflow-hidden">
             {/* Ambient Background Circles */}
             <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -left-10 bottom-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
@@ -714,15 +714,15 @@ export const StudentDashboardPage: React.FC = () => {
             {/* User Greeting Row */}
             <div className="flex items-center gap-3 relative z-10">
               <div className="relative shrink-0">
-                <div className="w-12 h-12 rounded-full border-2 border-white/50 bg-white text-[#00A97A] font-black text-lg flex items-center justify-center shadow-md shadow-black/20">
+                <div className="w-12 h-12 rounded-full border-2 border-white/50 bg-white text-[#544bec] font-black text-lg flex items-center justify-center shadow-md shadow-black/20">
                   {(studentData?.name || 'S').charAt(0).toUpperCase()}
                 </div>
                 <div
-                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#00966C] flex items-center justify-center ${
+                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#483ed8] flex items-center justify-center ${
                     isCheckedIn ? 'bg-white' : 'bg-slate-300'
                   }`}
                 >
-                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-[#00A97A] animate-pulse' : 'bg-slate-500'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-[#544bec] animate-pulse' : 'bg-slate-500'}`} />
                 </div>
               </div>
 
@@ -744,12 +744,12 @@ export const StudentDashboardPage: React.FC = () => {
                 <span className="text-xs font-black text-[#192038] tracking-tight">
                   Overview
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A]"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#544bec]"></span>
               </div>
               <button
                 type="button"
                 onClick={() => navigate('/student/attendance')}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#00A97A] hover:text-[#008f67] active:text-[#007454] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#544bec] hover:text-[#4338ca] active:text-[#007454] transition-colors cursor-pointer"
               >
                 <span>Attendance Logs</span>
                 <ChevronRight size={12} />
@@ -759,13 +759,13 @@ export const StudentDashboardPage: React.FC = () => {
             <div className="grid grid-cols-3 divide-x divide-slate-100 text-center">
               {/* Col 1: Status */}
               <div className="px-1.5">
-                <div className="w-7 h-7 mx-auto rounded-full bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-1">
+                <div className="w-7 h-7 mx-auto rounded-full bg-[#EEF0FD] text-[#544bec] flex items-center justify-center mb-1">
                   <CheckCircle2 size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] flex items-center justify-center gap-1 truncate">
                   {isCheckedIn ? (
                     <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A] animate-ping shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#544bec] animate-ping shrink-0" />
                       <span>Inside</span>
                     </>
                   ) : (
@@ -779,7 +779,7 @@ export const StudentDashboardPage: React.FC = () => {
 
               {/* Col 2: Total Hours */}
               <div className="px-1.5">
-                <div className="w-7 h-7 mx-auto rounded-full bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-1">
+                <div className="w-7 h-7 mx-auto rounded-full bg-[#EEF0FD] text-[#544bec] flex items-center justify-center mb-1">
                   <Clock size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] font-mono truncate">
@@ -792,7 +792,7 @@ export const StudentDashboardPage: React.FC = () => {
 
               {/* Col 3: Seat No */}
               <div className="px-1.5">
-                <div className="w-7 h-7 mx-auto rounded-full bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-1">
+                <div className="w-7 h-7 mx-auto rounded-full bg-[#EEF0FD] text-[#544bec] flex items-center justify-center mb-1">
                   <Armchair size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] truncate">
@@ -808,10 +808,10 @@ export const StudentDashboardPage: React.FC = () => {
           </div>
 
           {/* 3. Highlight Attendance Punch Card (Primary Color Styled) */}
-          <div className="bg-gradient-to-br from-[#E8F8F3] via-[#F4FCF8] to-[#FFFFFF] border border-[#00A97A]/25 rounded-2xl p-4 shadow-xs relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#EEF0FD] via-[#F5F6FE] to-[#FFFFFF] border border-[#544bec]/25 rounded-2xl p-4 shadow-xs relative overflow-hidden">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <span className="text-[9px] font-black tracking-widest text-[#00A97A] uppercase">
+                <span className="text-[9px] font-black tracking-widest text-[#544bec] uppercase">
                   Welcome
                 </span>
                 <h3 className="text-sm font-black text-[#192038] leading-tight m-0 mt-0.5">
@@ -823,7 +823,7 @@ export const StudentDashboardPage: React.FC = () => {
 
                 <div className="mt-3 space-y-0.5">
                   <div className="text-[11px] font-black text-[#192038]">
-                    Last Punch: <span className="text-[#00A97A] font-mono">{lastPunch.time}</span>
+                    Last Punch: <span className="text-[#544bec] font-mono">{lastPunch.time}</span>
                   </div>
                   <div className="text-[10px] text-[#8F9BB3] font-medium">
                     {lastPunch.date}
@@ -831,7 +831,7 @@ export const StudentDashboardPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigate('/student/attendance')}
-                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#00A97A] hover:text-[#008f67] active:text-[#007454] pt-1 cursor-pointer transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#544bec] hover:text-[#4338ca] active:text-[#007454] pt-1 cursor-pointer transition-colors"
                   >
                     <span>View Attendance History</span>
                     <ArrowRight size={11} />
@@ -850,7 +850,7 @@ export const StudentDashboardPage: React.FC = () => {
                       ? 'bg-slate-200 text-slate-600 border border-slate-300'
                       : isCheckedIn
                       ? 'bg-gradient-to-tr from-rose-500 to-rose-600 text-white shadow-rose-500/30 hover:shadow-rose-500/40'
-                      : 'bg-gradient-to-tr from-[#00A97A] to-[#00C992] text-white shadow-[#00A97A]/30 hover:shadow-[#00A97A]/40'
+                      : 'bg-gradient-to-tr from-[#544bec] to-[#6d64f7] text-white shadow-[#544bec]/30 hover:shadow-[#544bec]/40'
                   }`}
                 >
                   {punchLoading ? (
@@ -884,18 +884,18 @@ export const StudentDashboardPage: React.FC = () => {
             </div>
 
             {/* Bottom status alert / helpline */}
-            <div className="mt-3 pt-2.5 border-t border-[#00A97A]/20 text-[10px] font-medium">
+            <div className="mt-3 pt-2.5 border-t border-[#544bec]/20 text-[10px] font-medium">
               {isPunchBlocked ? (
                 <span className="text-slate-600 font-bold block text-center">
-                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-[#00A97A]">{adminPhone}</a>
+                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-[#544bec]">{adminPhone}</a>
                 </span>
               ) : isDailyLimitReached ? (
                 <span className="text-amber-700 font-bold block text-center">
                   Daily limit reached (Maximum 3 check-ins per day)
                 </span>
               ) : isCheckedIn ? (
-                <span className="text-[#00A97A] font-bold flex items-center justify-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A] animate-ping" />
+                <span className="text-[#544bec] font-bold flex items-center justify-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#544bec] animate-ping" />
                   Live Checked In • Since {formatDisplayTime(checkInTime)}
                 </span>
               ) : (
@@ -916,7 +916,7 @@ export const StudentDashboardPage: React.FC = () => {
           
           <div className="flex items-center justify-between mb-3.5 sm:mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 text-[#00A97A] flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 text-[#544bec] flex items-center justify-center shrink-0">
                 <CreditCard size={16} />
               </div>
               <div>
@@ -952,7 +952,7 @@ export const StudentDashboardPage: React.FC = () => {
                   <tbody className="divide-y divide-[#EDF1F7]">
                     {paginatedPayments.map((pay: any, idx: number) => (
                       <tr key={pay.id || idx} className="hover:bg-[#F8FAFD] transition-colors">
-                        <td className="py-3 font-mono font-bold text-[#00A97A]">
+                        <td className="py-3 font-mono font-bold text-[#544bec]">
                           {pay.receiptNo || `REC-${idx + 1}`}
                         </td>
                         <td className="py-3 text-[#192038] font-semibold">{formatDisplayDate(pay.date)}</td>
@@ -968,7 +968,7 @@ export const StudentDashboardPage: React.FC = () => {
                         <td className="py-3 text-right">
                           <button
                             onClick={() => handleOpenReceipt(pay)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8F8F3] text-[#00A97A] hover:bg-[#00A97A] hover:text-white transition-all cursor-pointer shadow-2xs"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#EEF0FD] text-[#544bec] hover:bg-[#544bec] hover:text-white transition-all cursor-pointer shadow-2xs"
                             title="View & Download Slip"
                           >
                             <Download size={13} />
@@ -990,7 +990,7 @@ export const StudentDashboardPage: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="font-mono font-black text-xs text-[#00A97A] block">
+                        <span className="font-mono font-black text-xs text-[#544bec] block">
                           {pay.receiptNo || `REC-${idx + 1}`}
                         </span>
                         <span className="text-[11px] text-[#8F9BB3]">
@@ -1001,13 +1001,13 @@ export const StudentDashboardPage: React.FC = () => {
                         <span className="text-sm font-black text-[#192038] block">
                           ₹{pay.amount}
                         </span>
-                        <span className="text-[10px] text-[#00A97A] font-bold">Paid</span>
+                        <span className="text-[10px] text-[#544bec] font-bold">Paid</span>
                       </div>
                     </div>
 
                     <button
                       onClick={() => handleOpenReceipt(pay)}
-                      className="w-full py-2 px-3 rounded-lg bg-[#E8F8F3] text-[#00A97A] font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors active:bg-[#00A97A] active:text-white cursor-pointer"
+                      className="w-full py-2 px-3 rounded-lg bg-[#EEF0FD] text-[#544bec] font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors active:bg-[#544bec] active:text-white cursor-pointer"
                     >
                       <Download size={13} />
                       <span>View & Download Receipt Slip</span>
@@ -1056,7 +1056,7 @@ export const StudentDashboardPage: React.FC = () => {
         {/* Support & Amenities Card */}
         <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#192038] to-[#252E4E] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 shadow-lg">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-[#00C992] text-xs font-black">
+            <div className="flex items-center gap-2 text-[#6d64f7] text-xs font-black">
               <Sparkles size={15} />
               <span>Vidya Library Facilities & Support</span>
             </div>
@@ -1071,7 +1071,7 @@ export const StudentDashboardPage: React.FC = () => {
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <a
               href={`tel:${adminPhone}`}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-white text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Phone size={14} />
               <span>Call Admin ({adminPhone})</span>
@@ -1099,7 +1099,7 @@ export const StudentDashboardPage: React.FC = () => {
       <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#EDF1F7] px-6 py-2 flex items-center justify-around shadow-lg">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex flex-col items-center gap-1 text-[#00A97A] font-black cursor-pointer py-1"
+          className="flex flex-col items-center gap-1 text-[#544bec] font-black cursor-pointer py-1"
         >
           <BookOpen size={18} />
           <span className="text-[10px] font-black">Dashboard</span>
@@ -1107,7 +1107,7 @@ export const StudentDashboardPage: React.FC = () => {
 
         <button
           onClick={() => navigate('/student/attendance')}
-          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer py-1"
+          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#544bec] cursor-pointer py-1"
         >
           <CalendarCheck size={18} />
           <span className="text-[10px] font-bold">Attendance</span>
@@ -1115,7 +1115,7 @@ export const StudentDashboardPage: React.FC = () => {
 
         <a
           href={`tel:${adminPhone}`}
-          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer py-1"
+          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#544bec] cursor-pointer py-1"
         >
           <Phone size={18} />
           <span className="text-[10px] font-bold">Call Admin</span>
@@ -1144,7 +1144,7 @@ export const StudentDashboardPage: React.FC = () => {
 
             {/* Modal Header */}
             <div className="text-center mb-5">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#E8F8F3] text-[#00A97A] mb-2.5 border border-[#00A97A]/20 shadow-xs">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#EEF0FD] text-[#544bec] mb-2.5 border border-[#544bec]/20 shadow-xs">
                 <KeyRound size={24} />
               </div>
               <h2 className="text-lg font-black text-[#192038] m-0">
@@ -1178,7 +1178,7 @@ export const StudentDashboardPage: React.FC = () => {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Enter current password"
-                    className="w-full px-3.5 pr-10 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all font-mono"
+                    className="w-full px-3.5 pr-10 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all font-mono"
                   />
                   <button
                     type="button"
@@ -1203,7 +1203,7 @@ export const StudentDashboardPage: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password"
-                    className="w-full px-3.5 pr-10 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all font-mono"
+                    className="w-full px-3.5 pr-10 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all font-mono"
                   />
                   <button
                     type="button"
@@ -1226,7 +1226,7 @@ export const StudentDashboardPage: React.FC = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter new password"
-                  className="w-full px-3.5 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all font-mono"
                 />
               </div>
 
@@ -1242,7 +1242,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isChangingPass}
-                  className="flex-1 py-2.5 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-white text-xs font-black shadow-md shadow-[#00A97A]/25 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-md shadow-[#544bec]/25 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
                 >
                   {isChangingPass ? (
                     <>

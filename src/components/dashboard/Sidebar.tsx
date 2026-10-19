@@ -60,7 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div>
           <div className="h-18 px-6 flex items-center justify-between border-b border-[#EDF1F7]">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#00A97A] text-white flex items-center justify-center shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-[#544bec] text-white flex items-center justify-center shadow-sm">
                 <BookOpen size={20} />
               </div>
               <div>
@@ -100,13 +100,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     item.hideOnMobile ? 'hidden lg:flex' : 'flex'
                   } ${
                     isActive
-                      ? 'bg-[#E8F8F3] text-[#00A97A] font-bold shadow-xs'
+                      ? 'bg-[#EEF0FD] text-[#544bec] font-bold shadow-xs'
                       : 'text-[#6B778C] hover:bg-[#F7F9FC] hover:text-[#192038]'
                   }`}
                 >
                   <Icon
                     size={17}
-                    className={isActive ? 'text-[#00A97A]' : 'text-[#8F9BB3]'}
+                    className={isActive ? 'text-[#544bec]' : 'text-[#8F9BB3]'}
                   />
                   <span>{item.label}</span>
                 </Link>

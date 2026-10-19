@@ -63,7 +63,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
     switch (status) {
       case 'Paid':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#E8F8F3] text-[#00A97A] border border-[#BBF7D0]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#EEF0FD] text-[#544bec] border border-[#BBF7D0]">
             Paid
           </span>
         );
@@ -155,7 +155,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
       header: 'Amount Paid',
       align: 'right',
       render: (row) => (
-        <span className="font-bold text-[#00A97A]">₹{row.amountPaid}</span>
+        <span className="font-bold text-[#544bec]">₹{row.amountPaid}</span>
       )
     },
     {
@@ -166,7 +166,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
           {row.dueAmount > 0 ? (
             <span className="font-extrabold text-[#FF3D71]">₹{row.dueAmount}</span>
           ) : (
-            <span className="text-[#00A97A] font-bold text-xs">₹0</span>
+            <span className="text-[#544bec] font-bold text-xs">₹0</span>
           )}
           {row.dueAmount > 0 && row.balanceDueDate && (
             <span className="block text-[10px] text-[#8F9BB3] font-normal">
@@ -197,7 +197,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
           <button
             type="button"
             onClick={() => onCollectFee(row.studentRef)}
-            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-xs cursor-pointer transition-all"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-xs cursor-pointer transition-all"
             title="Collect fee"
           >
             <IndianRupee size={12} />
@@ -244,7 +244,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
         <div className="grid grid-cols-2 gap-2 bg-[#F8FAFD] rounded-xl p-2.5 text-xs border border-[#EDF1F7]">
           {/* Seat & Category */}
           <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Armchair size={13} className="text-[#00A97A] shrink-0" />
+            <Armchair size={13} className="text-[#544bec] shrink-0" />
             <span className="text-[11px]">Seat:</span>
             <strong className="text-[#192038] font-bold text-xs truncate">
               {row.seatNo && row.seatNo !== '-' ? `#${row.seatNo}` : 'None'}
@@ -261,10 +261,10 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
 
           {/* Phone */}
           <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Phone size={13} className="text-[#00A97A] shrink-0" />
+            <Phone size={13} className="text-[#544bec] shrink-0" />
             <a
               href={`tel:${row.phone}`}
-              className="text-[#00A97A] font-bold text-xs hover:underline truncate"
+              className="text-[#544bec] font-bold text-xs hover:underline truncate"
             >
               {row.phone}
             </a>
@@ -293,7 +293,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-between px-2.5 py-1 text-[11px] text-[#00A97A] font-bold bg-[#E8F8F3]/60 rounded-lg">
+          <div className="flex items-center justify-between px-2.5 py-1 text-[11px] text-[#544bec] font-bold bg-[#EEF0FD]/60 rounded-lg">
             <span>✓ All dues cleared</span>
             <span>Paid: ₹{row.amountPaid}</span>
           </div>
@@ -304,7 +304,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
           <button
             type="button"
             onClick={() => onCollectFee(row.studentRef)}
-            className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-xs cursor-pointer transition-all"
+            className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-xs cursor-pointer transition-all"
           >
             <IndianRupee size={12} />
             <span>Collect Fee</span>

@@ -50,7 +50,7 @@ export const EditRatesModal: React.FC<EditRatesModalProps> = ({
       >
         <div className="p-5 border-b border-[#EDF1F7] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF0FD] text-[#544bec] flex items-center justify-center">
               <Crown size={18} />
             </div>
             <div>
@@ -84,7 +84,7 @@ export const EditRatesModal: React.FC<EditRatesModalProps> = ({
               required
               value={premiumRate}
               onChange={(e) => setPremiumRate(Number(e.target.value))}
-              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-bold text-[#192038] focus:border-[#00A97A] focus:bg-white focus:outline-hidden"
+              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-bold text-[#192038] focus:border-[#544bec] focus:bg-white focus:outline-hidden"
             />
           </div>
 
@@ -101,14 +101,14 @@ export const EditRatesModal: React.FC<EditRatesModalProps> = ({
               required
               value={lockerRate}
               onChange={(e) => setLockerRate(Number(e.target.value))}
-              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-bold text-[#192038] focus:border-[#00A97A] focus:bg-white focus:outline-hidden"
+              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-bold text-[#192038] focus:border-[#544bec] focus:bg-white focus:outline-hidden"
             />
           </div>
 
           {/* Normal */}
           <div>
             <label className="font-bold text-[#192038] flex items-center gap-2 mb-1.5">
-              <Armchair size={15} className="text-[#00A97A]" />
+              <Armchair size={15} className="text-[#544bec]" />
               <span>Normal Rate (₹/month)</span>
             </label>
             <input
@@ -118,7 +118,7 @@ export const EditRatesModal: React.FC<EditRatesModalProps> = ({
               required
               value={normalRate}
               onChange={(e) => setNormalRate(Number(e.target.value))}
-              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-bold text-[#192038] focus:border-[#00A97A] focus:bg-white focus:outline-hidden"
+              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl font-bold text-[#192038] focus:border-[#544bec] focus:bg-white focus:outline-hidden"
             />
           </div>
 
@@ -132,7 +132,7 @@ export const EditRatesModal: React.FC<EditRatesModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-xs font-extrabold text-white transition-all shadow-xs cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-xs font-extrabold text-white transition-all shadow-xs cursor-pointer"
             >
               Save Rates
             </button>

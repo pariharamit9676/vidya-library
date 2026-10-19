@@ -46,7 +46,7 @@ export const StudentTableToolbar: React.FC<StudentTableToolbarProps> = ({
           onClick={() => setIsOpen((prev) => !prev)}
           className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold border inline-flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
             isOpen || activeFilterCount > 0
-              ? 'bg-[#00A97A] text-white border-[#00A97A] shadow-xs'
+              ? 'bg-[#544bec] text-white border-[#544bec] shadow-xs'
               : 'bg-white text-[#192038] border-[#EDF1F7] hover:bg-[#F8FAFD]'
           }`}
           title="Filter Students"
@@ -76,7 +76,7 @@ export const StudentTableToolbar: React.FC<StudentTableToolbarProps> = ({
                   onClick={() => onFilterChange({ ...filters, status: st })}
                   className={`px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#00A97A] text-white shadow-2xs'
+                      ? 'bg-[#544bec] text-white shadow-2xs'
                       : 'bg-[#F7F9FC] text-[#6B778C] border border-[#EDF1F7] hover:bg-[#EDF1F7]'
                   }`}
                 >
@@ -94,7 +94,7 @@ export const StudentTableToolbar: React.FC<StudentTableToolbarProps> = ({
               <select
                 value={filters.plan}
                 onChange={(e) => onFilterChange({ ...filters, plan: e.target.value })}
-                className="bg-white border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] py-1.5 px-3 focus:outline-hidden focus:border-[#00A97A] cursor-pointer"
+                className="bg-white border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] py-1.5 px-3 focus:outline-hidden focus:border-[#544bec] cursor-pointer"
               >
                 <option value="All">All Plans</option>
                 <option value="Monthly">Monthly</option>
@@ -109,7 +109,7 @@ export const StudentTableToolbar: React.FC<StudentTableToolbarProps> = ({
               <select
                 value={filters.seat}
                 onChange={(e) => onFilterChange({ ...filters, seat: e.target.value })}
-                className="bg-white border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] py-1.5 px-3 focus:outline-hidden focus:border-[#00A97A] cursor-pointer"
+                className="bg-white border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] py-1.5 px-3 focus:outline-hidden focus:border-[#544bec] cursor-pointer"
               >
                 <option value="All">All Seats</option>
                 <option value="Assigned">Assigned Only</option>

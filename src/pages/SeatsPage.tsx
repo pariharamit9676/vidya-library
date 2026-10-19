@@ -585,7 +585,7 @@ export const SeatsPage: React.FC = () => {
           </Link>
           <Link
             to="/admin/students"
-            className="px-4 py-2.5 rounded-xl bg-[#00A97A] text-white text-xs font-extrabold shadow-sm shadow-[#00A97A]/30 transition-all"
+            className="px-4 py-2.5 rounded-xl bg-[#544bec] text-white text-xs font-extrabold shadow-sm shadow-[#544bec]/30 transition-all"
           >
             Go to Students
           </Link>

@@ -49,12 +49,12 @@ export const FeeReceiptModal = ({
         {/* Compact Header */}
         <div className="px-4 py-3 border-b border-[#EDF1F7] flex items-center justify-between bg-white">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#EEF0FD] text-[#544bec] flex items-center justify-center">
               <CheckCircle size={16} />
             </div>
             <div>
               <h3 className="text-sm font-extrabold text-[#192038] m-0 leading-tight">Payment Receipt</h3>
-              <span className="text-[10px] text-[#00A97A] font-bold">Official PDF Ready</span>
+              <span className="text-[10px] text-[#544bec] font-bold">Official PDF Ready</span>
             </div>
           </div>
           <button
@@ -99,7 +99,7 @@ export const FeeReceiptModal = ({
             )}
             <div className="flex justify-between">
               <span className="text-[#8F9BB3]">Seat No:</span>
-              <span className="font-bold text-[#00A97A]">{receipt.seatNo && receipt.seatNo !== '-' ? `Seat #${receipt.seatNo}` : 'Unassigned'}</span>
+              <span className="font-bold text-[#544bec]">{receipt.seatNo && receipt.seatNo !== '-' ? `Seat #${receipt.seatNo}` : 'Unassigned'}</span>
             </div>
             {receipt.seatCategory && (
               <div className="flex justify-between">
@@ -130,15 +130,15 @@ export const FeeReceiptModal = ({
             {receipt.newDueDate && (
               <div className="flex justify-between pt-1 border-t border-[#EDF1F7]">
                 <span className="text-[#8F9BB3]">Next Due Date:</span>
-                <strong className="text-[#00A97A]">{receipt.newDueDate}</strong>
+                <strong className="text-[#544bec]">{receipt.newDueDate}</strong>
               </div>
             )}
           </div>
 
           {/* Amount Paid Box */}
-          <div className="p-3 bg-[#E8F8F3] border border-[#BBF7D0] rounded-xl flex items-center justify-between">
-            <span className="text-xs font-bold text-[#00A97A]">Amount Paid</span>
-            <span className="text-xl font-black text-[#00A97A]">
+          <div className="p-3 bg-[#EEF0FD] border border-[#BBF7D0] rounded-xl flex items-center justify-between">
+            <span className="text-xs font-bold text-[#544bec]">Amount Paid</span>
+            <span className="text-xl font-black text-[#544bec]">
               ₹{Number(receipt.amount || 0).toLocaleString('en-IN')}.00
             </span>
           </div>
@@ -167,7 +167,7 @@ export const FeeReceiptModal = ({
               className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
               title="Download official PDF file"
             >
-              <Download size={13} className="text-[#00A97A]" />
+              <Download size={13} className="text-[#544bec]" />
               <span>PDF</span>
             </button>
 

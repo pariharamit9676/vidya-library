@@ -15,7 +15,7 @@ export const DonutCharts: React.FC = () => {
       name: 'Occupied',
       value: occupiedSeats,
       percentage: `${totalSeats > 0 ? ((occupiedSeats / totalSeats) * 100).toFixed(1) : 0}%`,
-      color: '#00A97A'
+      color: '#544bec'
     },
     {
       name: 'Available',
@@ -59,7 +59,7 @@ export const DonutCharts: React.FC = () => {
           <h3 className="text-sm font-extrabold text-[#192038] m-0">
             Seat Occupancy
           </h3>
-          <span className="text-[11px] font-bold text-[#00A97A] bg-[#E8F8F3] px-2.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-bold text-[#544bec] bg-[#EEF0FD] px-2.5 py-0.5 rounded-full">
             {totalSeats > 0 ? ((occupiedSeats / totalSeats) * 100).toFixed(1) : 0}% Occupied
           </span>
         </div>

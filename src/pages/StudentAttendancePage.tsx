@@ -134,7 +134,7 @@ export const StudentAttendancePage: React.FC = () => {
               disabled={isLoading}
               className="px-3 py-1.5 rounded-xl border border-[#EDF1F7] bg-[#F7F9FC] text-xs font-bold text-[#6B778C] hover:text-[#192038] hover:bg-white flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
             >
-              <RefreshCw size={13} className={isLoading ? 'animate-spin text-[#00A97A]' : ''} />
+              <RefreshCw size={13} className={isLoading ? 'animate-spin text-[#544bec]' : ''} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
@@ -151,15 +151,15 @@ export const StudentAttendancePage: React.FC = () => {
           <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold text-[#8F9BB3]">Current Status</span>
-              <div className="w-7 h-7 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
                 <CheckCircle2 size={14} />
               </div>
             </div>
             <div className="text-sm sm:text-base font-black text-[#192038] flex items-center gap-1.5">
               {isCheckedIn ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-[#00A97A] animate-ping" />
-                  <span className="text-[#00A97A]">Inside Library</span>
+                  <span className="w-2 h-2 rounded-full bg-[#544bec] animate-ping" />
+                  <span className="text-[#544bec]">Inside Library</span>
                 </>
               ) : (
                 <span className="text-[#6B778C]">Outside Library</span>
@@ -174,7 +174,7 @@ export const StudentAttendancePage: React.FC = () => {
           <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold text-[#8F9BB3]">Total Sessions</span>
-              <div className="w-7 h-7 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
                 <CalendarCheck size={14} />
               </div>
             </div>
@@ -190,7 +190,7 @@ export const StudentAttendancePage: React.FC = () => {
           <div className="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold text-[#8F9BB3]">Assigned Seat</span>
-              <div className="w-7 h-7 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
                 <Armchair size={14} />
               </div>
             </div>
@@ -216,7 +216,7 @@ export const StudentAttendancePage: React.FC = () => {
                 setCurrentPage(1);
               }}
               placeholder="Search by date (e.g. 19 Oct 2026, Oct, morning...)"
-              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#F8FAFD] border border-[#EDF1F7] text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all"
+              className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-[#F8FAFD] border border-[#EDF1F7] text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
             />
             {searchDate && (
               <button
@@ -265,7 +265,7 @@ export const StudentAttendancePage: React.FC = () => {
                             <Calendar size={13} className="text-[#8F9BB3]" />
                             <span>{formatDisplayDate(record.date)}</span>
                           </td>
-                          <td className="py-3 text-[#00A97A] font-bold font-mono">
+                          <td className="py-3 text-[#544bec] font-bold font-mono">
                             {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
                           </td>
                           <td className="py-3 text-[#6B778C] font-semibold font-mono">
@@ -303,12 +303,12 @@ export const StudentAttendancePage: React.FC = () => {
                     >
                       <div className="min-w-0 flex-1">
                         <div className="text-xs font-black text-[#192038] flex items-center gap-1.5 truncate">
-                          <Calendar size={13} className="text-[#00A97A] shrink-0" />
+                          <Calendar size={13} className="text-[#544bec] shrink-0" />
                           <span>{formatDisplayDate(record.date)}</span>
                         </div>
                         <div className="text-[11px] text-[#6B778C] mt-1.5 flex items-center gap-2 flex-wrap">
                           <span>
-                            In: <strong className="text-[#00A97A] font-mono">{record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}</strong>
+                            In: <strong className="text-[#544bec] font-mono">{record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}</strong>
                           </span>
                           <span>•</span>
                           <span>
@@ -323,7 +323,7 @@ export const StudentAttendancePage: React.FC = () => {
                         </span>
                         <span
                           className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded mt-0.5 ${
-                            isCompleted ? 'bg-[#EDF1F7] text-[#6B778C]' : 'bg-[#E8F8F3] text-[#00A97A]'
+                            isCompleted ? 'bg-[#EDF1F7] text-[#6B778C]' : 'bg-[#EEF0FD] text-[#544bec]'
                           }`}
                         >
                           {isCompleted ? 'Done' : 'Active'}
@@ -378,7 +378,7 @@ export const StudentAttendancePage: React.FC = () => {
               {searchDate && (
                 <button
                   onClick={() => setSearchDate('')}
-                  className="mt-3 px-3 py-1.5 rounded-lg bg-[#E8F8F3] text-[#00A97A] font-bold text-xs cursor-pointer"
+                  className="mt-3 px-3 py-1.5 rounded-lg bg-[#EEF0FD] text-[#544bec] font-bold text-xs cursor-pointer"
                 >
                   Clear Search
                 </button>
@@ -391,7 +391,7 @@ export const StudentAttendancePage: React.FC = () => {
         {/* Footer Support Card */}
         <div className="p-4 sm:p-5 rounded-2xl bg-[#192038] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
           <div className="space-y-0.5">
-            <div className="flex items-center gap-1.5 text-[#00C992] text-xs font-black">
+            <div className="flex items-center gap-1.5 text-[#6d64f7] text-xs font-black">
               <Sparkles size={14} />
               <span>Need help with attendance?</span>
             </div>
@@ -402,7 +402,7 @@ export const StudentAttendancePage: React.FC = () => {
 
           <a
             href={`tel:${adminPhone}`}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-white text-xs font-black shadow-sm flex items-center justify-center gap-1.5 transition-all"
+            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-sm flex items-center justify-center gap-1.5 transition-all"
           >
             <Phone size={13} />
             <span>Call Admin ({adminPhone})</span>
@@ -423,7 +423,7 @@ export const StudentAttendancePage: React.FC = () => {
 
         <button
           onClick={() => {}}
-          className="flex flex-col items-center gap-1 text-[#00A97A] font-black cursor-pointer py-1"
+          className="flex flex-col items-center gap-1 text-[#544bec] font-black cursor-pointer py-1"
         >
           <CalendarCheck size={18} />
           <span className="text-[10px] font-black">Attendance</span>
@@ -431,7 +431,7 @@ export const StudentAttendancePage: React.FC = () => {
 
         <a
           href={`tel:${adminPhone}`}
-          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer py-1"
+          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#544bec] cursor-pointer py-1"
         >
           <Phone size={18} />
           <span className="text-[10px] font-bold">Contact</span>

@@ -140,7 +140,7 @@ export const ReportsPage: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
           {/* Time Range Selector */}
           <div className="flex-1 sm:flex-initial bg-white border border-[#EDF1F7] rounded-xl px-2.5 sm:px-3 py-2 flex items-center justify-between sm:justify-start gap-2 text-xs font-semibold text-[#192038] shadow-xs">
-            <Calendar size={14} className="text-[#00A97A] shrink-0" />
+            <Calendar size={14} className="text-[#544bec] shrink-0" />
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value as any)}
@@ -156,7 +156,7 @@ export const ReportsPage: React.FC = () => {
           {/* Export CSV Button */}
           <button
             onClick={handleExportReportCSV}
-            className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 inline-flex items-center justify-center gap-1.5 sm:gap-2 transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
+            className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/30 inline-flex items-center justify-center gap-1.5 sm:gap-2 transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
           >
             <Download size={14} />
             <span className="hidden xs:inline sm:inline">Export CSV</span>
@@ -176,12 +176,12 @@ export const ReportsPage: React.FC = () => {
             <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5 sm:mt-1 flex items-baseline gap-1">
               <span>₹{monthlyRevenue.toLocaleString('en-IN')}</span>
             </div>
-            <div className="text-[10px] sm:text-[11px] text-[#00A97A] font-semibold mt-0.5 sm:mt-1 flex items-center gap-1 truncate">
+            <div className="text-[10px] sm:text-[11px] text-[#544bec] font-semibold mt-0.5 sm:mt-1 flex items-center gap-1 truncate">
               <TrendingUp size={11} className="shrink-0" />
               <span>+18.4% vs last mo</span>
             </div>
           </div>
-          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0 shadow-xs">
             <IndianRupee size={16} className="sm:hidden" />
             <IndianRupee size={22} className="hidden sm:block" />
           </div>
@@ -196,7 +196,7 @@ export const ReportsPage: React.FC = () => {
             <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5 sm:mt-1">
               {Math.min(100, Math.round((insideStudents / (totalStudents || 1)) * 100))}%
             </div>
-            <div className="text-[10px] sm:text-[11px] text-[#00A97A] font-semibold mt-0.5 sm:mt-1 truncate">
+            <div className="text-[10px] sm:text-[11px] text-[#544bec] font-semibold mt-0.5 sm:mt-1 truncate">
               {insideStudents} of {totalStudents} seats active
             </div>
           </div>
@@ -258,7 +258,7 @@ export const ReportsPage: React.FC = () => {
                 Fee collections over recent months vs target
               </p>
             </div>
-            <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A]">
+            <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold bg-[#EEF0FD] text-[#544bec]">
               +28% YoY
             </span>
           </div>
@@ -275,8 +275,8 @@ export const ReportsPage: React.FC = () => {
                     style={{ height: item.height }}
                     className={`w-full max-w-[36px] sm:max-w-[42px] rounded-t-lg sm:rounded-t-xl transition-all ${
                       item.isCurrent
-                        ? 'bg-[#00A97A] shadow-md shadow-[#00A97A]/25'
-                        : 'bg-[#E8F8F3] hover:bg-[#00A97A]/50'
+                        ? 'bg-[#544bec] shadow-md shadow-[#544bec]/25'
+                        : 'bg-[#EEF0FD] hover:bg-[#544bec]/50'
                     }`}
                   />
                   <span className="text-[10px] sm:text-[11px] font-semibold text-[#8F9BB3] mt-2">
@@ -289,11 +289,11 @@ export const ReportsPage: React.FC = () => {
 
           <div className="flex items-center justify-between text-[11px] sm:text-xs text-[#8F9BB3] pt-1">
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-sm bg-[#00A97A]" />
+              <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-sm bg-[#544bec]" />
               <span>Current</span>
             </div>
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-sm bg-[#E8F8F3]" />
+              <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-sm bg-[#EEF0FD]" />
               <span>Past Baseline</span>
             </div>
           </div>
@@ -330,7 +330,7 @@ export const ReportsPage: React.FC = () => {
                   <div className="w-full h-2 sm:h-2.5 bg-[#F7F9FC] rounded-full overflow-hidden border border-[#EDF1F7]">
                     <div
                       style={{ width: `${Math.max(8, percentage)}%` }}
-                      className="h-full bg-[#00A97A] rounded-full transition-all duration-500"
+                      className="h-full bg-[#544bec] rounded-full transition-all duration-500"
                     />
                   </div>
                 </div>
@@ -340,7 +340,7 @@ export const ReportsPage: React.FC = () => {
 
           <div className="p-2.5 sm:p-3 bg-[#F8FAFD] rounded-xl border border-[#EDF1F7] flex items-center justify-between text-[11px] sm:text-xs">
             <span className="text-[#8F9BB3] font-medium">Most Popular Slot:</span>
-            <span className="font-bold text-[#00A97A]">Full Day & Morning Shift</span>
+            <span className="font-bold text-[#544bec]">Full Day & Morning Shift</span>
           </div>
         </div>
 
@@ -355,18 +355,18 @@ export const ReportsPage: React.FC = () => {
                 Paid vs upcoming vs overdue collections
               </p>
             </div>
-            <span className="text-[11px] sm:text-xs font-bold text-[#00A97A]">
+            <span className="text-[11px] sm:text-xs font-bold text-[#544bec]">
               {Math.round(((totalStudents - overdueStudents.length) / (totalStudents || 1)) * 100)}% On-Track
             </span>
           </div>
 
           <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 sm:pt-2">
-            <div className="p-2 sm:p-3 bg-[#E8F8F3] rounded-xl border border-[#00A97A]/20">
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold text-[#00A97A] block truncate">Paid / Active</span>
-              <span className="text-base sm:text-lg font-black text-[#00A97A] mt-0.5 block">
+            <div className="p-2 sm:p-3 bg-[#EEF0FD] rounded-xl border border-[#544bec]/20">
+              <span className="text-[9px] sm:text-[10px] uppercase font-bold text-[#544bec] block truncate">Paid / Active</span>
+              <span className="text-base sm:text-lg font-black text-[#544bec] mt-0.5 block">
                 {activeStudents.length}
               </span>
-              <span className="text-[9px] sm:text-[10px] text-[#00A97A] font-medium truncate block">Up to date</span>
+              <span className="text-[9px] sm:text-[10px] text-[#544bec] font-medium truncate block">Up to date</span>
             </div>
 
             <div className="p-2 sm:p-3 bg-amber-50 rounded-xl border border-amber-200">
@@ -411,10 +411,10 @@ export const ReportsPage: React.FC = () => {
           {/* Hourly Density: 2 cols on mobile, 4 on desktop */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 sm:pt-2">
             {[
-              { slot: 'Morning', hours: '08 AM - 12 PM', density: 'High', fill: 'bg-[#00A97A]', percent: '85%' },
-              { slot: 'Afternoon', hours: '12 PM - 04 PM', density: 'Moderate', fill: 'bg-[#00A97A]/75', percent: '65%' },
-              { slot: 'Evening', hours: '04 PM - 08 PM', density: 'Peak', fill: 'bg-[#00A97A]', percent: '95%' },
-              { slot: 'Night', hours: '08 PM - 11 PM', density: 'Moderate', fill: 'bg-[#00A97A]/60', percent: '50%' }
+              { slot: 'Morning', hours: '08 AM - 12 PM', density: 'High', fill: 'bg-[#544bec]', percent: '85%' },
+              { slot: 'Afternoon', hours: '12 PM - 04 PM', density: 'Moderate', fill: 'bg-[#544bec]/75', percent: '65%' },
+              { slot: 'Evening', hours: '04 PM - 08 PM', density: 'Peak', fill: 'bg-[#544bec]', percent: '95%' },
+              { slot: 'Night', hours: '08 PM - 11 PM', density: 'Moderate', fill: 'bg-[#544bec]/60', percent: '50%' }
             ].map((p, idx) => (
               <div key={idx} className="p-2.5 sm:p-3 bg-[#F8FAFD] rounded-xl border border-[#EDF1F7] text-center space-y-1.5 sm:space-y-2">
                 <span className="text-[11px] font-bold text-[#192038] block truncate">{p.slot}</span>
@@ -422,7 +422,7 @@ export const ReportsPage: React.FC = () => {
                 <div className="w-full h-1.5 sm:h-2 bg-[#EDF1F7] rounded-full overflow-hidden">
                   <div style={{ width: p.percent }} className={`h-full ${p.fill} rounded-full`} />
                 </div>
-                <span className="text-[10px] font-extrabold text-[#00A97A] block">{p.density}</span>
+                <span className="text-[10px] font-extrabold text-[#544bec] block">{p.density}</span>
               </div>
             ))}
           </div>
@@ -469,7 +469,7 @@ export const ReportsPage: React.FC = () => {
             {
               header: 'Active Inside',
               render: (row) => (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A]">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FD] text-[#544bec]">
                   {row.inside} inside
                 </span>
               )
@@ -480,7 +480,7 @@ export const ReportsPage: React.FC = () => {
             },
             {
               header: 'Est. Monthly Revenue',
-              render: (row) => <span className="font-bold text-[#00A97A]">{row.rev}</span>
+              render: (row) => <span className="font-bold text-[#544bec]">{row.rev}</span>
             },
             {
               header: 'Collection Rate',
@@ -500,8 +500,8 @@ export const ReportsPage: React.FC = () => {
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-black text-xs text-[#00A97A]">{row.rev}</div>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A]">
+                <div className="font-black text-xs text-[#544bec]">{row.rev}</div>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#EEF0FD] text-[#544bec]">
                   {row.ratePercent}
                 </span>
               </div>

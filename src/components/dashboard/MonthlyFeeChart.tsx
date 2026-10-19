@@ -61,7 +61,7 @@ export const MonthlyFeeChart: React.FC = () => {
       return (
         <div className="bg-white px-3 py-2 rounded-xl border border-[#EDF1F7] shadow-lg text-center">
           <div className="text-[10px] text-[#8F9BB3] font-bold uppercase">{data.month} 2026</div>
-          <div className="text-xs font-black text-[#00A97A]">
+          <div className="text-xs font-black text-[#544bec]">
             ₹{data.collection.toLocaleString('en-IN')}
           </div>
         </div>
@@ -88,7 +88,7 @@ export const MonthlyFeeChart: React.FC = () => {
         {/* Dynamic Highlight Badge for Current Month */}
         <div className="absolute top-0 right-14 sm:right-16 z-10 bg-white px-3 py-1.5 rounded-xl border border-[#EDF1F7] shadow-md text-center hidden sm:block pointer-events-none">
           <div className="text-[10px] text-[#8F9BB3] font-semibold">{currentMonthLabel}</div>
-          <div className="text-xs font-extrabold text-[#00A97A]">
+          <div className="text-xs font-extrabold text-[#544bec]">
             ₹{currentCollection.toLocaleString('en-IN')}
           </div>
         </div>
@@ -116,7 +116,7 @@ export const MonthlyFeeChart: React.FC = () => {
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.isCurrent ? '#00A97A' : '#C7F2E5'}
+                  fill={entry.isCurrent ? '#544bec' : '#dcd8fb'}
                 />
               ))}
             </Bar>

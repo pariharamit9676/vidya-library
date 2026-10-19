@@ -71,7 +71,7 @@ export const createReceiptPDF = (
   doc.setLineWidth(0.4);
   doc.roundedRect(margin, margin, contentWidth, pageHeight - margin * 2, 4, 4, 'S');
 
-  // 2. Top Header Accent Banner (Emerald Green #00A97A)
+  // 2. Top Header Accent Banner (Emerald Green #544bec)
   doc.setFillColor(0, 169, 122);
   doc.roundedRect(margin, margin, contentWidth, 26, 4, 4, 'F');
   // Fill the bottom corners to keep banner straight at bottom

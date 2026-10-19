@@ -47,7 +47,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
   if (!cell) {
     return (
       <div className="bg-white rounded-2xl border border-[#EDF1F7] p-8 text-center text-[#8F9BB3] shadow-xs">
-        <Armchair size={32} className="mx-auto text-[#00A97A]/40 mb-3" />
+        <Armchair size={32} className="mx-auto text-[#544bec]/40 mb-3" />
         <strong className="text-sm text-[#192038] block">No Seat Selected</strong>
         <p className="text-xs text-[#8F9BB3] mt-1">
           Click on any seat on the library layout to view its details, assigned student, or update status.
@@ -66,7 +66,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
       case 'Locker':
         return <Archive size={14} className="text-blue-500" />;
       default:
-        return <Armchair size={14} className="text-[#00A97A]" />;
+        return <Armchair size={14} className="text-[#544bec]" />;
     }
   };
 
@@ -109,7 +109,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
                     ? 'bg-[#FFEFF0] text-[#FF3D71]'
                     : cell.status === 'Maintenance'
                     ? 'bg-slate-200 text-slate-700'
-                    : 'bg-[#E8F8F3] text-[#00A97A]'
+                    : 'bg-[#EEF0FD] text-[#544bec]'
                 }`}>
                   {displayStatus}
                 </span>
@@ -137,10 +137,10 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
           {cell.isSeat && (
             <button
               onClick={() => onEditCellCategory(cell)}
-              className="px-2.5 py-1.5 rounded-lg border border-[#00A97A]/30 bg-[#E8F8F3] text-[#00A97A] hover:bg-[#d6f4ea] font-bold text-xs inline-flex items-center gap-1 shadow-xs cursor-pointer transition-all"
+              className="px-2.5 py-1.5 rounded-lg border border-[#544bec]/30 bg-[#EEF0FD] text-[#544bec] hover:bg-[#d6f4ea] font-bold text-xs inline-flex items-center gap-1 shadow-xs cursor-pointer transition-all"
               title="Edit full seat details"
             >
-              <Edit2 size={12} className="text-[#00A97A]" />
+              <Edit2 size={12} className="text-[#544bec]" />
               <span>Edit</span>
             </button>
           )}
@@ -164,7 +164,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
 
             <div className="flex items-center justify-between py-1 border-b border-[#F7F9FC]">
               <span className="text-[#8F9BB3]">Monthly Fee</span>
-              <strong className="text-[#00A97A] font-extrabold text-sm">₹{cell.monthlyFee} / mo</strong>
+              <strong className="text-[#544bec] font-extrabold text-sm">₹{cell.monthlyFee} / mo</strong>
             </div>
 
             <div className="flex items-center justify-between py-1 border-b border-[#F7F9FC]">
@@ -176,7 +176,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
               <span className="text-[#8F9BB3]">Status</span>
               <div className="flex items-center gap-1.5">
                 <span className={`w-2 h-2 rounded-full ${
-                  isOccupied ? 'bg-[#FF3D71]' : cell.status === 'Maintenance' ? 'bg-slate-400' : 'bg-[#00A97A]'
+                  isOccupied ? 'bg-[#FF3D71]' : cell.status === 'Maintenance' ? 'bg-slate-400' : 'bg-[#544bec]'
                 }`} />
                 <span className="font-bold text-[#192038]">{displayStatus}</span>
               </div>
@@ -231,7 +231,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
         {cell.isSeat && !isOccupied && cell.status !== 'Maintenance' && (
           <button
             onClick={() => onAssignStudent(cell)}
-            className="w-full py-2.5 px-3 rounded-xl bg-[#00A97A] text-white hover:bg-[#008f67] font-extrabold text-xs inline-flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-xl bg-[#544bec] text-white hover:bg-[#4338ca] font-extrabold text-xs inline-flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
           >
             <UserCheck size={16} />
             <span>Assign to Student</span>
@@ -255,7 +255,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
               <span className="text-[11px] font-extrabold text-[#334155] flex items-center gap-1">
                 Change Category
               </span>
-              <span className="text-[10px] text-[#00A97A] font-bold">Instant Apply</span>
+              <span className="text-[10px] text-[#544bec] font-bold">Instant Apply</span>
             </div>
 
             <div className="grid grid-cols-3 gap-1.5">
@@ -370,7 +370,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
           <button
             type="button"
             onClick={onOpenEditRates}
-            className="px-2.5 py-1 rounded-lg bg-[#E8F8F3] hover:bg-[#d4f5ea] border border-[#00A97A]/30 text-[#00A97A] font-extrabold text-xs inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-[#EEF0FD] hover:bg-[#d4f5ea] border border-[#544bec]/30 text-[#544bec] font-extrabold text-xs inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
             title="Edit category monthly prices"
           >
             <Edit2 size={12} />
@@ -398,10 +398,10 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
             </div>
             <div className="text-right flex items-center gap-2">
               <div>
-                <strong className="text-[#00A97A] font-extrabold text-sm block">₹{categoryRates.Premium?.rate || 800}</strong>
+                <strong className="text-[#544bec] font-extrabold text-sm block">₹{categoryRates.Premium?.rate || 800}</strong>
                 <span className="text-[10px] text-[#8F9BB3]">/ month</span>
               </div>
-              <div className="w-6 h-6 rounded-md flex items-center justify-center text-[#8F9BB3] group-hover:text-[#00A97A] group-hover:bg-[#E8F8F3] transition-all">
+              <div className="w-6 h-6 rounded-md flex items-center justify-center text-[#8F9BB3] group-hover:text-[#544bec] group-hover:bg-[#EEF0FD] transition-all">
                 <Edit2 size={12} />
               </div>
             </div>
@@ -426,10 +426,10 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
             </div>
             <div className="text-right flex items-center gap-2">
               <div>
-                <strong className="text-[#00A97A] font-extrabold text-sm block">₹{categoryRates.Locker?.rate || 700}</strong>
+                <strong className="text-[#544bec] font-extrabold text-sm block">₹{categoryRates.Locker?.rate || 700}</strong>
                 <span className="text-[10px] text-[#8F9BB3]">/ month</span>
               </div>
-              <div className="w-6 h-6 rounded-md flex items-center justify-center text-[#8F9BB3] group-hover:text-[#00A97A] group-hover:bg-[#E8F8F3] transition-all">
+              <div className="w-6 h-6 rounded-md flex items-center justify-center text-[#8F9BB3] group-hover:text-[#544bec] group-hover:bg-[#EEF0FD] transition-all">
                 <Edit2 size={12} />
               </div>
             </div>
@@ -443,7 +443,7 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
           >
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center shadow-xs">
-                <Armchair size={14} className="text-[#00A97A]" strokeWidth={2.5} />
+                <Armchair size={14} className="text-[#544bec]" strokeWidth={2.5} />
               </div>
               <div>
                 <strong className="text-[#192038] block font-bold text-xs">Normal</strong>
@@ -454,10 +454,10 @@ export const SeatDetailPanel: React.FC<SeatDetailPanelProps> = ({
             </div>
             <div className="text-right flex items-center gap-2">
               <div>
-                <strong className="text-[#00A97A] font-extrabold text-sm block">₹{categoryRates.Normal?.rate || 600}</strong>
+                <strong className="text-[#544bec] font-extrabold text-sm block">₹{categoryRates.Normal?.rate || 600}</strong>
                 <span className="text-[10px] text-[#8F9BB3]">/ month</span>
               </div>
-              <div className="w-6 h-6 rounded-md flex items-center justify-center text-[#8F9BB3] group-hover:text-[#00A97A] group-hover:bg-[#E8F8F3] transition-all">
+              <div className="w-6 h-6 rounded-md flex items-center justify-center text-[#8F9BB3] group-hover:text-[#544bec] group-hover:bg-[#EEF0FD] transition-all">
                 <Edit2 size={12} />
               </div>
             </div>

@@ -265,7 +265,7 @@ export const StudentsPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleAddStudent}
-            className="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/25 inline-flex items-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
+            className="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/25 inline-flex items-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
           >
             <Plus size={15} strokeWidth={2.5} />
             <span>Add Student</span>

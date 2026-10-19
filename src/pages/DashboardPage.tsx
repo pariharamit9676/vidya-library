@@ -50,14 +50,14 @@ export const DashboardPage: React.FC = () => {
             className="flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold border border-[#EDF1F7] bg-white text-[#192038] hover:bg-[#F8FAFD] shadow-xs inline-flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             title="Mark Attendance"
           >
-            <CalendarCheck size={14} className="text-[#00A97A] shrink-0" />
+            <CalendarCheck size={14} className="text-[#544bec] shrink-0" />
             <span>Attendance</span>
           </button>
 
           {/* "+ Add Student" button */}
           <button
             onClick={handleAddStudent}
-            className="flex-1 sm:flex-initial px-3.5 sm:px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 inline-flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
+            className="flex-1 sm:flex-initial px-3.5 sm:px-4 py-2 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/30 inline-flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer shrink-0"
           >
             <Plus size={16} strokeWidth={2.5} />
             <span>Add Student</span>

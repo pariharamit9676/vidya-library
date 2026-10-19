@@ -154,10 +154,10 @@ export const SeatMapCard: React.FC = () => {
     switch (status) {
       case 'occupied':
         return {
-          bg: 'bg-[#00A97A]',
+          bg: 'bg-[#544bec]',
           text: 'text-white',
-          chair: 'text-[#00A97A]',
-          border: 'border-[#00A97A]'
+          chair: 'text-[#544bec]',
+          border: 'border-[#544bec]'
         };
       case 'maintenance':
         return {
@@ -191,7 +191,7 @@ export const SeatMapCard: React.FC = () => {
         {/* Full Seat Layout Button -> OPENS MODAL (Does NOT navigate to another page) */}
         <button
           onClick={() => setIsLayoutModalOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EDF1F7] bg-[#F7F9FC] text-xs font-bold text-[#00A97A] hover:bg-[#E8F8F3] hover:border-[#00A97A]/30 transition-all cursor-pointer shadow-2xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EDF1F7] bg-[#F7F9FC] text-xs font-bold text-[#544bec] hover:bg-[#EEF0FD] hover:border-[#544bec]/30 transition-all cursor-pointer shadow-2xs"
           title="Open Full 164 Seats Layout Modal"
         >
           <span>Full Seat Layout (164)</span>
@@ -202,7 +202,7 @@ export const SeatMapCard: React.FC = () => {
       {/* 2. Legend */}
       <div className="flex items-center gap-4 mb-4 text-xs font-semibold text-[#6B778C] flex-wrap">
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#00A97A]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#544bec]" />
           <span>Occupied</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -274,7 +274,7 @@ export const SeatMapCard: React.FC = () => {
             {/* Modal Header */}
             <div className="p-5 border-b border-[#EDF1F7] flex items-center justify-between bg-white shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shadow-xs">
                   <Armchair size={20} />
                 </div>
                 <div>
@@ -306,7 +306,7 @@ export const SeatMapCard: React.FC = () => {
                 />
                 <input
                   type="text"
-                  className="w-full bg-white border border-[#EDF1F7] rounded-xl pl-9 pr-3 py-2 text-xs text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:border-[#00A97A] transition-all"
+                  className="w-full bg-white border border-[#EDF1F7] rounded-xl pl-9 pr-3 py-2 text-xs text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:border-[#544bec] transition-all"
                   placeholder="Search seat number (e.g. 50) or student name..."
                   value={modalSearchQuery}
                   onChange={(e) => setModalSearchQuery(e.target.value)}
@@ -329,7 +329,7 @@ export const SeatMapCard: React.FC = () => {
                   onClick={() => setModalFilterMode('occupied')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     modalFilterMode === 'occupied'
-                      ? 'bg-[#00A97A] text-white shadow-xs'
+                      ? 'bg-[#544bec] text-white shadow-xs'
                       : 'text-[#6B778C] hover:text-[#192038]'
                   }`}
                 >
@@ -351,7 +351,7 @@ export const SeatMapCard: React.FC = () => {
             {/* Modal Legend */}
             <div className="px-5 py-2.5 border-b border-[#EDF1F7] bg-white flex items-center gap-4 text-xs font-semibold text-[#6B778C] flex-wrap shrink-0">
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00A97A]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#544bec]" />
                 <span>Occupied ({occupiedCount})</span>
               </div>
               <div className="flex items-center gap-1.5">

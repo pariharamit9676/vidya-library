@@ -117,13 +117,13 @@ export const LoginPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFD] relative overflow-hidden font-sans">
       {/* Ambient background glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#00A97A]/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#544bec]/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
       {/* Top Navbar */}
       <header className="py-4 px-4 sm:px-8 flex items-center justify-between max-w-6xl mx-auto w-full z-10">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-[#00A97A] flex items-center justify-center text-white shadow-md shadow-[#00A97A]/30 group-hover:scale-105 transition-all">
+          <div className="w-10 h-10 rounded-xl bg-[#544bec] flex items-center justify-center text-white shadow-md shadow-[#544bec]/30 group-hover:scale-105 transition-all">
             <BookOpen size={20} />
           </div>
           <div>
@@ -157,7 +157,7 @@ export const LoginPage = () => {
               onClick={() => handleRoleChange('student')}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition-all cursor-pointer ${
                 activeRole === 'student'
-                  ? 'bg-white text-[#00A97A] shadow-sm'
+                  ? 'bg-white text-[#544bec] shadow-sm'
                   : 'text-[#6B778C] hover:text-[#192038]'
               }`}
             >
@@ -173,7 +173,7 @@ export const LoginPage = () => {
                   : 'text-[#6B778C] hover:text-[#192038]'
               }`}
             >
-              <ShieldCheck size={16} className={activeRole === 'admin' ? 'text-[#00A97A]' : ''} />
+              <ShieldCheck size={16} className={activeRole === 'admin' ? 'text-[#544bec]' : ''} />
               <span>Admin Login</span>
             </button>
           </div>
@@ -223,7 +223,7 @@ export const LoginPage = () => {
                     required
                     autoFocus
                     autoComplete="username"
-                    className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
                     placeholder={
                       activeRole === 'student'
                         ? 'e.g. STU-001 or 9685912333'
@@ -250,7 +250,7 @@ export const LoginPage = () => {
                     type={showPassword ? 'text' : 'password'}
                     required
                     autoComplete="current-password"
-                    className="w-full pl-10 pr-11 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all font-mono"
+                    className="w-full pl-10 pr-11 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all font-mono"
                     placeholder={activeRole === 'student' ? 'Enter your password' : 'Enter admin password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -273,7 +273,7 @@ export const LoginPage = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="accent-[#00A97A] w-4 h-4 rounded cursor-pointer"
+                  className="accent-[#544bec] w-4 h-4 rounded cursor-pointer"
                 />
                 <span className="text-[#6B778C] font-medium">Remember me</span>
               </label>
@@ -289,7 +289,7 @@ export const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-xl font-black text-xs text-white bg-[#00A97A] hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 transition-all hover:-translate-y-0.5 cursor-pointer disabled:opacity-50 mt-2 flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 rounded-xl font-black text-xs text-white bg-[#544bec] hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/30 transition-all hover:-translate-y-0.5 cursor-pointer disabled:opacity-50 mt-2 flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -330,7 +330,7 @@ export const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => handleRoleChange('admin')}
-                className="text-xs font-semibold text-[#6B778C] hover:text-[#00A97A] transition-colors cursor-pointer"
+                className="text-xs font-semibold text-[#6B778C] hover:text-[#544bec] transition-colors cursor-pointer"
               >
                 Are you an administrator? <span className="underline font-bold">Admin Login</span>
               </button>
@@ -338,7 +338,7 @@ export const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => handleRoleChange('student')}
-                className="text-xs font-semibold text-[#6B778C] hover:text-[#00A97A] transition-colors cursor-pointer"
+                className="text-xs font-semibold text-[#6B778C] hover:text-[#544bec] transition-colors cursor-pointer"
               >
                 Are you a student? <span className="underline font-bold">Student Login</span>
               </button>

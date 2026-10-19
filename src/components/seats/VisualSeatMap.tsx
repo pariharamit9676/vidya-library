@@ -92,7 +92,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
         {/* Title & Status */}
         <div className="flex items-center justify-between sm:justify-start gap-2.5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
               <LayoutGrid size={18} />
             </div>
             <div>
@@ -116,7 +116,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
             <button
               type="button"
               onClick={onStartEdit}
-              className="sm:hidden px-3 py-1.5 rounded-lg bg-[#00A97A] text-white hover:bg-[#008f67] text-xs font-extrabold inline-flex items-center gap-1 shadow-sm shadow-[#00A97A]/30 transition-all cursor-pointer"
+              className="sm:hidden px-3 py-1.5 rounded-lg bg-[#544bec] text-white hover:bg-[#4338ca] text-xs font-extrabold inline-flex items-center gap-1 shadow-sm shadow-[#544bec]/30 transition-all cursor-pointer"
             >
               <Edit3 size={13} />
               <span>Edit</span>
@@ -220,7 +220,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
               <button
                 type="button"
                 onClick={onSaveEdit}
-                className="px-3 sm:px-3.5 py-1.5 rounded-lg bg-[#00A97A] text-white hover:bg-[#008f67] text-xs font-extrabold inline-flex items-center gap-1 shadow-sm shadow-[#00A97A]/30 transition-all cursor-pointer ml-auto sm:ml-0"
+                className="px-3 sm:px-3.5 py-1.5 rounded-lg bg-[#544bec] text-white hover:bg-[#4338ca] text-xs font-extrabold inline-flex items-center gap-1 shadow-sm shadow-[#544bec]/30 transition-all cursor-pointer ml-auto sm:ml-0"
                 title="Save current layout changes"
               >
                 <Save size={12} />
@@ -232,7 +232,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
             <button
               type="button"
               onClick={onStartEdit}
-              className="hidden sm:inline-flex px-3.5 py-1.5 rounded-lg bg-[#00A97A] text-white hover:bg-[#008f67] text-xs font-extrabold items-center gap-1.5 shadow-sm shadow-[#00A97A]/30 transition-all hover:-translate-y-0.5 cursor-pointer"
+              className="hidden sm:inline-flex px-3.5 py-1.5 rounded-lg bg-[#544bec] text-white hover:bg-[#4338ca] text-xs font-extrabold items-center gap-1.5 shadow-sm shadow-[#544bec]/30 transition-all hover:-translate-y-0.5 cursor-pointer"
             >
               <Edit3 size={13} />
               <span>Edit Layout</span>
@@ -247,7 +247,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search seat #..."
-              className="w-full pl-8 pr-3 py-1.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all"
+              className="w-full pl-8 pr-3 py-1.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
             />
           </div>
         </div>
@@ -256,7 +256,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
       {/* Mobile Swipe Hint */}
       <div className="sm:hidden px-3 py-1.5 bg-amber-50/70 border-b border-amber-200/50 text-[10px] text-amber-800 font-semibold flex items-center justify-between">
         <span>👉 Drag/Swipe to view all desks</span>
-        <span className="text-[#00A97A] font-bold">Tap to select seat</span>
+        <span className="text-[#544bec] font-bold">Tap to select seat</span>
       </div>
 
       {/* 2. Architectural Floor Plan Room */}
@@ -308,7 +308,7 @@ export const VisualSeatMap: React.FC<VisualSeatMapProps> = ({
                     getSeatColorStyles(cell)
                   } ${
                     isSelected
-                      ? 'ring-3 ring-[#00A97A] ring-offset-2 scale-105 z-10 shadow-lg'
+                      ? 'ring-3 ring-[#544bec] ring-offset-2 scale-105 z-10 shadow-lg'
                       : 'hover:scale-102 hover:shadow-md'
                   } ${
                     isDimmed ? 'opacity-30' : 'opacity-100'

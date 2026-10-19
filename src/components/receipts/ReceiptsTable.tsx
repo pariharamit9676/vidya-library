@@ -51,7 +51,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
     }
     if (clean === 'Cash') {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A] border border-[#BBF7D0]">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FD] text-[#544bec] border border-[#BBF7D0]">
           Cash
         </span>
       );
@@ -83,7 +83,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
       header: 'Receipt Number',
       render: (rc) => (
         <div className="flex items-center gap-1.5">
-          <FileText size={13} className="text-[#00A97A] shrink-0" />
+          <FileText size={13} className="text-[#544bec] shrink-0" />
           <span className="font-mono font-bold text-[#192038] tracking-tight">{rc.receiptNo}</span>
         </div>
       )
@@ -98,7 +98,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
       header: 'Student Name',
       render: (rc) => (
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-[#00A97A] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+          <div className="w-7 h-7 rounded-full bg-[#544bec] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs">
             {(rc.studentName || 'S').charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
@@ -139,7 +139,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
       header: 'Amount Received',
       align: 'right',
       render: (rc) => (
-        <span className="font-black text-[#00A97A] text-sm whitespace-nowrap">
+        <span className="font-black text-[#544bec] text-sm whitespace-nowrap">
           ₹{Number(rc.amount || 0).toLocaleString('en-IN')}
         </span>
       )
@@ -152,10 +152,10 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
           <button
             type="button"
             onClick={() => onViewReceipt(rc)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EDF1F7] bg-white text-[#192038] hover:bg-[#F8FAFD] hover:text-[#00A97A] hover:border-[#00A97A]/40 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#EDF1F7] bg-white text-[#192038] hover:bg-[#F8FAFD] hover:text-[#544bec] hover:border-[#544bec]/40 text-xs font-bold transition-all cursor-pointer shadow-2xs"
             title="View Receipt"
           >
-            <Eye size={13} className="text-[#00A97A]" />
+            <Eye size={13} className="text-[#544bec]" />
             <span>View</span>
           </button>
         </div>
@@ -173,7 +173,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
         <div className="flex items-start justify-between gap-2.5">
           <div>
             <div className="flex items-center gap-1.5">
-              <FileText size={14} className="text-[#00A97A] shrink-0" />
+              <FileText size={14} className="text-[#544bec] shrink-0" />
               <span className="font-mono font-bold text-xs text-[#192038]">{rc.receiptNo}</span>
             </div>
             <div className="text-[11px] text-[#8F9BB3] mt-0.5 flex items-center gap-1">
@@ -183,7 +183,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
           </div>
 
           <div className="text-right">
-            <span className="text-sm font-black text-[#00A97A] block">
+            <span className="text-sm font-black text-[#544bec] block">
               ₹{Number(rc.amount || 0).toLocaleString('en-IN')}
             </span>
             <div className="mt-0.5">{getPaymentModeBadge(rc.mode)}</div>
@@ -210,7 +210,7 @@ export const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
           <button
             type="button"
             onClick={() => onViewReceipt(rc)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E8F8F3] text-[#00A97A] hover:bg-[#d5f3e9] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#EEF0FD] text-[#544bec] hover:bg-[#d5f3e9] transition-colors cursor-pointer"
           >
             <Eye size={13} />
             <span>View Receipt</span>

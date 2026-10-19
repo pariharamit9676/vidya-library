@@ -44,11 +44,11 @@ export const SeatStatCards: React.FC<SeatStatCardsProps> = ({
           <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
             {availableCount}
           </div>
-          <div className="text-[10px] sm:text-[11px] font-bold text-[#00A97A] mt-0.5 truncate">
+          <div className="text-[10px] sm:text-[11px] font-bold text-[#544bec] mt-0.5 truncate">
             {availablePercent}% free
           </div>
         </div>
-        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
           <Armchair size={16} className="sm:hidden" />
           <Armchair size={22} className="hidden sm:block" />
         </div>

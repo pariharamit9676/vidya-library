@@ -67,7 +67,7 @@ export const AssignStudentModal: React.FC<AssignStudentModalProps> = ({
         {/* Header */}
         <div className="p-5 border-b border-[#EDF1F7] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#EEF0FD] text-[#544bec] flex items-center justify-center">
               <UserPlus size={18} />
             </div>
             <div>
@@ -97,7 +97,7 @@ export const AssignStudentModal: React.FC<AssignStudentModalProps> = ({
               required
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
-              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all cursor-pointer"
+              className="w-full p-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all cursor-pointer"
             >
               <option value="">-- Choose student --</option>
               {eligibleStudents.map((st) => (
@@ -113,7 +113,7 @@ export const AssignStudentModal: React.FC<AssignStudentModalProps> = ({
 
           {/* Selected Student Preview Card */}
           {selectedStudent && (
-            <div className="p-3 bg-[#E8F8F3] border border-[#00A97A]/30 rounded-xl text-xs space-y-1.5 animate-in fade-in">
+            <div className="p-3 bg-[#EEF0FD] border border-[#544bec]/30 rounded-xl text-xs space-y-1.5 animate-in fade-in">
               <div className="flex items-center gap-2.5">
                 <img
                   src={selectedStudent.avatar}
@@ -122,12 +122,12 @@ export const AssignStudentModal: React.FC<AssignStudentModalProps> = ({
                 />
                 <div>
                   <strong className="text-[#192038] block">{selectedStudent.name}</strong>
-                  <span className="text-[11px] text-[#00A97A] font-medium">
+                  <span className="text-[11px] text-[#544bec] font-medium">
                     {selectedStudent.studentId} • {selectedStudent.phone}
                   </span>
                 </div>
               </div>
-              <div className="text-[11px] text-[#8F9BB3] pt-1 border-t border-[#00A97A]/20 flex items-center justify-between">
+              <div className="text-[11px] text-[#8F9BB3] pt-1 border-t border-[#544bec]/20 flex items-center justify-between">
                 <span>Admission: {formatDisplayDate(selectedStudent.admissionDate)}</span>
                 <span>Due: {formatDisplayDate(selectedStudent.nextDueDate)}</span>
               </div>
@@ -148,7 +148,7 @@ export const AssignStudentModal: React.FC<AssignStudentModalProps> = ({
               disabled={!selectedStudentId}
               className={`px-4 py-2 rounded-xl text-xs font-extrabold text-white transition-all shadow-xs ${
                 selectedStudentId
-                  ? 'bg-[#00A97A] hover:bg-[#008f67] cursor-pointer shadow-[#00A97A]/20'
+                  ? 'bg-[#544bec] hover:bg-[#4338ca] cursor-pointer shadow-[#544bec]/20'
                   : 'bg-slate-300 cursor-not-allowed opacity-60'
               }`}
             >

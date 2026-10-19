@@ -225,15 +225,15 @@ export const AttendancePage: React.FC = () => {
             <div className="text-[10px] sm:text-[11px] font-bold text-[#8F9BB3] uppercase tracking-wider truncate">
               Currently Inside
             </div>
-            <div className="text-base sm:text-2xl font-black text-[#00A97A] mt-0.5 flex items-center gap-1.5">
+            <div className="text-base sm:text-2xl font-black text-[#544bec] mt-0.5 flex items-center gap-1.5">
               <span>{insideStudents.length}</span>
-              <span className="w-2 h-2 rounded-full bg-[#00A97A] inline-block" />
+              <span className="w-2 h-2 rounded-full bg-[#544bec] inline-block" />
             </div>
-            <div className="text-[10px] sm:text-[11px] text-[#00A97A] font-semibold mt-0.5 truncate">
+            <div className="text-[10px] sm:text-[11px] text-[#544bec] font-semibold mt-0.5 truncate">
               Active sessions
             </div>
           </div>
-          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shadow-2xs shrink-0">
+          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shadow-2xs shrink-0">
             <UserCheck size={16} className="sm:w-5 sm:h-5" />
           </div>
         </div>
@@ -265,7 +265,7 @@ export const AttendancePage: React.FC = () => {
             <div className="text-base sm:text-2xl font-black text-[#192038] mt-0.5">
               {students.length}
             </div>
-            <div className="text-[10px] sm:text-[11px] text-[#00A97A] font-semibold mt-0.5 truncate">
+            <div className="text-[10px] sm:text-[11px] text-[#544bec] font-semibold mt-0.5 truncate">
               {Math.round((insideStudents.length / (students.length || 1)) * 100)}% occupancy
             </div>
           </div>
@@ -309,7 +309,7 @@ export const AttendancePage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by student name, roll ID, seat, or phone..."
-                className="w-full pl-10 pr-4 py-2 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -322,7 +322,7 @@ export const AttendancePage: React.FC = () => {
                   onClick={() => setStatusFilter(st)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap capitalize ${
                     statusFilter === st
-                      ? 'bg-[#00A97A] text-white shadow-2xs'
+                      ? 'bg-[#544bec] text-white shadow-2xs'
                       : 'bg-[#F7F9FC] text-[#6B778C] border border-[#EDF1F7] hover:bg-[#EDF1F7]'
                   }`}
                 >
@@ -347,7 +347,7 @@ export const AttendancePage: React.FC = () => {
                 <div className="flex items-center gap-2.5">
                   <div
                     className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shrink-0 ${
-                      log.isInside ? 'bg-[#00A97A] text-white' : 'bg-[#E8F8F3] text-[#00A97A]'
+                      log.isInside ? 'bg-[#544bec] text-white' : 'bg-[#EEF0FD] text-[#544bec]'
                     }`}
                   >
                     {log.studentName ? log.studentName.charAt(0).toUpperCase() : 'S'}
@@ -374,7 +374,7 @@ export const AttendancePage: React.FC = () => {
               render: (log) => (
                 <span
                   className={`px-2 py-0.5 rounded-md text-[11px] font-bold ${
-                    log.isInside ? 'bg-[#E8F8F3] text-[#00A97A]' : 'bg-[#F7F9FC] text-[#6B778C]'
+                    log.isInside ? 'bg-[#EEF0FD] text-[#544bec]' : 'bg-[#F7F9FC] text-[#6B778C]'
                   }`}
                 >
                   {log.seatNo && log.seatNo !== '-' ? `Seat ${log.seatNo}` : '-'}
@@ -385,7 +385,7 @@ export const AttendancePage: React.FC = () => {
               header: 'Date',
               render: (log) => (
                 <span className="flex items-center gap-1.5 text-[#192038] font-medium">
-                  <Calendar size={13} className="text-[#00A97A]" />
+                  <Calendar size={13} className="text-[#544bec]" />
                   {log.date}
                 </span>
               )
@@ -399,7 +399,7 @@ export const AttendancePage: React.FC = () => {
               render: (log) => (
                 <span className="text-[#6B778C] font-medium">
                   {log.isInside ? (
-                    <span className="text-[#00A97A] font-semibold text-[11px]">Currently In</span>
+                    <span className="text-[#544bec] font-semibold text-[11px]">Currently In</span>
                   ) : (
                     log.checkOut
                   )}
@@ -419,8 +419,8 @@ export const AttendancePage: React.FC = () => {
               header: 'Status',
               render: (log) =>
                 log.isInside ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A]" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#544bec]" />
                     Inside
                   </span>
                 ) : (
@@ -469,7 +469,7 @@ export const AttendancePage: React.FC = () => {
                   <div className="flex items-center gap-2.5">
                     <div
                       className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shrink-0 ${
-                        log.isInside ? 'bg-[#00A97A] text-white' : 'bg-[#E8F8F3] text-[#00A97A]'
+                        log.isInside ? 'bg-[#544bec] text-white' : 'bg-[#EEF0FD] text-[#544bec]'
                       }`}
                     >
                       {log.studentName ? log.studentName.charAt(0).toUpperCase() : 'S'}
@@ -482,7 +482,7 @@ export const AttendancePage: React.FC = () => {
                     </div>
                   </div>
                   {log.isInside ? (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/20">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20">
                       Inside
                     </span>
                   ) : (
@@ -503,7 +503,7 @@ export const AttendancePage: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[10px] text-[#8F9BB3] block">Duration</span>
-                    <span className="font-bold text-[#00A97A] text-[11px]">
+                    <span className="font-bold text-[#544bec] text-[11px]">
                       {log.isInside && log.checkInTimeRaw ? (
                         <LiveStayTimer checkInTime={log.checkInTimeRaw} />
                       ) : (
@@ -552,7 +552,7 @@ export const AttendancePage: React.FC = () => {
             {/* Modal Header */}
             <div className="p-5 border-b border-[#EDF1F7] flex items-center justify-between bg-white">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shadow-xs">
                   <History size={20} />
                 </div>
                 <div>
@@ -591,7 +591,7 @@ export const AttendancePage: React.FC = () => {
                           {formatTimeOnly(item.checkInTime || item.checkIn)} → {formatTimeOnly(item.checkOutTime || item.checkOut)}
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#E8F8F3] text-[#00A97A]">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#EEF0FD] text-[#544bec]">
                         {item.duration || 'Session'}
                       </span>
                     </div>

@@ -606,7 +606,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                           }}
                           className={`p-1.5 rounded-lg border text-center transition-all cursor-pointer ${
                             isSelected
-                              ? 'border-[#00A97A] bg-[#00A97A] text-white shadow-2xs'
+                              ? 'border-[#544bec] bg-[#544bec] text-white shadow-2xs'
                               : 'border-[#EDF1F7] bg-[#F8FAFD] text-[#6B778C] hover:bg-white'
                           }`}
                         >
@@ -719,7 +719,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                         value={customDueDate}
                         onChange={(e) => setCustomDueDate(e.target.value)}
                         placeholder="DD MMM YYYY"
-                        className="px-1.5 py-0.5 text-xs font-black rounded border border-[#00A97A] bg-white text-slate-900 w-28 focus:outline-none"
+                        className="px-1.5 py-0.5 text-xs font-black rounded border border-[#544bec] bg-white text-slate-900 w-28 focus:outline-none"
                       />
                       <button
                         type="button"
@@ -739,7 +739,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                           setCustomDueDate(autoNextDueDate);
                           setIsManualDueDate(true);
                         }}
-                        className="text-[10px] text-[#00A97A] hover:underline font-bold cursor-pointer ml-1"
+                        className="text-[10px] text-[#544bec] hover:underline font-bold cursor-pointer ml-1"
                         title="Click to manually adjust date"
                       >
                         Edit
@@ -767,7 +767,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                       onClick={() => handleDurationChange(m)}
                       className={`py-2 px-1 rounded-xl text-xs font-black transition-all cursor-pointer text-center relative ${
                         isSelected
-                          ? 'bg-[#00A97A] text-white shadow-xs ring-1 ring-[#00A97A]'
+                          ? 'bg-[#544bec] text-white shadow-xs ring-1 ring-[#544bec]'
                           : 'bg-[#F8FAFD] border border-[#EDF1F7] text-[#6B778C] hover:bg-white hover:text-emerald-700'
                       }`}
                     >
@@ -882,7 +882,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                     onClick={() => setPaymentMode(mode)}
                     className={`py-2 px-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
                       isSelected
-                        ? 'border border-[#00A97A] bg-[#00A97A] text-white shadow-2xs'
+                        ? 'border border-[#544bec] bg-[#544bec] text-white shadow-2xs'
                         : 'border border-[#EDF1F7] bg-white text-[#6B778C] hover:bg-[#F8FAFD]'
                     }`}
                   >
@@ -953,7 +953,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || Number(amountReceived) <= 0}
-              className="px-4 sm:px-5 py-2 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-white font-black text-xs inline-flex items-center gap-1.5 transition-all shadow-sm shadow-[#00A97A]/30 cursor-pointer disabled:opacity-50"
+              className="px-4 sm:px-5 py-2 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white font-black text-xs inline-flex items-center gap-1.5 transition-all shadow-sm shadow-[#544bec]/30 cursor-pointer disabled:opacity-50"
             >
               <CheckCircle size={14} />
               <span>{isSubmitting ? 'Recording...' : 'Collect Fee'}</span>

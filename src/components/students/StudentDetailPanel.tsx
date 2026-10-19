@@ -57,7 +57,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
           <img
             src={student.avatar}
             alt={student.name}
-            className="w-13 h-13 rounded-full object-cover ring-2 ring-[#00A97A]/20"
+            className="w-13 h-13 rounded-full object-cover ring-2 ring-[#544bec]/20"
           />
           <div className="flex-1 min-w-0">
             <h3 className="text-base font-bold text-[#192038] m-0 truncate">
@@ -75,7 +75,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                     resolvedStatus === 'Demo'
                       ? 'bg-[#F3E8FF] text-[#7E22CE] border border-[#E9D5FF]'
                       : resolvedStatus === 'Active'
-                      ? 'bg-[#E8F8F3] text-[#00A97A]'
+                      ? 'bg-[#EEF0FD] text-[#544bec]'
                       : resolvedStatus === 'Due Soon'
                       ? 'bg-[#FFF7E8] text-[#FFAA00]'
                       : resolvedStatus === 'Overdue'
@@ -93,7 +93,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
           <div className="flex items-center gap-1.5 shrink-0">
             <a
               href={`tel:${student.phone}`}
-              className="w-8 h-8 rounded-full bg-[#E8F8F3] text-[#00A97A] hover:bg-[#00A97A] hover:text-white flex items-center justify-center transition-all shadow-xs"
+              className="w-8 h-8 rounded-full bg-[#EEF0FD] text-[#544bec] hover:bg-[#544bec] hover:text-white flex items-center justify-center transition-all shadow-xs"
               title="Call student"
             >
               <Phone size={14} />
@@ -118,13 +118,13 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
               onClick={() => setActiveTab(tab)}
               className={`pb-2.5 transition-all cursor-pointer relative ${
                 activeTab === tab
-                  ? 'text-[#00A97A] font-extrabold'
+                  ? 'text-[#544bec] font-extrabold'
                   : 'text-[#8F9BB3] hover:text-[#192038]'
               }`}
             >
               {tab}
               {activeTab === tab && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00A97A] rounded-full" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#544bec] rounded-full" />
               )}
             </button>
           ))}
@@ -143,7 +143,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                 </h4>
                 <button
                   onClick={() => onEditStudent(student)}
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8F9BB3] hover:text-[#544bec] cursor-pointer"
                 >
                   <Edit2 size={12} />
                   <span>Edit</span>
@@ -195,7 +195,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                 </h4>
                 <button
                   onClick={() => onChangeSeat(student)}
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8F9BB3] hover:text-[#544bec] cursor-pointer"
                 >
                   <Edit2 size={12} />
                   <span>Edit</span>
@@ -208,7 +208,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                   <span className={`px-2 py-0.5 rounded-md font-bold font-mono text-[11px] ${
                     student.status === 'Inactive' || computeStudentStatus(student) === 'Inactive' || !student.seatNo || student.seatNo === '-'
                       ? 'bg-slate-100 text-slate-500'
-                      : 'bg-[#00A97A] text-white'
+                      : 'bg-[#544bec] text-white'
                   }`}>
                     {student.status === 'Inactive' || computeStudentStatus(student) === 'Inactive' || !student.seatNo || student.seatNo === '-'
                       ? 'Unassigned'
@@ -250,7 +250,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                     student.studentType === 'Demo' || student.status === 'Demo'
                       ? 'bg-[#F3E8FF] text-[#7E22CE] border border-[#E9D5FF]'
                       : student.status === 'Active'
-                      ? 'bg-[#E8F8F3] text-[#00A97A]'
+                      ? 'bg-[#EEF0FD] text-[#544bec]'
                       : 'bg-[#FFF7E8] text-[#FFAA00]'
                   }`}>
                     {student.studentType === 'Demo' || student.status === 'Demo' ? 'Demo' : student.status}
@@ -266,21 +266,21 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-[#192038]">Recent Payments</span>
-              <span className="text-[#00A97A] font-bold">Total: ₹{student.planAmount * 2}</span>
+              <span className="text-[#544bec] font-bold">Total: ₹{student.planAmount * 2}</span>
             </div>
             {student.paymentHistory && student.paymentHistory.length > 0 ? (
               student.paymentHistory.map((p) => (
                 <div key={p.id} className="p-3 bg-[#F7F9FC] rounded-xl border border-[#EDF1F7] text-xs flex items-center justify-between">
                   <div>
                     <div className="font-bold text-[#192038] flex items-center gap-1.5">
-                      <Receipt size={13} className="text-[#00A97A]" />
+                      <Receipt size={13} className="text-[#544bec]" />
                       <span>{p.receiptNo}</span>
                     </div>
                     <span className="text-[11px] text-[#8F9BB3]">{formatDisplayDate(p.date)} • {p.mode}</span>
                   </div>
                   <div className="text-right">
                     <div className="font-extrabold text-[#192038]">₹{p.amount}</div>
-                    <span className="text-[10px] font-bold text-[#00A97A] bg-[#E8F8F3] px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-[#544bec] bg-[#EEF0FD] px-1.5 py-0.5 rounded">
                       {p.status}
                     </span>
                   </div>
@@ -299,21 +299,21 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-[#192038]">Recent Stay Logs</span>
-              <span className="text-[#00A97A] font-bold">Shift: {student.shift}</span>
+              <span className="text-[#544bec] font-bold">Shift: {student.shift}</span>
             </div>
             {student.attendanceHistory && student.attendanceHistory.length > 0 ? (
               student.attendanceHistory.map((a) => (
                 <div key={a.id} className="p-3 bg-[#F7F9FC] rounded-xl border border-[#EDF1F7] text-xs flex items-center justify-between">
                   <div>
                     <div className="font-bold text-[#192038] flex items-center gap-1.5">
-                      <Calendar size={13} className="text-[#00A97A]" />
+                      <Calendar size={13} className="text-[#544bec]" />
                       <span>{a.date}</span>
                     </div>
                     <span className="text-[11px] text-[#8F9BB3]">
                       In: {formatDisplayTime(a.checkInTime || a.checkIn)} | Out: {formatDisplayTime(a.checkOutTime || a.checkOut)}
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-1 rounded-md">
+                  <span className="text-[11px] font-mono font-bold text-[#544bec] bg-[#EEF0FD] px-2 py-1 rounded-md">
                     {a.duration}
                   </span>
                 </div>
@@ -348,7 +348,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
         <div className="grid grid-cols-2 gap-2.5">
           <button
             onClick={() => onCollectFee(student)}
-            className="w-full py-2.5 px-3 rounded-xl bg-[#00A97A] text-white hover:bg-[#008f67] font-bold text-xs inline-flex items-center justify-center gap-1.5 shadow-sm shadow-[#00A97A]/20 transition-all cursor-pointer"
+            className="w-full py-2.5 px-3 rounded-xl bg-[#544bec] text-white hover:bg-[#4338ca] font-bold text-xs inline-flex items-center justify-center gap-1.5 shadow-sm shadow-[#544bec]/20 transition-all cursor-pointer"
           >
             <Wallet size={15} />
             <span>Collect Fee</span>

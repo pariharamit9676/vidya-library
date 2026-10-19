@@ -91,7 +91,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
               <Upload size={20} />
             </div>
             <div>
@@ -114,7 +114,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
         {/* Template Download Tip */}
         <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
           <div className="flex items-center gap-2.5">
-            <FileSpreadsheet size={18} className="text-[#00A97A] shrink-0" />
+            <FileSpreadsheet size={18} className="text-[#544bec] shrink-0" />
             <span className="text-xs text-[#192038] font-medium">
               Need the correct column structure?
             </span>
@@ -124,7 +124,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
             onClick={handleDownloadTemplate}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-xs font-bold text-[#192038] transition-all cursor-pointer shadow-2xs whitespace-nowrap"
           >
-            <Download size={13} className="text-[#00A97A]" />
+            <Download size={13} className="text-[#544bec]" />
             <span>Download Template</span>
           </button>
         </div>
@@ -140,10 +140,10 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
           onClick={() => fileInputRef.current?.click()}
           className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center gap-3 text-center cursor-pointer transition-all ${
             isDragging
-              ? 'border-[#00A97A] bg-[#E8F8F3]/50 scale-[0.99]'
+              ? 'border-[#544bec] bg-[#EEF0FD]/50 scale-[0.99]'
               : selectedFile
               ? 'border-emerald-400 bg-emerald-50/40'
-              : 'border-slate-200 hover:border-[#00A97A] hover:bg-slate-50/60'
+              : 'border-slate-200 hover:border-[#544bec] hover:bg-slate-50/60'
           }`}
         >
           <input
@@ -156,7 +156,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
 
           {selectedFile ? (
             <>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-[#00A97A] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-[#544bec] flex items-center justify-center">
                 <CheckCircle2 size={26} />
               </div>
               <div>
@@ -170,7 +170,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
             </>
           ) : (
             <>
-              <div className="w-12 h-12 rounded-2xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center">
                 <Upload size={24} />
               </div>
               <div>
@@ -208,7 +208,7 @@ export const ImportStudentsModal: React.FC<ImportStudentsModalProps> = ({
             className={`w-full sm:w-auto px-6 py-3 sm:py-2.5 rounded-xl font-extrabold text-xs sm:text-sm text-white transition-all cursor-pointer text-center ${
               !selectedFile || isProcessing
                 ? 'bg-slate-300 cursor-not-allowed'
-                : 'bg-[#00A97A] hover:bg-[#008f67] shadow-lg shadow-[#00A97A]/30'
+                : 'bg-[#544bec] hover:bg-[#4338ca] shadow-lg shadow-[#544bec]/30'
             }`}
           >
             {isProcessing ? 'Importing...' : 'Upload & Import Records'}

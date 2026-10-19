@@ -77,7 +77,7 @@ export const RecentPaymentsTable: React.FC = () => {
       render: (item) => (
         <button
           onClick={() => setSelectedReceipt(item)}
-          className="p-1.5 rounded-lg text-[#6B778C] hover:text-[#00A97A] hover:bg-[#E8F8F3] transition-colors cursor-pointer bg-transparent border-none inline-flex items-center justify-center"
+          className="p-1.5 rounded-lg text-[#6B778C] hover:text-[#544bec] hover:bg-[#EEF0FD] transition-colors cursor-pointer bg-transparent border-none inline-flex items-center justify-center"
           title={`View Receipt ${item.receiptNo}`}
         >
           <FileText size={15} />
@@ -95,7 +95,7 @@ export const RecentPaymentsTable: React.FC = () => {
         </h3>
         <button
           onClick={() => navigate('/admin/receipts')}
-          className="text-xs font-bold text-[#00A97A] hover:underline cursor-pointer bg-transparent border-0"
+          className="text-xs font-bold text-[#544bec] hover:underline cursor-pointer bg-transparent border-0"
         >
           View All
         </button>
@@ -126,7 +126,7 @@ export const RecentPaymentsTable: React.FC = () => {
               <span className="font-bold text-xs text-[#192038]">₹{item.amount}</span>
               <button
                 onClick={() => setSelectedReceipt(item)}
-                className="p-1 rounded-lg text-[#6B778C] hover:text-[#00A97A] hover:bg-[#E8F8F3] transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-[#6B778C] hover:text-[#544bec] hover:bg-[#EEF0FD] transition-colors cursor-pointer"
               >
                 <FileText size={15} />
               </button>

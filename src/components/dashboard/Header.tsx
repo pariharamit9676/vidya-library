@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'hover:bg-[#F7F9FC] border-l-[#EDF1F7]'
             }`}
           >
-            <div className="w-8 h-8 rounded-full bg-[#00A97A] text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#544bec] text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0">
               A
             </div>
             <span className="hidden md:inline text-xs font-bold text-[#192038]">
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
             <ChevronDown
               size={14}
               className={`text-[#8F9BB3] transition-transform duration-200 ${
-                isDropdownOpen ? 'rotate-180 text-[#00A97A]' : ''
+                isDropdownOpen ? 'rotate-180 text-[#544bec]' : ''
               }`}
             />
           </button>
@@ -107,13 +107,13 @@ export const Header: React.FC<HeaderProps> = ({
               {/* User Info Header */}
               <div className="px-4 py-3 border-b border-[#EDF1F7] bg-[#F7F9FC]/70 rounded-t-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#00A97A] text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#544bec] text-white font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                     A
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs font-bold text-[#192038] truncate">Admin User</span>
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#E8F8F3] text-[#00A97A]">
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#EEF0FD] text-[#544bec]">
                         Active
                       </span>
                     </div>
@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Link
                   to="/admin/settings"
                   onClick={() => setIsDropdownOpen(false)}
-                  className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#192038] hover:bg-[#F7F9FC] hover:text-[#00A97A] transition-colors"
+                  className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#192038] hover:bg-[#F7F9FC] hover:text-[#544bec] transition-colors"
                 >
                   <Settings size={15} className="text-[#8F9BB3]" />
                   <span>Library Settings</span>
@@ -137,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <Link
                   to="/admin/reports"
                   onClick={() => setIsDropdownOpen(false)}
-                  className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#192038] hover:bg-[#F7F9FC] hover:text-[#00A97A] transition-colors"
+                  className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-[#192038] hover:bg-[#F7F9FC] hover:text-[#544bec] transition-colors"
                 >
                   <ShieldCheck size={15} className="text-[#8F9BB3]" />
                   <span>Admin Reports</span>

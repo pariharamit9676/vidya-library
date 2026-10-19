@@ -41,7 +41,7 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
         );
       case 'Active':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A]">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FD] text-[#544bec]">
             Active
           </span>
         );
@@ -196,7 +196,7 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
           <button
             type="button"
             onClick={() => onCollectFee(student)}
-            className="p-1.5 text-[#8F9BB3] hover:text-[#00A97A] hover:bg-[#E8F8F3] rounded-lg transition-all cursor-pointer"
+            className="p-1.5 text-[#8F9BB3] hover:text-[#544bec] hover:bg-[#EEF0FD] rounded-lg transition-all cursor-pointer"
             title="Collect fee"
           >
             <IndianRupee size={13} />
@@ -213,7 +213,7 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
     const isSelected = selectedIds.includes(student.id);
 
     return (
-      <div className={`p-3.5 sm:p-4 flex flex-col gap-2.5 transition-colors ${isSelected ? 'bg-[#F0FDF9]' : 'hover:bg-[#F9FBFC]'}`}>
+      <div className={`p-3.5 sm:p-4 flex flex-col gap-2.5 transition-colors ${isSelected ? 'bg-[#F5F6FE]' : 'hover:bg-[#F9FBFC]'}`}>
         {/* Header: Checkbox + Photo + Name + ID + Status */}
         <div className="flex items-start justify-between gap-2.5">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -229,7 +229,7 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
                     onSelectionChange([...selectedIds, student.id]);
                   }
                 }}
-                className="rounded border-[#EDF1F7] accent-[#00A97A] cursor-pointer w-4 h-4 shrink-0"
+                className="rounded border-[#EDF1F7] accent-[#544bec] cursor-pointer w-4 h-4 shrink-0"
               />
             )}
             <img
@@ -312,7 +312,7 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
           <button
             type="button"
             onClick={() => onCollectFee(student)}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-2xs transition-colors cursor-pointer"
           >
             <IndianRupee size={12} />
             <span>Collect Fee</span>

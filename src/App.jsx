@@ -24,7 +24,7 @@ const StudentAttendancePage = lazy(() => import('./pages/StudentAttendancePage')
 // Sleek lightweight spinner for route transitions
 const PageLoader = () => (
   <div className="min-h-screen bg-[#F8FAFD] flex flex-col items-center justify-center gap-2.5">
-    <div className="w-8 h-8 border-3 border-[#00A97A]/20 border-t-[#00A97A] rounded-full animate-spin" />
+    <div className="w-8 h-8 border-3 border-[#544bec]/20 border-t-[#544bec] rounded-full animate-spin" />
     <span className="text-[11px] font-bold text-slate-400">Loading Vidya Library...</span>
   </div>
 );

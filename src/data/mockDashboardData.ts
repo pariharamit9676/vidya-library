@@ -43,13 +43,13 @@ export const MONTHLY_COLLECTION_CHART: MonthlyCollectionData[] = [
 ];
 
 export const SEAT_OCCUPANCY_DATA = [
-  { name: 'Occupied', value: 186, percentage: '93%', color: '#00A97A' },
+  { name: 'Occupied', value: 186, percentage: '93%', color: '#544bec' },
   { name: 'Available', value: 14, percentage: '7%', color: '#B2EBD9' },
   { name: 'Maintenance', value: 0, percentage: '0%', color: '#FA5252' }
 ];
 
 export const ATTENDANCE_DATA = [
-  { name: 'Present', value: 186, percentage: '75%', color: '#00A97A' },
+  { name: 'Present', value: 186, percentage: '75%', color: '#544bec' },
   { name: 'Absent', value: 54, percentage: '22%', color: '#A0E3CD' },
   { name: 'Late', value: 8, percentage: '3%', color: '#F59F00' }
 ];

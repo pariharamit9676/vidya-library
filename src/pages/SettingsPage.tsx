@@ -351,7 +351,7 @@ export const SettingsPage: React.FC = () => {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 inline-flex items-center gap-2 transition-all hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
+            className="px-5 py-2.5 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/30 inline-flex items-center gap-2 transition-all hover:-translate-y-0.5 cursor-pointer disabled:opacity-50"
           >
             <Save size={16} />
             <span>{isSaving ? 'Saving...' : 'Save Settings'}</span>
@@ -365,7 +365,7 @@ export const SettingsPage: React.FC = () => {
           onClick={() => setActiveSection('profile')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeSection === 'profile'
-              ? 'bg-[#00A97A] text-white shadow-xs'
+              ? 'bg-[#544bec] text-white shadow-xs'
               : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
           }`}
         >
@@ -377,7 +377,7 @@ export const SettingsPage: React.FC = () => {
           onClick={() => setActiveSection('shifts')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeSection === 'shifts'
-              ? 'bg-[#00A97A] text-white shadow-xs'
+              ? 'bg-[#544bec] text-white shadow-xs'
               : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
           }`}
         >
@@ -389,7 +389,7 @@ export const SettingsPage: React.FC = () => {
           onClick={() => setActiveSection('discounts')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeSection === 'discounts'
-              ? 'bg-[#00A97A] text-white shadow-xs'
+              ? 'bg-[#544bec] text-white shadow-xs'
               : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
           }`}
         >
@@ -401,7 +401,7 @@ export const SettingsPage: React.FC = () => {
           onClick={() => setActiveSection('rules')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeSection === 'rules'
-              ? 'bg-[#00A97A] text-white shadow-xs'
+              ? 'bg-[#544bec] text-white shadow-xs'
               : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
           }`}
         >
@@ -413,7 +413,7 @@ export const SettingsPage: React.FC = () => {
           onClick={() => setActiveSection('account')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeSection === 'account'
-              ? 'bg-[#00A97A] text-white shadow-xs'
+              ? 'bg-[#544bec] text-white shadow-xs'
               : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
           }`}
         >
@@ -448,7 +448,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.libraryName}
                 onChange={handleChange}
                 placeholder="e.g. Vidya Library"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -461,7 +461,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.tagline}
                 onChange={handleChange}
                 placeholder="e.g. Your Space to Grow"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -476,7 +476,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+91 98765 43210"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -492,7 +492,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="admin@vidyalibrary.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -508,7 +508,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.upiId}
                   onChange={handleChange}
                   placeholder="vidyalibrary@upi"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -524,7 +524,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.address}
                   onChange={handleChange}
                   placeholder="Near Metro Gate 2, Main Market, New Delhi"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -554,7 +554,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.openingTime}
                 onChange={handleChange}
                 placeholder="06:00 AM"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -566,7 +566,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.closingTime}
                 onChange={handleChange}
                 placeholder="11:00 PM"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -574,7 +574,7 @@ export const SettingsPage: React.FC = () => {
             <div className="p-4 bg-[#F8FAFD] rounded-xl border border-[#EDF1F7] space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-[#192038]">Morning Shift (06 AM - 02 PM)</span>
-                <span className="text-[10px] font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-0.5 rounded">8 Hours</span>
+                <span className="text-[10px] font-bold text-[#544bec] bg-[#EEF0FD] px-2 py-0.5 rounded">8 Hours</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-[#8F9BB3]">Monthly Fee: ₹</span>
@@ -583,7 +583,7 @@ export const SettingsPage: React.FC = () => {
                   name="morningRate"
                   value={formData.morningRate}
                   onChange={handleChange}
-                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#544bec]"
                 />
               </div>
             </div>
@@ -592,7 +592,7 @@ export const SettingsPage: React.FC = () => {
             <div className="p-4 bg-[#F8FAFD] rounded-xl border border-[#EDF1F7] space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-[#192038]">Evening Shift (02 PM - 10 PM)</span>
-                <span className="text-[10px] font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-0.5 rounded">8 Hours</span>
+                <span className="text-[10px] font-bold text-[#544bec] bg-[#EEF0FD] px-2 py-0.5 rounded">8 Hours</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-[#8F9BB3]">Monthly Fee: ₹</span>
@@ -601,7 +601,7 @@ export const SettingsPage: React.FC = () => {
                   name="eveningRate"
                   value={formData.eveningRate}
                   onChange={handleChange}
-                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#544bec]"
                 />
               </div>
             </div>
@@ -610,7 +610,7 @@ export const SettingsPage: React.FC = () => {
             <div className="p-4 bg-[#F8FAFD] rounded-xl border border-[#EDF1F7] space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-[#192038]">Night Shift (10 PM - 06 AM)</span>
-                <span className="text-[10px] font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-0.5 rounded">8 Hours</span>
+                <span className="text-[10px] font-bold text-[#544bec] bg-[#EEF0FD] px-2 py-0.5 rounded">8 Hours</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-[#8F9BB3]">Monthly Fee: ₹</span>
@@ -619,7 +619,7 @@ export const SettingsPage: React.FC = () => {
                   name="nightRate"
                   value={formData.nightRate}
                   onChange={handleChange}
-                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#544bec]"
                 />
               </div>
             </div>
@@ -628,7 +628,7 @@ export const SettingsPage: React.FC = () => {
             <div className="p-4 bg-[#F8FAFD] rounded-xl border border-[#EDF1F7] space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-[#192038]">Full Day (24/7 Access)</span>
-                <span className="text-[10px] font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-0.5 rounded">Unlimited</span>
+                <span className="text-[10px] font-bold text-[#544bec] bg-[#EEF0FD] px-2 py-0.5 rounded">Unlimited</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-[#8F9BB3]">Monthly Fee: ₹</span>
@@ -637,16 +637,16 @@ export const SettingsPage: React.FC = () => {
                   name="fullDayRate"
                   value={formData.fullDayRate}
                   onChange={handleChange}
-                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#544bec]"
                 />
               </div>
             </div>
 
             {/* Reserved Desk Surcharge */}
-            <div className="p-4 bg-[#E8F8F3]/40 rounded-xl border border-[#00A97A]/20 md:col-span-2 space-y-2">
+            <div className="p-4 bg-[#EEF0FD]/40 rounded-xl border border-[#544bec]/20 md:col-span-2 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-[#192038]">Fixed Reserved Desk Surcharge</span>
-                <span className="text-[10px] font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-0.5 rounded">Optional Add-on</span>
+                <span className="text-[10px] font-bold text-[#544bec] bg-[#EEF0FD] px-2 py-0.5 rounded">Optional Add-on</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-[#8F9BB3]">Additional surcharge per month: ₹</span>
@@ -655,7 +655,7 @@ export const SettingsPage: React.FC = () => {
                   name="reservedSurcharge"
                   value={formData.reservedSurcharge}
                   onChange={handleChange}
-                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-32 px-3 py-1.5 bg-white border border-[#EDF1F7] rounded-lg text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#544bec]"
                 />
               </div>
             </div>
@@ -669,7 +669,7 @@ export const SettingsPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EDF1F7] pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00A97A] flex items-center justify-center font-bold">
+                <span className="w-8 h-8 rounded-xl bg-emerald-50 text-[#544bec] flex items-center justify-center font-bold">
                   <BadgePercent size={18} />
                 </span>
                 <h3 className="text-base font-extrabold text-[#192038] m-0">
@@ -684,7 +684,7 @@ export const SettingsPage: React.FC = () => {
             <button
               type="button"
               onClick={handleOpenAddDiscount}
-              className="px-4 py-2.5 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 inline-flex items-center gap-1.5 transition-all cursor-pointer self-start sm:self-auto shrink-0"
+              className="px-4 py-2.5 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/30 inline-flex items-center gap-1.5 transition-all cursor-pointer self-start sm:self-auto shrink-0"
             >
               <Plus size={15} strokeWidth={2.5} />
               <span>Create Discount Offer</span>
@@ -693,9 +693,9 @@ export const SettingsPage: React.FC = () => {
 
           {/* Quick Notice Banner */}
           <div className="p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50/40 border border-emerald-200/60 rounded-xl flex items-start gap-3">
-            <Sparkles size={18} className="text-[#00A97A] shrink-0 mt-0.5" />
+            <Sparkles size={18} className="text-[#544bec] shrink-0 mt-0.5" />
             <div className="text-xs text-[#192038] leading-relaxed">
-              <strong className="text-[#00A97A]">Automated Advance Savings:</strong> Configured offers automatically apply when choosing multi-month plans during student admission or fee collection. You can edit or toggle offers anytime.
+              <strong className="text-[#544bec]">Automated Advance Savings:</strong> Configured offers automatically apply when choosing multi-month plans during student admission or fee collection. You can edit or toggle offers anytime.
             </div>
           </div>
 
@@ -710,14 +710,14 @@ export const SettingsPage: React.FC = () => {
                   key={disc.id}
                   className={`p-4 rounded-2xl border transition-all relative flex flex-col justify-between ${
                     disc.isActive !== false
-                      ? 'border-[#EDF1F7] bg-white hover:border-[#00A97A]/40 hover:shadow-xs'
+                      ? 'border-[#EDF1F7] bg-white hover:border-[#544bec]/40 hover:shadow-xs'
                       : 'border-slate-200 bg-slate-50/80 opacity-75'
                   }`}
                 >
                   <div>
                     {/* Top row: badge & active toggle */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/20">
+                      <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20">
                         {disc.months} Months Plan
                       </span>
 
@@ -756,7 +756,7 @@ export const SettingsPage: React.FC = () => {
                       </div>
                       <div className="flex justify-between font-extrabold text-[#192038] pt-1 border-t border-[#EDF1F7]">
                         <span>Student Pays:</span>
-                        <span className="text-[#00A97A]">₹{calc.finalTotal.toLocaleString('en-IN')}</span>
+                        <span className="text-[#544bec]">₹{calc.finalTotal.toLocaleString('en-IN')}</span>
                       </div>
                     </div>
                   </div>
@@ -766,7 +766,7 @@ export const SettingsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleOpenEditDiscount(disc)}
-                      className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-[#6B778C] hover:text-[#00A97A] hover:bg-[#E8F8F3] transition-all flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-[#6B778C] hover:text-[#544bec] hover:bg-[#EEF0FD] transition-all flex items-center gap-1 cursor-pointer"
                     >
                       <Edit2 size={12} />
                       <span>Edit</span>
@@ -819,7 +819,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.wifiSSID}
                   onChange={handleChange}
                   placeholder="Vidya_HighSpeed_5G"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -835,7 +835,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.wifiPassword}
                   onChange={handleChange}
                   placeholder="StudyHard@2026"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
             </div>
@@ -849,7 +849,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.gracePeriodDays}
                 onChange={handleChange}
                 placeholder="3"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
               <span className="text-[11px] text-[#8F9BB3]">
                 Number of days before student status transitions to "Overdue"
@@ -865,7 +865,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.totalSeatsCapacity}
                 onChange={handleChange}
                 placeholder="164"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
               <span className="text-[11px] text-[#8F9BB3]">
                 Total physical study desks available in reading hall
@@ -897,7 +897,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.adminName}
                 onChange={handleChange}
                 placeholder="Admin"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -910,7 +910,7 @@ export const SettingsPage: React.FC = () => {
                 value={formData.adminEmail}
                 onChange={handleChange}
                 placeholder="admin@vidyalibrary.com"
-                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               />
             </div>
 
@@ -918,7 +918,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-1.5 md:col-span-2">
               <label className="text-xs font-bold text-[#192038] flex items-center justify-between">
                 <span>Call Admin Helpline (Database Contact Number)</span>
-                <span className="text-[10px] text-[#00A97A] font-extrabold uppercase">Shown on Student Portal</span>
+                <span className="text-[10px] text-[#544bec] font-extrabold uppercase">Shown on Student Portal</span>
               </label>
               <div className="relative">
                 <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8F9BB3]" />
@@ -928,7 +928,7 @@ export const SettingsPage: React.FC = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="e.g. 9685912333"
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
                 />
               </div>
               <p className="text-[11px] text-[#8F9BB3] m-0">
@@ -954,7 +954,7 @@ export const SettingsPage: React.FC = () => {
                   onClick={handleExportBackup}
                   className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-[#192038] border border-[#EDF1F7] hover:bg-[#F7F9FC] shadow-xs flex items-center gap-1.5 cursor-pointer shrink-0"
                 >
-                  <Download size={14} className="text-[#00A97A]" />
+                  <Download size={14} className="text-[#544bec]" />
                   <span>Download</span>
                 </button>
               </div>
@@ -990,7 +990,7 @@ export const SettingsPage: React.FC = () => {
           >
             <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-3">
               <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-emerald-50 text-[#00A97A] flex items-center justify-center">
+                <span className="w-8 h-8 rounded-lg bg-emerald-50 text-[#544bec] flex items-center justify-center">
                   <BadgePercent size={18} />
                 </span>
                 <h4 className="text-sm font-extrabold text-[#192038] m-0">
@@ -1026,7 +1026,7 @@ export const SettingsPage: React.FC = () => {
                       }
                       className={`py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                         Number(discountForm.months) === m
-                          ? 'bg-[#00A97A] text-white shadow-xs'
+                          ? 'bg-[#544bec] text-white shadow-xs'
                           : 'bg-[#F8FAFD] border border-[#EDF1F7] text-[#6B778C] hover:bg-white'
                       }`}
                     >
@@ -1048,7 +1048,7 @@ export const SettingsPage: React.FC = () => {
                       label: `${m} Months Advance (${prev.discountValue}${prev.discountType === 'percentage' ? '%' : '₹'} OFF)`
                     }));
                   }}
-                  className="w-full px-3.5 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-full px-3.5 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-extrabold text-[#192038] focus:outline-none focus:border-[#544bec]"
                   placeholder="Custom months e.g. 3, 6, 12"
                 />
               </div>
@@ -1070,7 +1070,7 @@ export const SettingsPage: React.FC = () => {
                     }
                     className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center ${
                       discountForm.discountType === 'percentage'
-                        ? 'border-[#00A97A] bg-emerald-50 text-[#00A97A] shadow-xs'
+                        ? 'border-[#544bec] bg-emerald-50 text-[#544bec] shadow-xs'
                         : 'border-[#EDF1F7] bg-white text-[#6B778C] hover:bg-[#F8FAFD]'
                     }`}
                   >
@@ -1087,7 +1087,7 @@ export const SettingsPage: React.FC = () => {
                     }
                     className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center ${
                       discountForm.discountType === 'flat'
-                        ? 'border-[#00A97A] bg-emerald-50 text-[#00A97A] shadow-xs'
+                        ? 'border-[#544bec] bg-emerald-50 text-[#544bec] shadow-xs'
                         : 'border-[#EDF1F7] bg-white text-[#6B778C] hover:bg-[#F8FAFD]'
                     }`}
                   >
@@ -1119,7 +1119,7 @@ export const SettingsPage: React.FC = () => {
                         label: `${prev.months} Months Advance (${v}${prev.discountType === 'percentage' ? '%' : '₹'} OFF)`
                       }));
                     }}
-                    className="w-full pl-8 pr-3.5 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-black text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                    className="w-full pl-8 pr-3.5 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-black text-[#192038] focus:outline-none focus:border-[#544bec]"
                     placeholder={discountForm.discountType === 'percentage' ? 'e.g. 10' : 'e.g. 300'}
                   />
                 </div>
@@ -1132,7 +1132,7 @@ export const SettingsPage: React.FC = () => {
                   type="text"
                   value={discountForm.label}
                   onChange={(e) => setDiscountForm((prev) => ({ ...prev, label: e.target.value }))}
-                  className="w-full px-3.5 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#00A97A]"
+                  className="w-full px-3.5 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec]"
                   placeholder="e.g. 3 Months Advance (10% OFF)"
                 />
               </div>
@@ -1151,7 +1151,7 @@ export const SettingsPage: React.FC = () => {
                     : (discountForm.discountValue || 0)}
                 </div>
                 <div className="text-xs font-black text-[#192038] pt-1 border-t border-emerald-200/60">
-                  Payable Fee: <span className="text-[#00A97A]">₹{Math.max(0, (800 * discountForm.months) - (discountForm.discountType === 'percentage'
+                  Payable Fee: <span className="text-[#544bec]">₹{Math.max(0, (800 * discountForm.months) - (discountForm.discountType === 'percentage'
                     ? Math.round((800 * discountForm.months * (discountForm.discountValue || 0)) / 100)
                     : (discountForm.discountValue || 0)))}</span>
                 </div>
@@ -1168,7 +1168,7 @@ export const SettingsPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/30 cursor-pointer"
                 >
                   Save Discount Offer
                 </button>

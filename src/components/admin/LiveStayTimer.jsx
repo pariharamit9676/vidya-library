@@ -27,8 +27,8 @@ export const LiveStayTimer = ({ checkInTime }) => {
   const pad = (n) => String(n).padStart(2, '0');
 
   return (
-    <div className="inline-flex items-center gap-1.5 bg-[#00A97A]/10 text-[#00A97A] px-2.5 py-1 rounded-full text-xs font-semibold border border-[#00A97A]/20">
-      <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A]"></span>
+    <div className="inline-flex items-center gap-1.5 bg-[#544bec]/10 text-[#544bec] px-2.5 py-1 rounded-full text-xs font-semibold border border-[#544bec]/20">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#544bec]"></span>
       <span className="font-mono text-xs font-bold tracking-wider">
         {elapsed.hours}h {pad(elapsed.minutes)}m {pad(elapsed.seconds)}s
       </span>

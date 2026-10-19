@@ -309,7 +309,7 @@ export const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFD] text-[#192038] selection:bg-[#00A97A] selection:text-white font-sans">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFD] text-[#192038] selection:bg-[#544bec] selection:text-white font-sans">
       
       {/* ===================================================================== */}
       {/* 1. MODERN GLASS NAVBAR (NON-FLOATING ON MOBILE, FLOATING ON DESKTOP) */}
@@ -318,7 +318,7 @@ export const HomePage = () => {
         <div className="backdrop-blur-xl bg-white/95 border-b sm:border border-[#E2E8F0] rounded-none sm:rounded-3xl shadow-xs sm:shadow-lg sm:shadow-slate-900/5 px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
           {/* Logo & Tagline */}
           <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#00A97A] to-teal-400 flex items-center justify-center text-white shadow-md shadow-[#00A97A]/25 group-hover:scale-105 transition-transform shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#544bec] to-teal-400 flex items-center justify-center text-white shadow-md shadow-[#544bec]/25 group-hover:scale-105 transition-transform shrink-0">
               <BookOpenIcon size={18} />
             </div>
             <div className="min-w-0">
@@ -326,7 +326,7 @@ export const HomePage = () => {
                 <span className="text-sm sm:text-xl font-black tracking-tight text-[#192038] truncate">
                   Vidya Library
                 </span>
-                <span className="hidden xs:inline-flex items-center gap-1 text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-[#E8F8F3] text-[#00A97A] border border-[#00A97A]/20 shrink-0">
+                <span className="hidden xs:inline-flex items-center gap-1 text-[9px] uppercase font-black px-2 py-0.5 rounded-full bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20 shrink-0">
                   Pin Drop Silence
                 </span>
               </div>
@@ -338,25 +338,25 @@ export const HomePage = () => {
 
           {/* Clean Navigation Links */}
           <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-[#64748B]">
-            <a href="#amenities" className="hover:text-[#00A97A] transition-colors">Amenities</a>
-            <a href="#plans" className="hover:text-[#00A97A] transition-colors font-extrabold text-[#00A97A]">Plans & Pricing</a>
-            <a href="#reviews" className="hover:text-[#00A97A] transition-colors">Ranker Reviews</a>
-            <a href="#faqs" className="hover:text-[#00A97A] transition-colors">FAQs</a>
-            <a href="#contact" className="hover:text-[#00A97A] transition-colors">Location</a>
+            <a href="#amenities" className="hover:text-[#544bec] transition-colors">Amenities</a>
+            <a href="#plans" className="hover:text-[#544bec] transition-colors font-extrabold text-[#544bec]">Plans & Pricing</a>
+            <a href="#reviews" className="hover:text-[#544bec] transition-colors">Ranker Reviews</a>
+            <a href="#faqs" className="hover:text-[#544bec] transition-colors">FAQs</a>
+            <a href="#contact" className="hover:text-[#544bec] transition-colors">Location</a>
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <Link
               to="/login?role=student"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold border border-[#00A97A]/30 bg-[#E8F8F3] text-[#00A97A] hover:bg-[#d8f4ea] transition-all cursor-pointer whitespace-nowrap shadow-xs"
+              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-bold border border-[#544bec]/30 bg-[#EEF0FD] text-[#544bec] hover:bg-[#d8f4ea] transition-all cursor-pointer whitespace-nowrap shadow-xs"
             >
               <GraduationCap size={13} />
               <span>Student</span>
             </Link>
             <Link
               to="/login"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-black bg-[#00A97A] hover:bg-[#008f67] text-white shadow-sm shadow-[#00A97A]/30 transition-all hover:-translate-y-0.5 cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-black bg-[#544bec] hover:bg-[#4338ca] text-white shadow-sm shadow-[#544bec]/30 transition-all hover:-translate-y-0.5 cursor-pointer whitespace-nowrap"
             >
               <LogInIcon size={13} />
               <span>Admin</span>
@@ -370,7 +370,7 @@ export const HomePage = () => {
       {/* ===================================================================== */}
       <section className="relative pt-4 sm:pt-8 pb-8 sm:pb-14 px-4 sm:px-8 max-w-7xl mx-auto w-full overflow-hidden">
         {/* Ambient Glows */}
-        <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#00A97A]/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+        <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#544bec]/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
         <div className="absolute top-20 right-10 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
@@ -379,13 +379,13 @@ export const HomePage = () => {
             
             {/* Tagline Status Chips */}
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8F8F3] border border-[#00A97A]/30 text-[#00A97A] text-[11px] font-extrabold shadow-2xs">
-                <Sparkles size={11} className="text-[#00A97A]" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EEF0FD] border border-[#544bec]/30 text-[#544bec] text-[11px] font-extrabold shadow-2xs">
+                <Sparkles size={11} className="text-[#544bec]" />
                 Pin Drop Silence
               </span>
 
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-[#E2E8F0] text-[#64748B] text-[11px] font-bold shadow-2xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A]"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#544bec]"></span>
                 Open 24/7 • 365 Days
               </span>
 
@@ -403,7 +403,7 @@ export const HomePage = () => {
             {/* Editorial Headline */}
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.14] text-[#192038]">
               Where Deep Focus Meets <br />
-              <span className="bg-gradient-to-r from-[#00A97A] via-teal-500 to-emerald-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#544bec] via-teal-500 to-emerald-600 bg-clip-text text-transparent">
                 Pin Drop Silence.
               </span>
             </h1>
@@ -417,7 +417,7 @@ export const HomePage = () => {
             {/* Metric Strip */}
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-2.5 sm:p-4 rounded-xl bg-white border border-[#E2E8F0] shadow-xs max-w-md">
               <div className="text-center sm:text-left">
-                <div className="text-lg sm:text-2xl font-black text-[#00A97A]">40+</div>
+                <div className="text-lg sm:text-2xl font-black text-[#544bec]">40+</div>
                 <div className="text-[10px] sm:text-xs text-[#64748B] font-semibold mt-0.5">Cubicles</div>
               </div>
               <div className="border-x border-[#E2E8F0] px-1 sm:px-3 text-center sm:text-left">
@@ -437,7 +437,7 @@ export const HomePage = () => {
               <motion.button
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setIsTrialModalOpen(true)}
-                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#00A97A] to-teal-500 hover:from-[#008f67] hover:to-teal-600 text-white font-black text-xs sm:text-sm shadow-md shadow-[#00A97A]/25 transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#544bec] to-teal-500 hover:from-[#4338ca] hover:to-teal-600 text-white font-black text-xs sm:text-sm shadow-md shadow-[#544bec]/25 transition-all cursor-pointer inline-flex items-center justify-center gap-2"
               >
                 <Sparkles size={15} />
                 <span>Claim 1-Day Free Trial Desk</span>
@@ -446,24 +446,24 @@ export const HomePage = () => {
 
               <a
                 href="#plans"
-                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#00A97A]/40 text-[#192038] font-bold text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition-all shadow-2xs hover:bg-slate-50"
+                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white border border-[#E2E8F0] hover:border-[#544bec]/40 text-[#192038] font-bold text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition-all shadow-2xs hover:bg-slate-50"
               >
-                <Clock size={15} className="text-[#00A97A]" />
+                <Clock size={15} className="text-[#544bec]" />
                 <span>Explore 4 Plans & Pricing</span>
               </a>
             </div>
 
             {/* Quick Guarantees */}
             <div className="flex items-center gap-2.5 sm:gap-4 text-[11px] sm:text-xs text-[#64748B] pt-0.5 flex-wrap">
-              <span className="flex items-center gap-1 text-[#00A97A] font-bold">
+              <span className="flex items-center gap-1 text-[#544bec] font-bold">
                 <CheckCircle2 size={13} /> Zero Deposit
               </span>
               <span>•</span>
-              <span className="flex items-center gap-1 text-[#00A97A] font-bold">
+              <span className="flex items-center gap-1 text-[#544bec] font-bold">
                 <CheckCircle2 size={13} /> 100% Free Demo Seat
               </span>
               <span>•</span>
-              <span className="flex items-center gap-1 text-[#00A97A] font-bold">
+              <span className="flex items-center gap-1 text-[#544bec] font-bold">
                 <CheckCircle2 size={13} /> 24/7 Monitored Calm
               </span>
             </div>
@@ -499,8 +499,8 @@ export const HomePage = () => {
                     onClick={toggleAmbience}
                     className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all cursor-pointer ${
                       isPlayingAudio
-                        ? 'bg-[#00A97A] text-white shadow-md shadow-[#00A97A]/40 scale-105'
-                        : 'bg-[#E8F8F3] text-[#00A97A] hover:bg-[#00A97A] hover:text-white'
+                        ? 'bg-[#544bec] text-white shadow-md shadow-[#544bec]/40 scale-105'
+                        : 'bg-[#EEF0FD] text-[#544bec] hover:bg-[#544bec] hover:text-white'
                     }`}
                     title={isPlayingAudio ? "Pause Pin Drop Silence" : "Play Pin Drop Silence"}
                     aria-label={isPlayingAudio ? "Pause Pin Drop Silence" : "Play Pin Drop Silence"}
@@ -515,14 +515,14 @@ export const HomePage = () => {
                     <div className="text-xs sm:text-sm font-black text-[#192038] truncate flex items-center gap-1.5">
                       <span>Pin Drop Silence</span>
                       {isPlayingAudio && (
-                        <span className="flex items-end gap-0.5 h-3 text-[#00A97A]">
-                          <span className="w-1 h-2 bg-[#00A97A] rounded-full animate-bounce" style={{ animationDuration: '0.6s', animationDelay: '0ms' }}></span>
-                          <span className="w-1 h-3.5 bg-[#00A97A] rounded-full animate-bounce" style={{ animationDuration: '0.6s', animationDelay: '150ms' }}></span>
-                          <span className="w-1 h-2 bg-[#00A97A] rounded-full animate-bounce" style={{ animationDuration: '0.6s', animationDelay: '300ms' }}></span>
+                        <span className="flex items-end gap-0.5 h-3 text-[#544bec]">
+                          <span className="w-1 h-2 bg-[#544bec] rounded-full animate-bounce" style={{ animationDuration: '0.6s', animationDelay: '0ms' }}></span>
+                          <span className="w-1 h-3.5 bg-[#544bec] rounded-full animate-bounce" style={{ animationDuration: '0.6s', animationDelay: '150ms' }}></span>
+                          <span className="w-1 h-2 bg-[#544bec] rounded-full animate-bounce" style={{ animationDuration: '0.6s', animationDelay: '300ms' }}></span>
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] sm:text-[11px] font-bold truncate transition-colors text-[#00A97A]">
+                    <div className="text-[10px] sm:text-[11px] font-bold truncate transition-colors text-[#544bec]">
                       {isPlayingAudio ? "Playing silence..." : "Tap to listen"}
                     </div>
                   </div>
@@ -535,7 +535,7 @@ export const HomePage = () => {
                   className={`text-[10px] sm:text-[11px] font-black uppercase px-2.5 sm:px-3 py-1.5 rounded-lg shrink-0 flex items-center gap-1.5 transition-all cursor-pointer ${
                     isPlayingAudio
                       ? 'bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 shadow-xs'
-                      : 'bg-[#00A97A] text-white hover:bg-[#009268] shadow-xs hover:shadow-md'
+                      : 'bg-[#544bec] text-white hover:bg-[#009268] shadow-xs hover:shadow-md'
                   }`}
                 >
                   {isPlayingAudio ? (
@@ -561,7 +561,7 @@ export const HomePage = () => {
       {/* ===================================================================== */}
       <section id="amenities" className="py-8 sm:py-16 px-4 sm:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-          <span className="text-[11px] font-black uppercase tracking-widest text-[#00A97A] bg-[#E8F8F3] px-3 py-1 rounded-full border border-[#00A97A]/20">
+          <span className="text-[11px] font-black uppercase tracking-widest text-[#544bec] bg-[#EEF0FD] px-3 py-1 rounded-full border border-[#544bec]/20">
             WORLD-CLASS AMENITIES
           </span>
           <h2 className="text-2xl sm:text-4xl font-black mt-2 text-[#192038] tracking-tight">
@@ -578,10 +578,10 @@ export const HomePage = () => {
           {/* Feature 1: Pin Drop Silence */}
           <motion.div
             whileHover={{ y: -3, transition: { duration: 0.18 } }}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#00A97A]/40 hover:shadow-md transition-all flex flex-col justify-between group"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#544bec]/40 hover:shadow-md transition-all flex flex-col justify-between group"
           >
             <div>
-              <div className="w-10 h-10 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                 <VolumeX size={18} />
               </div>
               <h3 className="text-sm sm:text-base font-bold text-[#192038] mb-1">
@@ -591,7 +591,7 @@ export const HomePage = () => {
                 Acoustically soundproof halls with noise-absorbing carpets, soft desk padding, and a strict zero-ringer mobile discipline.
               </p>
             </div>
-            <div className="mt-3 pt-2.5 border-t border-[#F1F5F9] text-[11px] font-bold text-[#00A97A] flex items-center gap-1">
+            <div className="mt-3 pt-2.5 border-t border-[#F1F5F9] text-[11px] font-bold text-[#544bec] flex items-center gap-1">
               <CheckCircle2 size={13} /> Ambient Quiet ~18 dB
             </div>
           </motion.div>
@@ -599,7 +599,7 @@ export const HomePage = () => {
           {/* Feature 2: Dual 300 Mbps Fiber */}
           <motion.div
             whileHover={{ y: -3, transition: { duration: 0.18 } }}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#00A97A]/40 hover:shadow-md transition-all flex flex-col justify-between group"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#544bec]/40 hover:shadow-md transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
@@ -620,7 +620,7 @@ export const HomePage = () => {
           {/* Feature 3: Ergonomic Desks */}
           <motion.div
             whileHover={{ y: -3, transition: { duration: 0.18 } }}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#00A97A]/40 hover:shadow-md transition-all flex flex-col justify-between group"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#544bec]/40 hover:shadow-md transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
@@ -641,7 +641,7 @@ export const HomePage = () => {
           {/* Feature 4: Personal Warm LED Lamp */}
           <motion.div
             whileHover={{ y: -3, transition: { duration: 0.18 } }}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#00A97A]/40 hover:shadow-md transition-all flex flex-col justify-between group"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#544bec]/40 hover:shadow-md transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
@@ -662,7 +662,7 @@ export const HomePage = () => {
           {/* Feature 5: Dual Power Backup */}
           <motion.div
             whileHover={{ y: -3, transition: { duration: 0.18 } }}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#00A97A]/40 hover:shadow-md transition-all flex flex-col justify-between group"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#544bec]/40 hover:shadow-md transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
@@ -683,7 +683,7 @@ export const HomePage = () => {
           {/* Feature 6: RO Water & 24/7 Security */}
           <motion.div
             whileHover={{ y: -3, transition: { duration: 0.18 } }}
-            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#00A97A]/40 hover:shadow-md transition-all flex flex-col justify-between group"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] shadow-2xs hover:border-[#544bec]/40 hover:shadow-md transition-all flex flex-col justify-between group"
           >
             <div>
               <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
@@ -715,7 +715,7 @@ export const HomePage = () => {
           
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#00A97A] bg-[#E8F8F3] px-3 py-1 rounded-full border border-[#00A97A]/20">
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#544bec] bg-[#EEF0FD] px-3 py-1 rounded-full border border-[#544bec]/20">
               3 Seat Types • 4 Plans
             </span>
             <h2 className="text-2xl sm:text-3xl font-black mt-2 text-[#192038] tracking-tight">
@@ -749,13 +749,13 @@ export const HomePage = () => {
                       name="seatTypeRadio"
                       checked={isSelected}
                       onChange={() => setSelectedSeatId(seat.id)}
-                      className="w-4 h-4 accent-[#00A97A] cursor-pointer shrink-0 relative z-10"
+                      className="w-4 h-4 accent-[#544bec] cursor-pointer shrink-0 relative z-10"
                     />
                     <span className="text-sm shrink-0 relative z-10">{seat.icon}</span>
                     <span className={`text-xs font-bold relative z-10 truncate ${isSelected ? 'text-[#192038]' : 'text-slate-600'}`}>
                       {seat.name}
                     </span>
-                    <span className="text-xs font-black text-[#00A97A] ml-auto shrink-0 relative z-10">
+                    <span className="text-xs font-black text-[#544bec] ml-auto shrink-0 relative z-10">
                       ₹{seat.basePrice}<span className="text-[10px] font-normal text-slate-400">/mo</span>
                     </span>
                   </label>
@@ -789,7 +789,7 @@ export const HomePage = () => {
                     whileHover={{ y: -4, transition: { duration: 0.2 } }}
                     className={`rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative transition-shadow duration-200 ${
                       tier.popular
-                        ? 'bg-white border-2 border-[#00A97A] shadow-lg shadow-[#00A97A]/10 ring-2 ring-[#00A97A]/20'
+                        ? 'bg-white border-2 border-[#544bec] shadow-lg shadow-[#544bec]/10 ring-2 ring-[#544bec]/20'
                         : 'bg-white border border-[#E2E8F0] shadow-2xs hover:border-slate-300 hover:shadow-sm'
                     }`}
                   >
@@ -848,7 +848,7 @@ export const HomePage = () => {
                       {/* Seat Features List for this Card */}
                       <div className="flex flex-col gap-1.5 pt-2 text-[11px] text-[#192038]">
                         <div className="flex items-center gap-1.5">
-                          <CheckCircle2 size={13} className="text-[#00A97A] shrink-0" />
+                          <CheckCircle2 size={13} className="text-[#544bec] shrink-0" />
                           <span className="font-semibold truncate">
                             {activeSeat.id === 'premium' && 'Private 12-Seat Acoustic Cabin'}
                             {activeSeat.id === 'reserve' && 'Permanent Fixed Reserved Desk'}
@@ -857,14 +857,14 @@ export const HomePage = () => {
                         </div>
 
                         <div className="flex items-center gap-1.5">
-                          <CheckCircle2 size={13} className={activeSeat.hasLocker ? 'text-[#00A97A] shrink-0' : 'text-slate-400 shrink-0'} />
+                          <CheckCircle2 size={13} className={activeSeat.hasLocker ? 'text-[#544bec] shrink-0' : 'text-slate-400 shrink-0'} />
                           <span className={activeSeat.hasLocker ? 'font-semibold truncate' : 'text-slate-400 truncate'}>
                             {activeSeat.hasLocker ? 'Personal Locker Included' : 'No Locker'}
                           </span>
                         </div>
 
                         <div className="flex items-center gap-1.5">
-                          <CheckCircle2 size={13} className="text-[#00A97A] shrink-0" />
+                          <CheckCircle2 size={13} className="text-[#544bec] shrink-0" />
                           <span className="font-medium text-slate-600 truncate">
                             Dual 300 Mbps 5G Fiber & Power Backup
                           </span>
@@ -887,8 +887,8 @@ export const HomePage = () => {
                         }}
                         className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer text-center ${
                           tier.popular
-                            ? 'bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/25'
-                            : 'bg-slate-100 text-slate-800 hover:bg-[#00A97A] hover:text-white'
+                            ? 'bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/25'
+                            : 'bg-slate-100 text-slate-800 hover:bg-[#544bec] hover:text-white'
                         }`}
                       >
                         Choose {tier.name} →
@@ -912,7 +912,7 @@ export const HomePage = () => {
       {/* ===================================================================== */}
       <section id="reviews" className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto w-full border-t border-[#E2E8F0]">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
-          <span className="text-xs font-black uppercase tracking-widest text-[#00A97A] bg-[#E8F8F3] px-3.5 py-1.5 rounded-full border border-[#00A97A]/20">
+          <span className="text-xs font-black uppercase tracking-widest text-[#544bec] bg-[#EEF0FD] px-3.5 py-1.5 rounded-full border border-[#544bec]/20">
             TESTIMONIALS
           </span>
           <h2 className="text-3xl sm:text-4xl font-black mt-3 text-[#192038] tracking-tight">
@@ -946,7 +946,7 @@ export const HomePage = () => {
                 </div>
                 <div>
                   <strong className="text-sm block text-[#192038] font-black">{r.name}</strong>
-                  <span className="text-[11px] text-[#00A97A] font-bold">{r.exam}</span>
+                  <span className="text-[11px] text-[#544bec] font-bold">{r.exam}</span>
                 </div>
               </div>
             </div>
@@ -959,7 +959,7 @@ export const HomePage = () => {
       {/* ===================================================================== */}
       <section id="faqs" className="py-14 sm:py-20 px-4 sm:px-8 max-w-4xl mx-auto w-full border-t border-[#E2E8F0]">
         <div className="text-center mb-10 sm:mb-14">
-          <span className="text-xs font-black uppercase tracking-widest text-[#00A97A] bg-[#E8F8F3] px-3.5 py-1.5 rounded-full border border-[#00A97A]/20">
+          <span className="text-xs font-black uppercase tracking-widest text-[#544bec] bg-[#EEF0FD] px-3.5 py-1.5 rounded-full border border-[#544bec]/20">
             GOT QUESTIONS?
           </span>
           <h2 className="text-3xl sm:text-4xl font-black mt-3 text-[#192038] tracking-tight">
@@ -982,7 +982,7 @@ export const HomePage = () => {
                 <ChevronDown
                   size={18}
                   className={`text-[#64748B] transition-transform duration-200 shrink-0 ${
-                    openFaq === idx ? 'rotate-180 text-[#00A97A]' : ''
+                    openFaq === idx ? 'rotate-180 text-[#544bec]' : ''
                   }`}
                 />
               </button>
@@ -1036,7 +1036,7 @@ export const HomePage = () => {
             {!trialSubmitted ? (
               <form onSubmit={handleTrialSubmit} className="flex flex-col gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8F8F3] text-[#00A97A] text-[11px] font-black uppercase mb-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EEF0FD] text-[#544bec] text-[11px] font-black uppercase mb-1">
                     <Sparkles size={12} /> 100% Free Trial Desk
                   </div>
                   <h3 className="text-xl font-black text-[#192038] m-0">
@@ -1058,7 +1058,7 @@ export const HomePage = () => {
                       placeholder="e.g. Rahul Sharma"
                       value={trialForm.name}
                       onChange={(e) => setTrialForm({ ...trialForm, name: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#00A97A] focus:ring-2 focus:ring-[#00A97A]/20"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20"
                     />
                   </div>
 
@@ -1072,7 +1072,7 @@ export const HomePage = () => {
                       placeholder="e.g. 9876543210"
                       value={trialForm.phone}
                       onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#00A97A] focus:ring-2 focus:ring-[#00A97A]/20"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20"
                     />
                   </div>
 
@@ -1139,7 +1139,7 @@ export const HomePage = () => {
               </form>
             ) : (
               <div className="text-center py-4 flex flex-col items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-emerald-50 text-[#00A97A] border border-emerald-200 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-emerald-50 text-[#544bec] border border-emerald-200 flex items-center justify-center">
                   <CheckCircle2 size={32} />
                 </div>
                 <h3 className="text-xl font-black text-[#192038]">
@@ -1172,7 +1172,7 @@ export const HomePage = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 pb-10 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-[#00A97A] text-white flex items-center justify-center shadow-md">
+              <div className="w-9 h-9 rounded-xl bg-[#544bec] text-white flex items-center justify-center shadow-md">
                 <BookOpenIcon size={20} />
               </div>
               <h3 className="text-lg font-black text-white m-0">Vidya Library</h3>
@@ -1194,7 +1194,7 @@ export const HomePage = () => {
                 rel="noopener noreferrer"
                 className="flex items-start gap-2 text-slate-300 hover:text-emerald-400 transition-colors leading-relaxed group"
               >
-                <MapPin size={16} className="text-[#00A97A] shrink-0 mt-0.5" />
+                <MapPin size={16} className="text-[#544bec] shrink-0 mt-0.5" />
                 <span>
                   <strong className="block text-white">66W8+4FH, Gayatri Nagar,</strong>
                   Gwalior, Madhya Pradesh 474005
@@ -1203,12 +1203,12 @@ export const HomePage = () => {
               </a>
 
               <div className="flex items-center gap-2 text-slate-300">
-                <Phone size={15} className="text-[#00A97A] shrink-0" />
+                <Phone size={15} className="text-[#544bec] shrink-0" />
                 <a href="tel:+919876543210" className="hover:text-emerald-400 transition-colors">+91 98765 43210 / +91 98234 56789</a>
               </div>
 
               <div className="flex items-center gap-2 text-slate-300">
-                <Clock size={15} className="text-[#00A97A] shrink-0" />
+                <Clock size={15} className="text-[#544bec] shrink-0" />
                 <span>Open 24 Hours • 7 Days a Week (All Holidays)</span>
               </div>
             </div>
@@ -1222,7 +1222,7 @@ export const HomePage = () => {
             <div className="flex flex-col gap-2.5">
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#00A97A] text-white font-bold text-xs hover:bg-[#008f67] shadow-xs transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#544bec] text-white font-bold text-xs hover:bg-[#4338ca] shadow-xs transition-colors"
               >
                 <LogInIcon size={14} /> Open Admin Portal
               </Link>

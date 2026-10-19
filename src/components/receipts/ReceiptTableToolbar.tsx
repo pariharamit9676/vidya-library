@@ -54,7 +54,7 @@ export const ReceiptTableToolbar: React.FC<ReceiptTableToolbarProps> = ({
             value={filters.search}
             onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
             placeholder="Search by receipt #, student name, or mobile..."
-            className="w-full pl-10 pr-4 py-2 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#00A97A] focus:bg-white transition-all"
+            className="w-full pl-10 pr-4 py-2 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
           />
         </div>
 
@@ -64,7 +64,7 @@ export const ReceiptTableToolbar: React.FC<ReceiptTableToolbarProps> = ({
           onClick={() => setIsOpen((prev) => !prev)}
           className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold border inline-flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
             isOpen || activeFilterCount > 0
-              ? 'bg-[#E8F8F3] text-[#00A97A] border-[#00A97A]/30 shadow-xs'
+              ? 'bg-[#EEF0FD] text-[#544bec] border-[#544bec]/30 shadow-xs'
               : 'bg-white text-[#192038] border-[#EDF1F7] hover:bg-[#F8FAFD]'
           }`}
           title="Filter Receipts"
@@ -72,7 +72,7 @@ export const ReceiptTableToolbar: React.FC<ReceiptTableToolbarProps> = ({
           <Filter size={15} />
           <span className="hidden sm:inline">Filters</span>
           {activeFilterCount > 0 && (
-            <span className="w-4 h-4 rounded-full bg-[#00A97A] text-white text-[10px] font-black flex items-center justify-center">
+            <span className="w-4 h-4 rounded-full bg-[#544bec] text-white text-[10px] font-black flex items-center justify-center">
               {activeFilterCount}
             </span>
           )}
@@ -94,7 +94,7 @@ export const ReceiptTableToolbar: React.FC<ReceiptTableToolbarProps> = ({
                   onClick={() => onFilterChange({ ...filters, dateRange: key })}
                   className={`px-3 py-1 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-[#00A97A] text-white shadow-xs'
+                      ? 'bg-[#544bec] text-white shadow-xs'
                       : 'bg-[#F7F9FC] text-[#6B778C] border border-[#EDF1F7] hover:bg-[#EDF1F7]'
                   }`}
                 >

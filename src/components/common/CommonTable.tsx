@@ -151,7 +151,7 @@ export function CommonTable<T>({
                     type="checkbox"
                     checked={isAllSelected}
                     onChange={(e) => handleToggleSelectAll(e.target.checked)}
-                    className="rounded border-[#EDF1F7] accent-[#00A97A] cursor-pointer w-3.5 h-3.5"
+                    className="rounded border-[#EDF1F7] accent-[#544bec] cursor-pointer w-3.5 h-3.5"
                   />
                 </th>
               )}
@@ -193,7 +193,7 @@ export function CommonTable<T>({
                     key={rowId}
                     onClick={() => onRowClick?.(row)}
                     className={`transition-colors hover:bg-[#F9FBFC] text-xs ${
-                      isSelected ? 'bg-[#F0FDF9]' : ''
+                      isSelected ? 'bg-[#F5F6FE]' : ''
                     } ${onRowClick ? 'cursor-pointer' : ''}`}
                   >
                     {selectable && (
@@ -202,7 +202,7 @@ export function CommonTable<T>({
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => handleToggleSelectRow(rowId, e as any)}
-                          className="rounded border-[#EDF1F7] accent-[#00A97A] cursor-pointer w-3.5 h-3.5"
+                          className="rounded border-[#EDF1F7] accent-[#544bec] cursor-pointer w-3.5 h-3.5"
                         />
                       </td>
                     )}
@@ -264,7 +264,7 @@ export function CommonTable<T>({
                   onClick={() => setCurrentPage(page)}
                   className={`w-7 h-7 rounded-lg font-bold flex items-center justify-center cursor-pointer transition-all ${
                     safeCurrentPage === page
-                      ? 'bg-[#00A97A] text-white shadow-xs'
+                      ? 'bg-[#544bec] text-white shadow-xs'
                       : 'border border-[#EDF1F7] text-[#192038] hover:bg-[#F7F9FC]'
                   }`}
                 >

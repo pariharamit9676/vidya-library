@@ -52,9 +52,9 @@ export const PopupDialog: React.FC<PopupDialogProps> = ({
         };
       case 'success':
         return {
-          icon: <CheckCircle2 size={24} className="text-[#00A97A]" />,
-          iconBg: 'bg-[#E8F8F3] ring-8 ring-[#E8F8F3]/60 text-[#00A97A]',
-          confirmBtn: 'bg-[#00A97A] hover:bg-[#008f67] active:bg-[#007a57] text-white shadow-lg shadow-[#00A97A]/30'
+          icon: <CheckCircle2 size={24} className="text-[#544bec]" />,
+          iconBg: 'bg-[#EEF0FD] ring-8 ring-[#EEF0FD]/60 text-[#544bec]',
+          confirmBtn: 'bg-[#544bec] hover:bg-[#4338ca] active:bg-[#007a57] text-white shadow-lg shadow-[#544bec]/30'
         };
       case 'info':
       default:

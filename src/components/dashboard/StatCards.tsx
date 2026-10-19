@@ -30,11 +30,11 @@ export const StatCards: React.FC = () => {
           <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5">
             {isLoading ? '...' : totalStudents}
           </div>
-          <div className="text-[10px] sm:text-[11px] font-bold text-[#00A97A] mt-0.5 truncate">
+          <div className="text-[10px] sm:text-[11px] font-bold text-[#544bec] mt-0.5 truncate">
             <span>{regularStudents} reg</span> • <span>{demoStudents} demo</span>
           </div>
         </div>
-        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
           <Users size={16} className="sm:hidden" />
           <Users size={22} className="hidden sm:block" />
         </div>
@@ -68,7 +68,7 @@ export const StatCards: React.FC = () => {
           <div className="text-base sm:text-2xl font-black text-[#192038] tracking-tight mt-0.5 truncate">
             {isLoading ? '...' : `₹${monthlyCollection.toLocaleString('en-IN')}`}
           </div>
-          <div className="text-[10px] sm:text-[11px] font-bold text-[#00A97A] mt-0.5 truncate">
+          <div className="text-[10px] sm:text-[11px] font-bold text-[#544bec] mt-0.5 truncate">
             <span>{totalTransactions} recorded</span>
           </div>
         </div>

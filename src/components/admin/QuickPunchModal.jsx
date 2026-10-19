@@ -64,7 +64,7 @@ export const QuickPunchModal = ({
         {/* Modal Header */}
         <div className="p-5 border-b border-[#EDF1F7] flex items-center justify-between bg-white">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shadow-xs">
               <CalendarCheck size={20} />
             </div>
             <div>
@@ -89,7 +89,7 @@ export const QuickPunchModal = ({
           {/* Summary Strip & Quick Search */}
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#E8F8F3] text-[#00A97A]">
+              <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#EEF0FD] text-[#544bec]">
                 {insideCount} Inside
               </span>
               <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#F7F9FC] text-[#6B778C] border border-[#EDF1F7]">
@@ -110,7 +110,7 @@ export const QuickPunchModal = ({
             <input
               type="text"
               autoFocus
-              className="w-full bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:border-[#00A97A] focus:bg-white transition-all"
+              className="w-full bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#192038] placeholder-[#8F9BB3] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
               placeholder="Search by Student ID (#STU008), Name, Seat, or Mobile..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -142,12 +142,12 @@ export const QuickPunchModal = ({
                     {/* Left: Avatar & Info */}
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-[#E8F8F3] text-[#00A97A] font-bold text-xs flex items-center justify-center border border-[#00A97A]/20">
+                        <div className="w-10 h-10 rounded-full bg-[#EEF0FD] text-[#544bec] font-bold text-xs flex items-center justify-center border border-[#544bec]/20">
                           {student.name ? student.name.slice(0, 2).toUpperCase() : 'ST'}
                         </div>
                         {isInside && (
                           <span
-                            className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#00A97A] border-2 border-white"
+                            className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#544bec] border-2 border-white"
                             title="Inside"
                           />
                         )}
@@ -161,7 +161,7 @@ export const QuickPunchModal = ({
                           <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#F7F9FC] border border-[#EDF1F7] text-[#6B778C]">
                             {student.studentId || sId}
                           </span>
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#E8F8F3] text-[#00A97A]">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#EEF0FD] text-[#544bec]">
                             {seatDisplay}
                           </span>
                         </div>
@@ -175,8 +175,8 @@ export const QuickPunchModal = ({
                           )}
                           <span>•</span>
                           {isInside ? (
-                            <span className="text-[#00A97A] font-semibold flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A]" />
+                            <span className="text-[#544bec] font-semibold flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#544bec]" />
                               Inside ({calculateDuration(student.currentCheckInTime)})
                             </span>
                           ) : (
@@ -212,7 +212,7 @@ export const QuickPunchModal = ({
                           type="button"
                           onClick={() => handleToggle(student)}
                           disabled={isLoading}
-                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           {isLoading ? (
                             <>

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #00A97A;
-  --primary-hover: #008f67;
-  --primary-dark: #007353;
-  --primary-light: #E8F8F3;
-  --primary-subtle: #F0FDF9;
-  --primary-glow: rgba(0, 169, 122, 0.25);
-  --primary-border: rgba(0, 169, 122, 0.2);
+  --primary: #544bec;
+  --primary-hover: #4338ca;
+  --primary-dark: #3730a3;
+  --primary-light: #EEF0FD;
+  --primary-subtle: #F5F6FE;
+  --primary-glow: rgba(84, 75, 236, 0.25);
+  --primary-border: rgba(84, 75, 236, 0.2);
 
   --bg-app: #FFFFFF;
   --bg-dashboard: #F8FAFD;
@@ -24,16 +24,16 @@
 }
 
 @theme {
-  --color-primary: #00A97A;
-  --color-primary-hover: #008f67;
-  --color-primary-dark: #007353;
-  --color-primary-light: #E8F8F3;
-  --color-primary-subtle: #F0FDF9;
-  --color-primary-50: #f0fdf9;
-  --color-primary-100: #ccfbef;
-  --color-primary-500: #00A97A;
-  --color-primary-600: #008f67;
-  --color-primary-700: #007353;
+  --color-primary: #544bec;
+  --color-primary-hover: #4338ca;
+  --color-primary-dark: #3730a3;
+  --color-primary-light: #EEF0FD;
+  --color-primary-subtle: #F5F6FE;
+  --color-primary-50: #f5f6fe;
+  --color-primary-100: #eef0fd;
+  --color-primary-500: #544bec;
+  --color-primary-600: #4338ca;
+  --color-primary-700: #3730a3;
   --color-surface-bg: #F8FAFD;
 
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -78,7 +78,7 @@ body {
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00A97A;
+  background: #544bec;
 }
 
 /* Compact Table Utilities */
@@ -195,7 +195,7 @@ body {
 }
 
 .form-input:focus, .form-select:focus {
-  border-color: #00A97A;
+  border-color: #544bec;
   background-color: #FFFFFF;
   box-shadow: 0 0 0 3px rgba(0, 169, 122, 0.15);
 }
@@ -225,12 +225,12 @@ body {
 }
 
 .btn-primary {
-  background-color: #00A97A;
+  background-color: #544bec;
   color: #FFFFFF;
 }
 
 .btn-primary:hover {
-  background-color: #008f67;
+  background-color: #4338ca;
 }
 
 .btn-danger {
