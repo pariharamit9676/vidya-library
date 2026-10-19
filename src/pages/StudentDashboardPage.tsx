@@ -78,6 +78,10 @@ export const StudentDashboardPage: React.FC = () => {
   const [paymentPage, setPaymentPage] = useState<number>(1);
   const PAYMENT_PAGE_SIZE = 5;
 
+  // Attendance Pagination for Laptop View (5 logs per page)
+  const [attendancePage, setAttendancePage] = useState<number>(1);
+  const ATTENDANCE_PAGE_SIZE = 5;
+
   // Auto-dismiss feedback toast after 4 seconds
   useEffect(() => {
     if (!feedbackMsg) return;
@@ -360,6 +364,20 @@ export const StudentDashboardPage: React.FC = () => {
     const start = (paymentPage - 1) * PAYMENT_PAGE_SIZE;
     return paymentRecords.slice(start, start + PAYMENT_PAGE_SIZE);
   }, [paymentRecords, paymentPage]);
+
+  // Attendance history logs for Laptop View (newest first)
+  const allAttendanceLogs = useMemo(() => {
+    if (!studentData?.attendanceHistory || !Array.isArray(studentData.attendanceHistory)) {
+      return [];
+    }
+    return [...studentData.attendanceHistory].reverse();
+  }, [studentData?.attendanceHistory]);
+
+  const totalAttendancePages = Math.max(1, Math.ceil(allAttendanceLogs.length / ATTENDANCE_PAGE_SIZE));
+  const paginatedAttendance = useMemo(() => {
+    const start = (attendancePage - 1) * ATTENDANCE_PAGE_SIZE;
+    return allAttendanceLogs.slice(start, start + ATTENDANCE_PAGE_SIZE);
+  }, [allAttendanceLogs, attendancePage]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-24 sm:pb-12">
@@ -908,6 +926,131 @@ export const StudentDashboardPage: React.FC = () => {
         </div>
 
 
+
+        {/* ======================================================== */}
+        {/* ATTENDANCE HISTORY (Visible on Laptop / Desktop view)     */}
+        {/* ======================================================== */}
+        <div className="hidden sm:block bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-4 sm:p-6 shadow-xs">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center shrink-0">
+                <CalendarCheck size={16} />
+              </div>
+              <div>
+                <h2 className="text-sm sm:text-base font-black text-[#192038] m-0">
+                  Attendance Logs
+                </h2>
+                <p className="text-[11px] text-[#8F9BB3] m-0">
+                  Daily punch-in, punch-out, and study duration records
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-[#8F9BB3] font-bold bg-[#F8FAFD] px-2.5 py-1 rounded-lg border border-[#EDF1F7]">
+                {allAttendanceLogs.length} Records
+              </span>
+              <button
+                onClick={() => navigate('/student/attendance')}
+                className="text-xs font-bold text-[#544bec] hover:text-[#4338ca] bg-[#EEF0FD] px-3 py-1.5 rounded-lg border border-[#544bec]/20 flex items-center gap-1 transition-all cursor-pointer"
+              >
+                <span>Full Logs Page</span>
+                <ArrowRight size={12} />
+              </button>
+            </div>
+          </div>
+
+          {allAttendanceLogs.length > 0 ? (
+            <>
+              {/* Desktop Attendance Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-[#EDF1F7] text-[#8F9BB3]">
+                      <th className="pb-3 font-bold">#</th>
+                      <th className="pb-3 font-bold">Date</th>
+                      <th className="pb-3 font-bold">Punch In</th>
+                      <th className="pb-3 font-bold">Punch Out</th>
+                      <th className="pb-3 font-bold">Study Duration</th>
+                      <th className="pb-3 font-bold text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#EDF1F7]">
+                    {paginatedAttendance.map((record: any, idx: number) => {
+                      const rowNum = (attendancePage - 1) * ATTENDANCE_PAGE_SIZE + idx + 1;
+                      const isCompleted = Boolean(record.checkOutTime || record.checkOut);
+                      return (
+                        <tr key={record.id || idx} className="hover:bg-[#F8FAFD] transition-colors">
+                          <td className="py-3 text-[#8F9BB3] font-mono text-[11px]">
+                            {rowNum}
+                          </td>
+                          <td className="py-3 font-bold text-[#192038] flex items-center gap-1.5">
+                            <Calendar size={13} className="text-[#8F9BB3]" />
+                            <span>{formatDisplayDate(record.date)}</span>
+                          </td>
+                          <td className="py-3 text-[#544bec] font-bold font-mono">
+                            {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
+                          </td>
+                          <td className="py-3 text-[#6B778C] font-semibold font-mono">
+                            {isCompleted ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active In Library'}
+                          </td>
+                          <td className="py-3 font-mono font-bold text-[#192038]">
+                            {record.duration || 'Session in progress'}
+                          </td>
+                          <td className="py-3 text-right">
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                isCompleted
+                                  ? 'bg-[#F1F4F9] text-[#6B778C]'
+                                  : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              }`}
+                            >
+                              {isCompleted ? 'Completed' : 'Currently Active'}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Attendance Pagination Controls */}
+              {totalAttendancePages > 1 && (
+                <div className="mt-4 pt-3 border-t border-[#EDF1F7] flex items-center justify-between gap-2">
+                  <div className="text-[11px] text-[#8F9BB3] font-medium">
+                    Page <strong className="text-[#192038]">{attendancePage}</strong> of{' '}
+                    <strong className="text-[#192038]">{totalAttendancePages}</strong>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setAttendancePage((p) => Math.max(1, p - 1))}
+                      disabled={attendancePage <= 1}
+                      className="px-2.5 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft size={13} />
+                      <span>Prev</span>
+                    </button>
+
+                    <button
+                      onClick={() => setAttendancePage((p) => Math.min(totalAttendancePages, p + 1))}
+                      disabled={attendancePage >= totalAttendancePages}
+                      className="px-2.5 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>Next</span>
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-7 text-xs text-[#8F9BB3] border border-dashed border-[#EDF1F7] rounded-xl">
+              No previous attendance records recorded yet. Punch in above when you enter the library!
+            </div>
+          )}
+        </div>
 
         {/* ======================================================== */}
         {/* PAYMENT HISTORY & RECEIPTS: with 1-click Download Slip   */}
