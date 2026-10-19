@@ -173,8 +173,6 @@ export const StudentDashboardPage: React.FC = () => {
 
   const isDailyLimitReached = !isCheckedIn && todayCheckInCount >= 3;
 
-  const renewalFee = Number(studentData?.planAmount) || 600;
-  const feeDisplayAmount = dueAmt > 0 ? dueAmt : renewalFee;
 
   // Today's total study duration for the overview card
   const todayTotalDuration = useMemo(() => {
@@ -890,124 +888,6 @@ export const StudentDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* 4 Quick Stat Metric Cards (2x2 on Mobile, 4-col on Laptop) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-          
-          {/* Seat Card */}
-          <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-              <span className="text-[11px] sm:text-xs font-bold text-[#8F9BB3]">Assigned Seat</span>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
-                <Armchair size={14} className="sm:w-4 sm:h-4" />
-              </div>
-            </div>
-            <div className="text-base sm:text-xl font-black text-[#192038]">
-              {!isInactive && studentData?.seatNo && studentData.seatNo !== '-' ? `Seat #${studentData.seatNo}` : 'No Seat'}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#6B778C] font-semibold mt-0.5 sm:mt-1 truncate">
-              {isInactive ? (
-                <span className="text-slate-500 font-medium">Unassigned (Inactive)</span>
-              ) : (
-                <span>Type: <strong className="text-[#00A97A] font-bold">{studentData?.seatCategory || 'Standard'}</strong></span>
-              )}
-            </div>
-          </div>
-
-          {/* Membership Plan */}
-          <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-              <span className="text-[11px] sm:text-xs font-bold text-[#8F9BB3]">Plan Type</span>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
-                <BookOpen size={14} className="sm:w-4 sm:h-4" />
-              </div>
-            </div>
-            <div className="text-base sm:text-xl font-black text-[#192038] truncate">
-              {studentData?.plan || 'Monthly'}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#6B778C] font-semibold mt-0.5 sm:mt-1 truncate">
-              Adm: {studentData?.admissionDate ? formatDisplayDate(studentData.admissionDate) : 'Active'}
-            </div>
-          </div>
-
-          {/* Fee Status Card */}
-          <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-              <span className="text-[11px] sm:text-xs font-bold text-[#8F9BB3]">
-                {isInactive ? 'Membership' : 'Fee Status'}
-              </span>
-              <div
-                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 ${
-                  isInactive
-                    ? 'bg-slate-100 text-slate-600'
-                    : isOverdue
-                    ? 'bg-rose-50 text-rose-600'
-                    : isDueSoon || dueAmt > 0
-                    ? 'bg-amber-50 text-amber-600'
-                    : 'bg-[#E8F8F3] text-[#00A97A]'
-                }`}
-              >
-                <CreditCard size={14} className="sm:w-4 sm:h-4" />
-              </div>
-            </div>
-
-            <div
-              className={`text-base sm:text-xl font-black truncate ${
-                isInactive
-                  ? 'text-slate-700'
-                  : isOverdue
-                  ? 'text-rose-600'
-                  : isDueSoon || dueAmt > 0
-                  ? 'text-amber-600'
-                  : 'text-[#00A97A]'
-              }`}
-            >
-              {isInactive
-                ? 'Inactive'
-                : isOverdue
-                ? `₹${feeDisplayAmount} Overdue`
-                : isDueSoon
-                ? `₹${feeDisplayAmount} Due Soon`
-                : dueAmt > 0
-                ? `₹${dueAmt} Due`
-                : 'Fees Cleared'}
-            </div>
-
-            <div className="text-[10px] sm:text-[11px] text-[#6B778C] font-semibold mt-0.5 sm:mt-1 truncate">
-              {isInactive ? (
-                <span className="text-slate-500 font-medium">
-                  Membership is inactive
-                </span>
-              ) : isOverdue && daysLeft !== null ? (
-                <span className="text-rose-600 font-bold">
-                  {Math.abs(daysLeft)} {Math.abs(daysLeft) === 1 ? 'day' : 'days'} overdue ({formatDisplayDate(dueDate)})
-                </span>
-              ) : isDueSoon && daysLeft !== null ? (
-                <span className="text-amber-600 font-bold">
-                  Due {daysLeft === 0 ? 'Today' : `in ${daysLeft} days`} ({formatDisplayDate(dueDate)})
-                </span>
-              ) : (
-                <span>Due: <strong className="text-[#192038]">{dueDate ? formatDisplayDate(dueDate) : 'Cleared'}</strong></span>
-              )}
-            </div>
-          </div>
-
-          {/* Shift / Timings */}
-          <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-2xs">
-            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-              <span className="text-[11px] sm:text-xs font-bold text-[#8F9BB3]">Study Shift</span>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
-                <Clock size={14} className="sm:w-4 sm:h-4" />
-              </div>
-            </div>
-            <div className="text-sm sm:text-lg font-black text-[#192038] truncate">
-              {studentData?.shift || 'Full Day'}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-[#00A97A] font-bold mt-0.5 sm:mt-1">
-              Open 24 Hours
-            </div>
-          </div>
-
-        </div>
 
 
         {/* ======================================================== */}
