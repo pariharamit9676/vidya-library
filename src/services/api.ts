@@ -102,9 +102,10 @@ export const studentService = {
     }
   },
 
-  toggleCheckIn: (id: string) =>
+  toggleCheckIn: (id: string, byAdmin: boolean = false) =>
     request(`/students/${id}/check-in`, {
-      method: 'POST'
+      method: 'POST',
+      body: JSON.stringify({ byAdmin })
     }),
 
   recordPayment: (id: string, paymentData: any) =>

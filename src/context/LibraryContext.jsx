@@ -127,13 +127,20 @@ export const LibraryProvider = ({ children }) => {
   };
 
   // Toggle Check-in / Check-out
-  const toggleCheckIn = (studentId) => {
+  const toggleCheckIn = (studentId, suppressToast = false) => {
     const now = new Date();
     const updated = students.map((s) => {
-      if (s.id !== studentId) return s;
+      const isMatch =
+        s.id === studentId ||
+        s._id === studentId ||
+        s.studentId === studentId ||
+        String(s.id) === String(studentId);
+      if (!isMatch) return s;
 
       if (!s.isCheckedIn) {
-        showToast(`🟢 ${s.name} checked in at ${formatTimeOnly(now.toISOString())}`);
+        if (!suppressToast) {
+          showToast(`🟢 ${s.name} checked in at ${formatTimeOnly(now.toISOString())}`);
+        }
         return {
           ...s,
           isCheckedIn: true,
@@ -159,7 +166,9 @@ export const LibraryProvider = ({ children }) => {
         };
 
         const existingHistory = s.attendanceHistory || [];
-        showToast(`🔴 ${s.name} checked out. Stay duration: ${formattedStay}`);
+        if (!suppressToast) {
+          showToast(`🔴 ${s.name} checked out. Stay duration: ${formattedStay}`);
+        }
 
         return {
           ...s,

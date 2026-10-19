@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, CalendarCheck, Search, LogIn, LogOut, CheckCircle2, User } from 'lucide-react';
+import { X, CalendarCheck, Search, LogIn, LogOut, CheckCircle2, User, Loader2 } from 'lucide-react';
 import { calculateDuration } from '../../utils/storage';
+import { computeStudentStatus } from '../../utils/dateFormatter';
 
 export const QuickPunchModal = ({
   isOpen,
@@ -13,7 +14,16 @@ export const QuickPunchModal = ({
 
   if (!isOpen) return null;
 
-  const studentList = Array.isArray(students) ? students : [];
+  // Filter out Inactive students - only eligible enrolled students can be punched
+  const studentList = (Array.isArray(students) ? students : []).filter((s) => {
+    if (s.status?.toLowerCase() === 'inactive' || s.feeStatus?.toLowerCase() === 'inactive') {
+      return false;
+    }
+    try {
+      if (computeStudentStatus(s) === 'Inactive') return false;
+    } catch (_) {}
+    return true;
+  });
 
   const filtered = studentList.filter((s) => {
     const q = query.toLowerCase().trim();
@@ -29,12 +39,14 @@ export const QuickPunchModal = ({
   const outsideCount = studentList.length - insideCount;
 
   const handleToggle = async (student) => {
-    const id = student.id || student._id || student.studentId;
+    const id = student._id || student.id || student.studentId;
     setLoadingId(id);
     try {
       if (onToggleCheckIn) {
         await onToggleCheckIn(id);
       }
+    } catch (err) {
+      console.error('Failed to toggle attendance punch:', err);
     } finally {
       setLoadingId(null);
     }
@@ -178,21 +190,41 @@ export const QuickPunchModal = ({
                     <div className="shrink-0">
                       {isInside ? (
                         <button
+                          type="button"
                           onClick={() => handleToggle(student)}
                           disabled={isLoading}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed shadow-2xs"
                         >
-                          <LogOut size={13} />
-                          <span>{isLoading ? 'Punching...' : 'Punch Out'}</span>
+                          {isLoading ? (
+                            <>
+                              <Loader2 size={13} className="animate-spin text-rose-600" />
+                              <span>Punching Out...</span>
+                            </>
+                          ) : (
+                            <>
+                              <LogOut size={13} />
+                              <span>Punch Out</span>
+                            </>
+                          )}
                         </button>
                       ) : (
                         <button
+                          type="button"
                           onClick={() => handleToggle(student)}
                           disabled={isLoading}
-                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                          <LogIn size={13} />
-                          <span>{isLoading ? 'Punching...' : 'Punch In'}</span>
+                          {isLoading ? (
+                            <>
+                              <Loader2 size={13} className="animate-spin text-white" />
+                              <span>Punching In...</span>
+                            </>
+                          ) : (
+                            <>
+                              <LogIn size={13} />
+                              <span>Punch In</span>
+                            </>
+                          )}
                         </button>
                       )}
                     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CheckCircle2, X } from 'lucide-react';
+import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 export const Toast = ({ message, type = 'success', onClose }) => {
   useEffect(() => {
@@ -12,12 +12,14 @@ export const Toast = ({ message, type = 'success', onClose }) => {
 
   if (!message) return null;
 
+  const isError = type === 'danger' || type === 'error';
+
   return (
     <div className={`fixed bottom-4 inset-x-4 sm:inset-x-auto sm:bottom-6 sm:right-6 z-[9999] bg-[var(--bg-card)] border ${
-      type === 'danger' ? 'border-rose-500 shadow-rose-500/10' : 'border-[#01a06e] shadow-emerald-500/10'
+      isError ? 'border-rose-500 shadow-rose-500/10' : 'border-[#01a06e] shadow-emerald-500/10'
     } text-[var(--text-main)] p-3.5 px-4 rounded-2xl sm:rounded-xl shadow-2xl flex items-center gap-3 sm:max-w-md animate-in slide-in-from-bottom-4 duration-200`}>
-      <div className={type === 'danger' ? 'text-rose-500' : 'text-[#01a06e]'}>
-        <CheckCircle2 size={20} />
+      <div className={isError ? 'text-rose-500' : 'text-[#01a06e]'}>
+        {isError ? <AlertCircle size={20} /> : <CheckCircle2 size={20} />}
       </div>
       <div className="text-xs sm:text-sm font-semibold flex-1 leading-snug">
         {message}

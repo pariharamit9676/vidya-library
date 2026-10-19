@@ -40,11 +40,26 @@ export const AdminLayout: React.FC = () => {
 
   const handleToggleCheckIn = async (studentId: string) => {
     try {
-      await toggleCheckInMutation.mutateAsync(studentId);
-      toggleCheckIn(studentId);
-    } catch (err) {
+      const res: any = await toggleCheckInMutation.mutateAsync({ id: studentId, byAdmin: true });
+      toggleCheckIn(studentId, true);
+      const studentName = res?.data?.name || 'Student';
+      const isNowInside = res?.data?.isCheckedIn;
+      const msg =
+        res?.message ||
+        (isNowInside
+          ? `🟢 ${studentName} checked in successfully!`
+          : `🔴 ${studentName} checked out successfully!`);
+      if (showToast) {
+        showToast(msg, 'success');
+      }
+      return res;
+    } catch (err: any) {
       console.error('Error toggling check in:', err);
-      toggleCheckIn(studentId);
+      const errMsg = err?.message || 'Failed to update attendance punch';
+      if (showToast) {
+        showToast(errMsg, 'error');
+      }
+      throw err;
     }
   };
 

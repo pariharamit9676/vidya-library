@@ -75,7 +75,12 @@ export const useBulkDeleteStudents = () => {
 export const useToggleCheckIn = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => studentService.toggleCheckIn(id),
+    mutationFn: (param: string | { id: string; byAdmin?: boolean }) => {
+      if (typeof param === 'string') {
+        return studentService.toggleCheckIn(param, false);
+      }
+      return studentService.toggleCheckIn(param.id, param.byAdmin ?? false);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.students });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.dashboard });

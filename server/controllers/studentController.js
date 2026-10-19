@@ -309,6 +309,7 @@ export class StudentController {
   static async toggleCheckIn(req, res, next) {
     try {
       const { id } = req.params;
+      const { byAdmin = false } = req.body || {};
       const student = await StudentModel.getById(id);
       if (!student) {
         return res.status(404).json({
@@ -317,12 +318,12 @@ export class StudentController {
         });
       }
 
-      // Check if student is Inactive (Punch locked ONLY for Inactive, NOT for Overdue)
+      // Check if student is Inactive (Punch locked ONLY for Inactive, NOT for Overdue on Student Portal)
       const dueDate = student.nextDueDate || student.nextFeeDueDate;
       const daysLeft = getDaysUntilDue(dueDate);
       const isInactive = student.status === 'Inactive' || (daysLeft !== null && daysLeft < -40);
 
-      if (isInactive) {
+      if (!byAdmin && isInactive) {
         const settings = await SettingModel.get();
         const adminPhone = settings.phone || settings.adminPhone || '9685912333';
         return res.status(403).json({
@@ -333,8 +334,8 @@ export class StudentController {
         });
       }
 
-      // Condition: Max 3 check-ins per day per student (only applies when checking in, never blocks check-out)
-      if (!student.isCheckedIn) {
+      // Condition: Max 3 check-ins per day applies ONLY to Student Portal self-punch, NOT to Admin!
+      if (!byAdmin && !student.isCheckedIn) {
         const todayStr = new Date().toDateString();
         const todayCheckIns = (student.attendanceHistory || []).filter((item) => {
           const itemDate = item.checkInTime ? new Date(item.checkInTime) : (item.date ? new Date(item.date) : null);
