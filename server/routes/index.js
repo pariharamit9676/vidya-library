@@ -6,6 +6,7 @@ import seatRoutes from './seatRoutes.js';
 import categoryRoutes from './categoryRoutes.js';
 import feeRoutes from './feeRoutes.js';
 import settingRoutes from './settingRoutes.js';
+import referralRoutes from './referralRoutes.js';
 import { isMongoConnected } from '../config/database.js';
 
 const router = Router();
@@ -18,6 +19,7 @@ router.use('/seats', seatRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/fees', feeRoutes);
 router.use('/settings', settingRoutes);
+router.use('/referrals', referralRoutes);
 
 // Health check endpoint
 router.get('/health', (req, res) => {

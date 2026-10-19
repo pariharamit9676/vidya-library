@@ -2,6 +2,7 @@ import { StudentModel } from '../models/Student.js';
 import { SeatModel } from '../models/Seat.js';
 import { PaymentModel } from '../models/Payment.js';
 import { SettingModel } from '../models/Setting.js';
+import { ReferralModel } from '../models/Referral.js';
 import { generateReceiptNumber } from '../utils/idGenerator.js';
 import { formatDate, getDaysUntilDue, computeFeeStatus } from '../utils/dateUtils.js';
 
@@ -408,6 +409,13 @@ export class StudentController {
         plan: receipt.plan,
         nextDueDate: newDueDate || student.nextDueDate
       });
+
+      // Auto-approve referral for student when fee is recorded
+      try {
+        await ReferralModel.checkAndApproveByReferee(student.phone || student.studentId, student.seatNo || '-');
+      } catch (refErr) {
+        console.error('Error auto-approving referral on payment:', refErr.message);
+      }
 
       return res.status(200).json({
         success: true,

@@ -212,3 +212,31 @@ export const settingsService = {
     })
 };
 
+// 8. Referral & Payout Service
+export const referralApiService = {
+  getAll: () => request<any>('/referrals'),
+  getStudentStats: (studentId: string, code?: string) =>
+    request<any>(`/referrals/student/${encodeURIComponent(studentId)}${code ? `?code=${encodeURIComponent(code)}` : ''}`),
+  createLead: (payload: any) =>
+    request<any>('/referrals', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
+  updateStatus: (id: string, status: string) =>
+    request<any>(`/referrals/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status })
+    }),
+  getPayouts: () => request<any>('/referrals/payouts'),
+  requestPayout: (payload: any) =>
+    request<any>('/referrals/payouts', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
+  updatePayoutStatus: (id: string, status: string, utrRef?: string, adminNote?: string) =>
+    request<any>(`/referrals/payouts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status, utrRef, adminNote })
+    })
+};
+

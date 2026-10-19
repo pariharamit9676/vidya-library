@@ -4,6 +4,7 @@ import { generateStudentId, generateReferralCode } from '../utils/idGenerator.js
 import { isMongoConnected } from '../config/database.js';
 import { StudentMongo } from './schemas/StudentSchema.js';
 import { SeatModel } from './Seat.js';
+import { ReferralModel } from './Referral.js';
 
 const FILE_NAME = 'students.json';
 
@@ -276,6 +277,30 @@ export class StudentModel {
     students.unshift(newStudent);
     writeJsonFile(FILE_NAME, students);
 
+    // Auto create referral lead in database if referred
+    if (studentData.referredBy || studentData.referralCodeUsed) {
+      try {
+        const refCode = String(studentData.referralCodeUsed || studentData.referredBy).toUpperCase();
+        const refMatch = await StudentModel.verifyReferralCode(refCode);
+        if (refMatch && refMatch.found && refMatch.student) {
+          await ReferralModel.createLead({
+            referrerId: refMatch.student.studentId,
+            referrerName: refMatch.student.name,
+            referrerPhone: refMatch.student.phone,
+            referrerCode: refMatch.student.referralCode,
+            refereeId: generatedId,
+            refereeName: studentData.name,
+            refereePhone: studentData.phone,
+            status: studentData.status === 'Active' || (studentData.seatNo && studentData.seatNo !== '-') ? 'Approved' : 'Pending',
+            seatNo: studentData.seatNo || '-',
+            notes: 'Created on admission / trial registration'
+          });
+        }
+      } catch (err) {
+        console.error('Auto create referral error:', err.message);
+      }
+    }
+
     return {
       ...newStudent,
       feeStatus: newStudent.status === 'Inactive' ? 'INACTIVE' : computeFeeStatus(newStudent.nextDueDate, newStudent.dueAmount, newStudent.status)
@@ -314,6 +339,15 @@ export class StudentModel {
     writeJsonFile(FILE_NAME, updatedList);
     const finalResult = updatedMongo || updatedStudent;
     if (!finalResult) return null;
+
+    // Auto-approve referral if student now has seat or active status
+    if (finalResult.status === 'Active' || (finalResult.seatNo && finalResult.seatNo !== '-')) {
+      try {
+        await ReferralModel.checkAndApproveByReferee(finalResult.phone || finalResult.studentId, finalResult.seatNo);
+      } catch (refErr) {
+        console.error('Error auto-approving referral on student update:', refErr.message);
+      }
+    }
     const daysLeft = getDaysUntilDue(finalResult.nextDueDate);
     const isInactive = (daysLeft !== null && daysLeft < -40) || finalResult.status === 'Inactive';
     if (isInactive && finalResult.seatNo && finalResult.seatNo !== '-') {

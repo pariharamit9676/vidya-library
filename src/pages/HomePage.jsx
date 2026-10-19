@@ -42,7 +42,7 @@ import {
   Gift,
   Tag
 } from 'lucide-react';
-import { studentService } from '../services/api';
+import { studentService, referralApiService } from '../services/api';
 import { referralService, findStudentByReferralCode } from '../services/referralService';
 
 export const HomePage = () => {
@@ -429,6 +429,22 @@ export const HomePage = () => {
       const registeredId = createdStudent?.id || createdStudent?._id || `stu_demo_${Date.now()}`;
 
       if (verifiedReferrer) {
+        try {
+          await referralApiService.createLead({
+            referrerId: verifiedReferrer.studentId || verifiedReferrer.id,
+            referrerName: verifiedReferrer.name,
+            referrerPhone: verifiedReferrer.phone || '',
+            referrerCode: verifiedReferrer.referralCode || trialForm.referralCode.trim().toUpperCase(),
+            refereeId: registeredId,
+            refereeName: trialForm.name.trim(),
+            refereePhone: cleanPhone,
+            status: 'Pending',
+            notes: 'Free Trial Demo from website'
+          });
+        } catch (apiLeadErr) {
+          console.warn('Backend referral lead creation notice:', apiLeadErr);
+        }
+
         referralService.createReferralLead({
           referrer: verifiedReferrer,
           referee: {

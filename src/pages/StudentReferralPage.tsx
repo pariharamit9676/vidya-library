@@ -7,7 +7,7 @@ import {
   ReferralRecord,
   PayoutRequest
 } from '../services/referralService';
-import { studentService } from '../services/api';
+import { studentService, referralApiService } from '../services/api';
 import { formatDisplayDate } from '../utils/dateFormatter';
 import {
   Gift,
@@ -65,9 +65,18 @@ export const StudentReferralPage: React.FC = () => {
     return dbReferralCode || user?.referralCode || getStudentReferralCode(user);
   }, [dbReferralCode, user]);
 
-  // Load stats
-  const reloadStats = () => {
+  // Load stats from MongoDB
+  const reloadStats = async () => {
     if (!studentId) return;
+    try {
+      const res = await referralApiService.getStudentStats(studentId, referralCode);
+      if (res?.data) {
+        setReferralStats(res.data);
+        return;
+      }
+    } catch (e) {
+      console.warn('API getStudentStats note:', e);
+    }
     const stats = referralService.getStudentReferralStats(studentId, referralCode);
     setReferralStats(stats);
   };
@@ -184,7 +193,7 @@ export const StudentReferralPage: React.FC = () => {
     setIsWithdrawModalOpen(true);
   };
 
-  const handleConfirmWithdrawal = () => {
+  const handleConfirmWithdrawal = async () => {
     if (withdrawAmount <= 0) return;
     if (withdrawAmount > referralStats.availableBalance) {
       setWithdrawFeedback({ type: 'error', text: 'Requested amount exceeds your available balance.' });
@@ -193,7 +202,19 @@ export const StudentReferralPage: React.FC = () => {
 
     setIsWithdrawing(true);
     try {
-      const res = referralService.requestUpiPayout({
+      try {
+        await referralApiService.requestPayout({
+          studentId,
+          studentName: user?.name || 'Student',
+          studentPhone: user?.phone || '',
+          upiId: upiId.trim(),
+          amount: withdrawAmount
+        });
+      } catch (apiErr: any) {
+        console.warn('Backend payout request note:', apiErr);
+      }
+
+      referralService.requestUpiPayout({
         studentId,
         studentName: user?.name || 'Student',
         studentPhone: user?.phone || '',
@@ -201,17 +222,13 @@ export const StudentReferralPage: React.FC = () => {
         amount: withdrawAmount
       });
 
-      if (res.success) {
-        reloadStats();
-        setIsWithdrawModalOpen(false);
-        setWithdrawFeedback({
-          type: 'success',
-          text: `🎉 ₹${withdrawAmount} withdrawal requested! Admin will transfer to ${upiId}.`
-        });
-        setTimeout(() => setWithdrawFeedback(null), 5000);
-      } else {
-        setWithdrawFeedback({ type: 'error', text: res.message });
-      }
+      await reloadStats();
+      setIsWithdrawModalOpen(false);
+      setWithdrawFeedback({
+        type: 'success',
+        text: `🎉 ₹${withdrawAmount} withdrawal requested! Admin will transfer to ${upiId}.`
+      });
+      setTimeout(() => setWithdrawFeedback(null), 5000);
     } catch (err: any) {
       setWithdrawFeedback({ type: 'error', text: err?.message || 'Failed to submit withdrawal request.' });
     } finally {

@@ -24,6 +24,7 @@ import {
   ReferralRecord,
   PayoutRequest
 } from '../services/referralService';
+import { referralApiService } from '../services/api';
 import { CommonTable } from '../components/common/CommonTable';
 import { formatDisplayDate } from '../utils/dateFormatter';
 
@@ -43,10 +44,40 @@ export const AdminReferralsPage: React.FC = () => {
   const [payoutNote, setPayoutNote] = useState<string>('');
   const [isProcessingPayout, setIsProcessingPayout] = useState<boolean>(false);
 
-  // Load referrals and payouts
-  const reloadData = () => {
-    setReferrals(referralService.getReferrals());
-    setPayouts(referralService.getPayoutRequests());
+  // Load referrals and payouts from MongoDB
+  const reloadData = async () => {
+    try {
+      const [refRes, payRes] = await Promise.all([
+        referralApiService.getAll(),
+        referralApiService.getPayouts()
+      ]);
+      const serverRefs = refRes?.data || [];
+      const serverPays = payRes?.data || [];
+
+      // Combine with local storage fallback if any
+      const localRefs = referralService.getReferrals();
+      const localPays = referralService.getPayoutRequests();
+
+      const mergedRefs = [...serverRefs];
+      localRefs.forEach((lr) => {
+        if (!mergedRefs.some((mr) => mr.id === lr.id || (mr.refereePhone && mr.refereePhone === lr.refereePhone))) {
+          mergedRefs.push(lr);
+        }
+      });
+
+      const mergedPays = [...serverPays];
+      localPays.forEach((lp) => {
+        if (!mergedPays.some((mp) => mp.id === lp.id)) {
+          mergedPays.push(lp);
+        }
+      });
+
+      setReferrals(mergedRefs);
+      setPayouts(mergedPays);
+    } catch {
+      setReferrals(referralService.getReferrals());
+      setPayouts(referralService.getPayoutRequests());
+    }
   };
 
   useEffect(() => {
@@ -131,26 +162,34 @@ export const AdminReferralsPage: React.FC = () => {
   }, [payouts, searchQuery]);
 
   // Action: Manually Approve Referral
-  const handleManualApprove = (referral: ReferralRecord) => {
-    const success = referralService.approveReferral(referral.id);
-    if (success) {
-      reloadData();
-      if (showToast) {
-        showToast(
-          `🟢 Referral approved! ₹${referral.rewardAmount || 100} credited to ${referral.referrerName}'s wallet.`,
-          'success'
-        );
-      }
+  const handleManualApprove = async (referral: ReferralRecord) => {
+    try {
+      await referralApiService.updateStatus(referral.id, 'Approved');
+    } catch (e) {
+      console.warn('API update referral status notice:', e);
+    }
+    referralService.approveReferral(referral.id);
+    await reloadData();
+    if (showToast) {
+      showToast(
+        `🟢 Referral approved! ₹${referral.rewardAmount || 100} credited to ${referral.referrerName}'s wallet.`,
+        'success'
+      );
     }
   };
 
   // Action: Complete Payout
-  const handleConfirmPayout = () => {
+  const handleConfirmPayout = async () => {
     if (!selectedPayout) return;
     setIsProcessingPayout(true);
     try {
+      try {
+        await referralApiService.updatePayoutStatus(selectedPayout.id, 'Completed', utrRef, payoutNote);
+      } catch (e) {
+        console.warn('API payout status update notice:', e);
+      }
       referralService.markPayoutCompleted(selectedPayout.id, utrRef, payoutNote);
-      reloadData();
+      await reloadData();
       setSelectedPayout(null);
       setUtrRef('');
       setPayoutNote('');
