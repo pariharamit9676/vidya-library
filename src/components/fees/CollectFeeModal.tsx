@@ -65,14 +65,21 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
   if (!isOpen) return null;
 
   const regularStudents = useMemo(() => {
-    return (Array.isArray(students) ? students : []).filter(
+    const list = (Array.isArray(students) ? students : []).filter(
       (s) => s.studentType !== 'Demo' && s.status !== 'Demo'
     );
-  }, [students]);
+    if (preSelectedStudent && (preSelectedStudent.studentType === 'Demo' || preSelectedStudent.status === 'Demo')) {
+      const alreadyIn = list.some(x => x.id === preSelectedStudent.id || x._id === preSelectedStudent._id);
+      if (!alreadyIn) {
+        list.unshift(preSelectedStudent);
+      }
+    }
+    return list;
+  }, [students, preSelectedStudent]);
 
   // Selected Student ID
   const [selectedStudentId, setSelectedStudentId] = useState<string>(() => {
-    if (preSelectedStudent && preSelectedStudent.studentType !== 'Demo') {
+    if (preSelectedStudent) {
       return preSelectedStudent.id || preSelectedStudent._id || '';
     }
     return regularStudents[0]?.id || regularStudents[0]?._id || '';
@@ -80,7 +87,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
 
   // Sync selectedStudentId when preSelectedStudent changes
   useEffect(() => {
-    if (preSelectedStudent && preSelectedStudent.studentType !== 'Demo') {
+    if (preSelectedStudent) {
       const targetId = preSelectedStudent.id || preSelectedStudent._id || '';
       if (targetId) {
         setSelectedStudentId(targetId);

@@ -40,7 +40,8 @@ import {
   Printer,
   Calendar,
   Lock,
-  ArrowRight
+  ArrowRight,
+  Gift
 } from 'lucide-react';
 
 export const StudentDashboardPage: React.FC = () => {
@@ -985,7 +986,37 @@ export const StudentDashboardPage: React.FC = () => {
           </div>
         </div>
 
+        {/* ======================================================== */}
+        {/* REFER & EARN PROMO BANNER                                */}
+        {/* ======================================================== */}
+        <div
+          onClick={() => navigate('/student/referrals')}
+          className="bg-gradient-to-r from-[#4338CA] via-[#544bec] to-[#6366F1] rounded-2xl sm:rounded-3xl p-4 sm:p-5 text-white shadow-md shadow-[#544bec]/20 flex items-center justify-between gap-3 cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group"
+        >
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Gift size={22} className="text-white" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-black tracking-tight">
+                  Refer a Friend & Earn ₹100
+                </span>
+                <span className="px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-400 text-slate-950">
+                  Wallet Cash
+                </span>
+              </div>
+              <p className="text-[11px] text-white/80 mt-0.5 truncate m-0">
+                Invite study partners to reserve a free trial desk. Withdraw to UPI or get fee discount.
+              </p>
+            </div>
+          </div>
 
+          <div className="flex items-center gap-1 shrink-0 bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors">
+            <span>Invite</span>
+            <ChevronRight size={14} />
+          </div>
+        </div>
 
         {/* ======================================================== */}
         {/* ATTENDANCE HISTORY (Visible on Laptop / Desktop view)     */}
@@ -1299,7 +1330,7 @@ export const StudentDashboardPage: React.FC = () => {
       </main>
 
       {/* Mobile Bottom Navigation Bar (Docked to bottom on mobile) */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#EDF1F7] px-6 py-2 flex items-center justify-around shadow-lg">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#EDF1F7] px-4 py-2 flex items-center justify-around shadow-lg">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex flex-col items-center gap-1 text-[#544bec] font-black cursor-pointer py-1"
@@ -1314,6 +1345,15 @@ export const StudentDashboardPage: React.FC = () => {
         >
           <CalendarCheck size={18} />
           <span className="text-[10px] font-bold">Attendance</span>
+        </button>
+
+        <button
+          onClick={() => navigate('/student/referrals')}
+          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#544bec] cursor-pointer py-1 relative"
+        >
+          <Gift size={18} />
+          <span className="text-[10px] font-bold">Refer & Earn</span>
+          <span className="absolute top-0 right-3 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
         </button>
 
         <a

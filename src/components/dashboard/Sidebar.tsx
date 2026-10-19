@@ -9,7 +9,8 @@ import {
   FileText,
   BarChart2,
   Settings,
-  X
+  X,
+  Gift
 } from 'lucide-react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 
@@ -35,6 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'seats', label: 'Seat Management', icon: Armchair, path: '/admin/seats', hideOnMobile: true },
     { id: 'fees', label: 'Fees & Payments', icon: CreditCard, path: '/admin/fees' },
     { id: 'attendance', label: 'Attendance', icon: Calendar, path: '/admin/attendance' },
+    { id: 'referrals', label: 'Refer & Earn', icon: Gift, path: '/admin/referrals' },
     { id: 'receipts', label: 'Receipts', icon: FileText, path: '/admin/receipts' },
     { id: 'reports', label: 'Reports', icon: BarChart2, path: '/admin/reports' },
     { id: 'settings', label: 'Settings', icon: Settings, path: '/admin/settings' },

@@ -10,6 +10,7 @@ import { QuickPunchModal } from '../components/admin/QuickPunchModal';
 import { FeeReceiptModal } from '../components/admin/FeeReceiptModal';
 import { Toast } from '../components/common/Toast';
 import { useCreateStudent, useRecordFeePayment, useStudents, useToggleCheckIn } from '../services/useLibraryQueries';
+import { referralService } from '../services/referralService';
 
 export interface AdminLayoutContextType {
   openAddStudent: () => void;
@@ -159,6 +160,11 @@ export const AdminLayout: React.FC = () => {
               } : undefined,
               notes: data.notes
             });
+            if (data.studentType !== 'Demo' && data.seatNo && data.seatNo !== '-') {
+              try {
+                referralService.checkAndApproveByStudent(data.phone, data.seatNo);
+              } catch {}
+            }
           } catch (e) {
             console.error('Header Add Student error:', e);
           }
@@ -220,6 +226,14 @@ export const AdminLayout: React.FC = () => {
             dueAmount: payload.dueAmount,
             balanceDueDate: payload.balanceDueDate
           });
+
+          // Automatically approve referral if this student was referred as Demo
+          try {
+            referralService.checkAndApproveByStudent(payload.studentId, payload.seatNo);
+            if (selectedFeeStudent?.phone) {
+              referralService.checkAndApproveByStudent(selectedFeeStudent.phone, payload.seatNo);
+            }
+          } catch {}
 
           setIsCollectFeeOpen(false);
           setSelectedFeeStudent(null);

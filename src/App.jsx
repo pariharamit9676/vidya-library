@@ -20,6 +20,8 @@ const ReportsPage = lazy(() => import('./pages/ReportsPage').then(m => ({ defaul
 const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage').then(m => ({ default: m.StudentDashboardPage })));
 const StudentAttendancePage = lazy(() => import('./pages/StudentAttendancePage').then(m => ({ default: m.StudentAttendancePage })));
+const StudentReferralPage = lazy(() => import('./pages/StudentReferralPage').then(m => ({ default: m.StudentReferralPage })));
+const AdminReferralsPage = lazy(() => import('./pages/AdminReferralsPage').then(m => ({ default: m.AdminReferralsPage })));
 
 // Sleek lightweight spinner for route transitions
 const PageLoader = () => (
@@ -83,6 +85,14 @@ export default function App() {
                   </ProtectedStudentRoute>
                 }
               />
+              <Route
+                path="/student/referrals"
+                element={
+                  <ProtectedStudentRoute>
+                    <StudentReferralPage />
+                  </ProtectedStudentRoute>
+                }
+              />
 
               {/* Direct top-level route redirects */}
               <Route path="/students" element={<Navigate to="/admin/students" replace />} />
@@ -91,6 +101,7 @@ export default function App() {
               <Route path="/settings" element={<Navigate to="/admin/settings" replace />} />
               <Route path="/fees" element={<Navigate to="/admin/fees" replace />} />
               <Route path="/attendance" element={<Navigate to="/admin/attendance" replace />} />
+              <Route path="/referrals" element={<Navigate to="/admin/referrals" replace />} />
               <Route path="/reports" element={<Navigate to="/admin/reports" replace />} />
               <Route path="/receipts" element={<Navigate to="/admin/receipts" replace />} />
 
@@ -111,6 +122,7 @@ export default function App() {
                 <Route path="seats" element={<SeatsPage />} />
                 <Route path="fees" element={<FeesPage />} />
                 <Route path="attendance" element={<AttendancePage />} />
+                <Route path="referrals" element={<AdminReferralsPage />} />
                 <Route
                   path="books"
                   element={

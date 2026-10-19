@@ -38,11 +38,15 @@ import {
   Armchair,
   Play,
   Pause,
-  Volume2
+  Volume2,
+  Gift,
+  Tag
 } from 'lucide-react';
+import { studentService } from '../services/api';
+import { referralService, findStudentByReferralCode } from '../services/referralService';
 
 export const HomePage = () => {
-  const { settings, showToast } = useLibrary();
+  const { settings, showToast, students, createStudent } = useLibrary();
   const { data: serverCategories } = useCategories();
 
   // Ambient "Pin Drop Silence" Audio Player: water-droplet-2.mp3 repeating every 2 seconds until paused
@@ -283,25 +287,107 @@ export const HomePage = () => {
   const [trialForm, setTrialForm] = useState({
     name: '',
     phone: '',
+    referralCode: '',
     exam: 'UPSC CSE',
-    seatCategory: 'Premium Seat (Private Cabin + Locker • 12 Desks)',
-    plan: 'Quarterly Plan (Quater - 3 Months)'
+    shift: 'Full Day (24/7 Access)'
   });
   const [trialSubmitted, setTrialSubmitted] = useState(false);
+  const [isSubmittingTrial, setIsSubmittingTrial] = useState(false);
+  const [registeredDemoInfo, setRegisteredDemoInfo] = useState(null);
 
-  const handleTrialSubmit = (e) => {
+  // Live lookup of entered referral code
+  const verifiedReferrer = useMemo(() => {
+    if (!trialForm.referralCode || trialForm.referralCode.trim().length < 3) return null;
+    return findStudentByReferralCode(trialForm.referralCode, students || []);
+  }, [trialForm.referralCode, students]);
+
+  const handleTrialSubmit = async (e) => {
     e.preventDefault();
-    if (!trialForm.name.trim() || !trialForm.phone.trim()) {
-      if (showToast) showToast('Please enter your Name and WhatsApp Number', 'error');
+    const cleanPhone = trialForm.phone.replace(/\D/g, '');
+    if (!trialForm.name.trim()) {
+      if (showToast) showToast('Please enter your Name', 'error');
       return;
     }
-    setTrialSubmitted(true);
-    if (showToast) showToast('Free Trial Desk Reserved! See you at Vidya Library.', 'success');
+    if (cleanPhone.length < 10) {
+      if (showToast) showToast('Please enter a valid 10-digit WhatsApp number', 'error');
+      return;
+    }
+
+    if (verifiedReferrer && String(verifiedReferrer.phone).replace(/\D/g, '') === cleanPhone) {
+      if (showToast) showToast('You cannot use your own referral code!', 'error');
+      return;
+    }
+
+    try {
+      setIsSubmittingTrial(true);
+
+      const studentPayload = {
+        name: trialForm.name.trim(),
+        phone: cleanPhone,
+        studentType: 'Demo',
+        status: 'Demo',
+        plan: 'Daily',
+        shift: trialForm.shift || 'Full Day',
+        seatNo: '-',
+        seatCategory: 'Normal',
+        exam: trialForm.exam || 'General',
+        dueAmount: 0,
+        admissionDate: new Date().toISOString().slice(0, 10),
+        referredBy: verifiedReferrer ? (verifiedReferrer.studentId || verifiedReferrer.id) : null,
+        referrerName: verifiedReferrer ? verifiedReferrer.name : null,
+        referralCodeUsed: trialForm.referralCode.trim().toUpperCase() || null,
+        referralStatus: verifiedReferrer ? 'Pending' : null,
+        notes: `Free Trial Desk • ${trialForm.exam} • Shift: ${trialForm.shift}`
+      };
+
+      let createdStudent = null;
+      try {
+        const res = await studentService.create(studentPayload);
+        if (res && res.data) {
+          createdStudent = res.data;
+        }
+      } catch (err) {
+        if (createStudent) {
+          createdStudent = createStudent(studentPayload);
+        }
+      }
+
+      const registeredId = createdStudent?.id || createdStudent?._id || `stu_demo_${Date.now()}`;
+
+      if (verifiedReferrer) {
+        referralService.createReferralLead({
+          referrer: verifiedReferrer,
+          referee: {
+            id: registeredId,
+            name: trialForm.name.trim(),
+            phone: cleanPhone
+          },
+          notes: `Trial registered via Website. Shift: ${trialForm.shift}`
+        });
+      }
+
+      setRegisteredDemoInfo({
+        name: trialForm.name.trim(),
+        phone: cleanPhone,
+        referrerName: verifiedReferrer ? verifiedReferrer.name : null
+      });
+
+      setTrialSubmitted(true);
+      if (showToast) {
+        showToast('🎉 Free Trial Desk Reserved! Status set to Demo.', 'success');
+      }
+    } catch (err) {
+      console.error('Error reserving trial desk:', err);
+      if (showToast) showToast(err?.message || 'Failed to reserve trial desk', 'error');
+    } finally {
+      setIsSubmittingTrial(false);
+    }
   };
 
   const closeTrialModal = () => {
     setIsTrialModalOpen(false);
     setTrialSubmitted(false);
+    setRegisteredDemoInfo(null);
   };
 
   const reviews = [
@@ -1088,7 +1174,7 @@ export const HomePage = () => {
             </button>
 
             {!trialSubmitted ? (
-              <form onSubmit={handleTrialSubmit} className="flex flex-col gap-4">
+              <form onSubmit={handleTrialSubmit} className="flex flex-col gap-3.5">
                 <div>
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EEF0FD] text-[#544bec] text-[11px] font-black uppercase mb-1">
                     <Sparkles size={12} /> 100% Free Trial Desk
@@ -1097,11 +1183,11 @@ export const HomePage = () => {
                     Reserve Your Desk at Vidya Library
                   </h3>
                   <p className="text-xs text-[#64748B] mt-1 m-0">
-                    Experience our ergonomic chair, 300 Mbps Wi-Fi, and pin-drop silence before joining.
+                    Register for your free trial desk. Your status will be <strong>Demo</strong> until you visit the library, pay your fee, and select your seat.
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3 pt-1">
                   <div>
                     <label className="text-xs font-bold text-[#192038] block mb-1">
                       Your Full Name *
@@ -1112,7 +1198,7 @@ export const HomePage = () => {
                       placeholder="e.g. Rahul Sharma"
                       value={trialForm.name}
                       onChange={(e) => setTrialForm({ ...trialForm, name: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20 text-[#192038]"
                     />
                   </div>
 
@@ -1123,11 +1209,55 @@ export const HomePage = () => {
                     <input
                       type="tel"
                       required
+                      maxLength={10}
                       placeholder="e.g. 9876543210"
                       value={trialForm.phone}
-                      onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20"
+                      onChange={(e) => setTrialForm({ ...trialForm, phone: e.target.value.replace(/\D/g, '') })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20 text-[#192038]"
                     />
+                  </div>
+
+                  {/* Referral Code Field with Real-time Verification */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-bold text-[#192038] flex items-center gap-1.5">
+                        <Gift size={13} className="text-[#544bec]" />
+                        <span>Referral Code (Optional)</span>
+                      </label>
+                      <span className="text-[10px] text-[#8F9BB3] font-medium">Friend's code</span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="e.g. AMIT2333"
+                        value={trialForm.referralCode}
+                        onChange={(e) => setTrialForm({ ...trialForm, referralCode: e.target.value.toUpperCase() })}
+                        className={`w-full px-3.5 py-2.5 rounded-xl border text-xs outline-none uppercase font-mono tracking-wider transition-all ${
+                          verifiedReferrer
+                            ? 'border-emerald-500 bg-emerald-50/30 text-emerald-900 focus:ring-2 focus:ring-emerald-500/20'
+                            : 'border-[#CBD5E1] text-[#192038] focus:border-[#544bec] focus:ring-2 focus:ring-[#544bec]/20'
+                        }`}
+                      />
+                      {verifiedReferrer && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-600">
+                          <CheckCircle2 size={16} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Dynamic Feedback on Referral Code */}
+                    {verifiedReferrer ? (
+                      <div className="mt-1.5 p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 font-bold flex items-center gap-1.5">
+                        <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                        <span>
+                          Referral Applied! Referred by <strong>{verifiedReferrer.name}</strong> • ₹100 Benefit on Admission
+                        </span>
+                      </div>
+                    ) : trialForm.referralCode.trim().length >= 4 ? (
+                      <p className="mt-1 text-[11px] text-amber-600 font-medium m-0">
+                        Code not recognized, but you can still reserve your free trial desk.
+                      </p>
+                    ) : null}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -1138,7 +1268,7 @@ export const HomePage = () => {
                       <select
                         value={trialForm.exam}
                         onChange={(e) => setTrialForm({ ...trialForm, exam: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white"
+                        className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white text-[#192038]"
                       >
                         <option value="UPSC CSE">UPSC CSE</option>
                         <option value="SSC CGL">SSC CGL</option>
@@ -1151,44 +1281,35 @@ export const HomePage = () => {
 
                     <div>
                       <label className="text-xs font-bold text-[#192038] block mb-1">
-                        Seat Category
+                        Preferred Shift
                       </label>
                       <select
-                        value={trialForm.seatCategory}
-                        onChange={(e) => setTrialForm({ ...trialForm, seatCategory: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white font-medium"
+                        value={trialForm.shift}
+                        onChange={(e) => setTrialForm({ ...trialForm, shift: e.target.value })}
+                        className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white font-medium text-[#192038]"
                       >
-                        {seatCategories.map((s) => (
-                          <option key={s.id} value={`${s.name} (${s.tagline})`}>
-                            {s.name} (₹{s.basePrice}/mo)
-                          </option>
-                        ))}
+                        <option value="Full Day (24/7 Access)">Full Day (24/7 Access)</option>
+                        <option value="Morning Shift (6 AM - 2 PM)">Morning (6 AM - 2 PM)</option>
+                        <option value="Evening Shift (2 PM - 10 PM)">Evening (2 PM - 10 PM)</option>
+                        <option value="Night Shift (10 PM - 6 AM)">Night (10 PM - 6 AM)</option>
                       </select>
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-[#192038] block mb-1">
-                      Preferred Plan
-                    </label>
-                    <select
-                      value={trialForm.plan}
-                      onChange={(e) => setTrialForm({ ...trialForm, plan: e.target.value })}
-                      className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white font-medium"
-                    >
-                      <option value="Monthly Plan (1m - 1 Month)">Monthly Plan (1m - 1 Month)</option>
-                      <option value="Quarterly Plan (Quater - 3 Months)">Quarterly Plan (Quater - 3 Months)</option>
-                      <option value="Half-Yearly Plan (Half - 6 Months)">Half-Yearly Plan (Half - 6 Months)</option>
-                      <option value="Yearly Plan (Annual - 12 Months)">Yearly Plan (Annual - 12 Months)</option>
-                    </select>
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs shadow-md shadow-slate-900/20 transition-all cursor-pointer mt-2"
+                  disabled={isSubmittingTrial}
+                  className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs shadow-md shadow-slate-900/20 transition-all cursor-pointer mt-1 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  Confirm Free Trial Desk Reservation →
+                  {isSubmittingTrial ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Registering Demo Account...</span>
+                    </>
+                  ) : (
+                    <span>Confirm Free Demo Registration →</span>
+                  )}
                 </button>
               </form>
             ) : (
@@ -1196,21 +1317,37 @@ export const HomePage = () => {
                 <div className="w-14 h-14 rounded-full bg-emerald-50 text-[#544bec] border border-emerald-200 flex items-center justify-center">
                   <CheckCircle2 size={32} />
                 </div>
-                <h3 className="text-xl font-black text-[#192038]">
+                <h3 className="text-xl font-black text-[#192038] m-0">
                   Free Trial Reserved!
                 </h3>
-                <p className="text-xs text-[#64748B] max-w-sm leading-relaxed">
-                  Hi <strong>{trialForm.name}</strong>, your demo seat for <strong>{trialForm.seatCategory}</strong> ({trialForm.plan}) is confirmed. You can visit anytime tomorrow with your ID proof.
-                </p>
-                <div className="p-3 rounded-xl bg-[#F8FAFD] border border-[#E2E8F0] text-xs text-[#192038] w-full text-left">
-                  <strong className="block text-slate-900 font-bold">Vidya Library Address:</strong>
-                  66W8+4FH, Gayatri Nagar, Gwalior, MP 474005
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
+                  Status: Demo Student (Trial Active)
                 </div>
+
+                <p className="text-xs text-[#64748B] max-w-sm leading-relaxed m-0">
+                  Hi <strong>{registeredDemoInfo?.name || trialForm.name}</strong>, your demo registration is confirmed.
+                  {registeredDemoInfo?.referrerName && (
+                    <span className="block text-emerald-700 font-bold mt-1">
+                      🎁 Referred by {registeredDemoInfo.referrerName}. Referral bonus will be approved when you enroll!
+                    </span>
+                  )}
+                </p>
+
+                <div className="p-3.5 rounded-xl bg-[#F8FAFD] border border-[#E2E8F0] text-xs text-[#192038] w-full text-left space-y-1">
+                  <strong className="block text-slate-900 font-bold">What to do next:</strong>
+                  <p className="text-[11px] text-[#64748B] m-0">
+                    Visit Vidya Library anytime tomorrow with an ID proof. The admin will verify your details, collect your fee, assign your permanent desk, and your referral benefit will be credited.
+                  </p>
+                  <div className="pt-2 text-[11px] text-slate-700 font-medium">
+                    📍 <strong>Address:</strong> 66W8+4FH, Gayatri Nagar, Gwalior, MP 474005
+                  </div>
+                </div>
+
                 <button
                   onClick={closeTrialModal}
                   className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs cursor-pointer mt-1"
                 >
-                  Close Window
+                  Done / Close Window
                 </button>
               </div>
             )}
