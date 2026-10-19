@@ -573,7 +573,7 @@ export const StudentDashboardPage: React.FC = () => {
                 ) : (
                   <>
                     <CalendarCheck size={16} />
-                    <span>Punch In to Library ({todayCheckInCount}/3 today)</span>
+                    <span>Punch In to Library</span>
                   </>
                 )}
               </button>
@@ -587,7 +587,7 @@ export const StudentDashboardPage: React.FC = () => {
                   </span>
                 ) : isDailyLimitReached ? (
                   <span className="text-amber-600 font-bold flex items-center gap-1.5 justify-end">
-                    <span>Daily limit reached (3 of 3 check-ins used today)</span>
+                    <span>Daily limit reached (Maximum 3 check-ins per day)</span>
                   </span>
                 ) : isCheckedIn ? (
                   <span className="text-[#00A97A] font-bold flex items-center gap-1.5 justify-end">
@@ -595,7 +595,7 @@ export const StudentDashboardPage: React.FC = () => {
                     Checked in {formatLiveCheckInTime(checkInTime)}
                   </span>
                 ) : (
-                  <span className="text-[#8F9BB3]">Currently checked out • {Math.max(0, 3 - todayCheckInCount)} check-in{3 - todayCheckInCount === 1 ? '' : 's'} remaining today</span>
+                  <span className="text-[#8F9BB3]">Currently checked out</span>
                 )}
               </div>
             </div>
@@ -673,7 +673,7 @@ export const StudentDashboardPage: React.FC = () => {
               ) : (
                 <>
                   <CalendarCheck size={15} />
-                  <span>Punch In to Library ({todayCheckInCount}/3)</span>
+                  <span>Punch In to Library</span>
                 </>
               )}
             </button>
@@ -686,7 +686,7 @@ export const StudentDashboardPage: React.FC = () => {
                 </span>
               ) : isDailyLimitReached ? (
                 <span className="text-amber-600 font-bold">
-                  Daily limit reached (3 of 3 check-ins used today)
+                  Daily limit reached (Maximum 3 check-ins per day)
                 </span>
               ) : isCheckedIn ? (
                 <span className="text-[#00A97A] font-bold flex items-center justify-center gap-1.5">
@@ -694,7 +694,7 @@ export const StudentDashboardPage: React.FC = () => {
                   Live Checked In ({formatDisplayTime(checkInTime) || 'Active'})
                 </span>
               ) : (
-                <span className="text-[#8F9BB3]">Tap to mark arrival • {Math.max(0, 3 - todayCheckInCount)} check-ins remaining</span>
+                <span className="text-[#8F9BB3]">Tap to mark your arrival in the library</span>
               )}
             </div>
           </div>
