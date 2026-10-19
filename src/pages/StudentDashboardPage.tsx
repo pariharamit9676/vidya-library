@@ -10,9 +10,11 @@ import {
   getDaysUntilDue,
   computeFeeStatus
 } from '../utils/dateFormatter';
+import { calculateDuration } from '../utils/storage';
 import {
   BookOpen,
   LogOut,
+  LogIn,
   CalendarCheck,
   Armchair,
   CreditCard,
@@ -37,7 +39,8 @@ import {
   X,
   Printer,
   Calendar,
-  Lock
+  Lock,
+  ArrowRight
 } from 'lucide-react';
 
 export const StudentDashboardPage: React.FC = () => {
@@ -166,6 +169,50 @@ export const StudentDashboardPage: React.FC = () => {
 
   const renewalFee = Number(studentData?.planAmount) || 600;
   const feeDisplayAmount = dueAmt > 0 ? dueAmt : renewalFee;
+
+  // Today's total study duration for the overview card
+  const todayTotalDuration = useMemo(() => {
+    if (isCheckedIn && checkInTime) {
+      return calculateDuration(checkInTime);
+    }
+    const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    const todayLogs = (studentData?.attendanceHistory || []).filter((item: any) => {
+      const rawDate = item.checkInTime || item.timestamp || item.date;
+      if (!rawDate) return false;
+      const d = new Date(rawDate);
+      return !isNaN(d.getTime()) && d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST;
+    });
+    if (todayLogs.length > 0 && todayLogs[0]?.duration) {
+      return todayLogs[0].duration;
+    }
+    const last = studentData?.attendanceHistory?.[0];
+    return last?.duration || '0m';
+  }, [isCheckedIn, checkInTime, studentData?.attendanceHistory]);
+
+  // Last Punch information for the Dribbble-style card
+  const lastPunch = useMemo(() => {
+    if (isCheckedIn && checkInTime) {
+      return {
+        time: formatDisplayTime(checkInTime) || 'Active',
+        date: formatDisplayDate(checkInTime) || 'Today',
+        action: 'Punched In'
+      };
+    }
+    const last = studentData?.attendanceHistory?.[0];
+    if (last) {
+      const punchTime = last.checkOutTime || last.checkOut || last.checkInTime || last.checkIn;
+      return {
+        time: punchTime ? formatDisplayTime(punchTime) : '12:30 PM',
+        date: last.date ? formatDisplayDate(last.date) : 'Today',
+        action: 'Last Punch'
+      };
+    }
+    return {
+      time: 'No recent punch',
+      date: 'Today',
+      action: 'Ready'
+    };
+  }, [isCheckedIn, checkInTime, studentData?.attendanceHistory]);
 
   // Handle Quick Punch In/Out
   const handleTogglePunch = async () => {
@@ -317,8 +364,8 @@ export const StudentDashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-16">
       
-      {/* Top Navbar - Clean, Admin-matched design */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#EDF1F7] px-4 sm:px-8 py-2.5 sm:py-3 shadow-2xs">
+      {/* Top Navbar - Clean, Admin-matched design (Desktop only) */}
+      <header className="hidden sm:block sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#EDF1F7] px-4 sm:px-8 py-2.5 sm:py-3 shadow-2xs">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           
           {/* Left Brand */}
@@ -475,10 +522,12 @@ export const StudentDashboardPage: React.FC = () => {
         {/* ======================================================== */}
         {/* HERO SECTION: Responsive (Distinct Laptop vs Mobile)     */}
         {/* ======================================================== */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-4 sm:p-7 shadow-xs">
-          
-          {/* Laptop / Desktop Layout (Hidden on Mobile) */}
-          <div className="hidden sm:flex items-center justify-between gap-6">
+        {/* ======================================================== */}
+        {/* HERO SECTION: Responsive (Distinct Laptop vs Mobile)     */}
+        {/* ======================================================== */}
+        {/* Laptop / Desktop Layout (Hidden on Mobile) */}
+        <div className="hidden sm:block bg-white rounded-3xl border border-[#EDF1F7] p-6 sm:p-7 shadow-xs">
+          <div className="flex items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#00A97A] to-[#00C992] text-white text-3xl font-black flex items-center justify-center shadow-lg shadow-[#00A97A]/25 shrink-0">
@@ -600,105 +649,267 @@ export const StudentDashboardPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Mobile Layout (Optimized for Phones) */}
-          <div className="sm:hidden space-y-3.5">
-            {/* Mobile Header Row */}
-            <div className="flex items-center gap-3">
+        {/* ======================================================== */}
+        {/* MOBILE SECTION (Dribbble Inspired Native App Experience) */}
+        {/* ======================================================== */}
+        <div className="sm:hidden space-y-3.5">
+          {/* 1. Curved Deep Navy App Header */}
+          <div className="bg-gradient-to-br from-[#122b5e] via-[#1a3875] to-[#224b96] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-12 rounded-b-[2.5rem] shadow-lg shadow-[#122b5e]/20 relative overflow-hidden">
+            {/* Ambient Background Circles */}
+            <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -left-10 bottom-0 w-32 h-32 bg-[#00A97A]/10 rounded-full blur-xl pointer-events-none" />
+
+            {/* Top Bar: Title + Quick Actions */}
+            <div className="flex items-center justify-between gap-3 mb-4 relative z-10">
+              <div>
+                <h2 className="text-lg font-black text-white tracking-tight m-0 leading-tight">
+                  Dashboard
+                </h2>
+                <span className="text-[10px] text-blue-200/90 font-semibold tracking-wide">
+                  Vidya Library Student Portal
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={fetchStudentProfile}
+                  disabled={isLoading}
+                  className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/10"
+                  title="Refresh"
+                >
+                  <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsChangePassOpen(true)}
+                  className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/10"
+                  title="Change Password"
+                >
+                  <KeyRound size={13} />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-8 h-8 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 active:bg-rose-500/40 text-rose-200 border border-rose-400/30 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                  title="Log Out"
+                >
+                  <LogOut size={13} />
+                </button>
+              </div>
+            </div>
+
+            {/* User Greeting Row */}
+            <div className="flex items-center gap-3 relative z-10">
               <div className="relative shrink-0">
-                <div className="w-13 h-13 rounded-2xl bg-[#00A97A] text-white text-xl font-black flex items-center justify-center shadow-md shadow-[#00A97A]/25">
+                <div className="w-12 h-12 rounded-full border-2 border-white/40 bg-[#00A97A] text-white font-black text-lg flex items-center justify-center shadow-md shadow-black/25">
                   {(studentData?.name || 'S').charAt(0).toUpperCase()}
                 </div>
                 <div
-                  className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white flex items-center justify-center ${
-                    isCheckedIn ? 'bg-[#00A97A]' : 'bg-slate-300'
+                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#1a3875] flex items-center justify-center ${
+                    isCheckedIn ? 'bg-[#00A97A]' : 'bg-slate-400'
                   }`}
                 >
-                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-white animate-pulse' : 'bg-slate-500'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-white animate-pulse' : 'bg-slate-600'}`} />
                 </div>
               </div>
 
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <h1 className="text-base font-black tracking-tight text-[#192038] m-0 truncate">
-                    {studentData?.name || 'Student'}
-                  </h1>
-                  <span className="px-2 py-0.5 rounded-md bg-[#E8F8F3] text-[#00A97A] font-mono font-bold text-[10px]">
-                    {studentData?.studentId || 'ID'}
-                  </span>
-                  {isPunchBlocked && (
-                    <span className="px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200 font-bold text-[9px] animate-pulse">
-                      {isInactive ? 'Inactive' : 'Overdue'}
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-[#8F9BB3] m-0 mt-0.5 truncate">
-                  {getGreeting()} • Seat #{studentData?.seatNo || 'None'}
+                <h1 className="text-base font-black text-white m-0 truncate tracking-tight">
+                  Hello, {studentData?.name || 'Student'} 👋
+                </h1>
+                <p className="text-[11px] text-blue-100 font-medium m-0 mt-0.5 truncate">
+                  {getGreeting()} • ID #{studentData?.studentId || 'STU'}
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Mobile Big Thumb-friendly Punch In / Punch Out Button */}
-            <button
-              onClick={handleTogglePunch}
-              disabled={punchLoading}
-              className={`w-full py-3.5 px-4 rounded-xl font-black text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 ${
-                isPunchBlocked || isDailyLimitReached
-                  ? 'bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-300'
-                  : isCheckedIn
-                  ? 'bg-rose-500 active:bg-rose-600 text-white shadow-rose-500/25'
-                  : 'bg-[#00A97A] active:bg-[#008f67] text-white shadow-[#00A97A]/30'
-              }`}
-            >
-              {punchLoading ? (
-                <>
-                  <RefreshCw size={15} className="animate-spin" />
-                  <span>Processing...</span>
-                </>
-              ) : isPunchBlocked ? (
-                <>
-                  <Lock size={15} className="text-slate-500" />
-                  <span>Punch In / Out Locked (Inactive)</span>
-                </>
-              ) : isDailyLimitReached ? (
-                <>
-                  <Lock size={15} className="text-amber-500" />
-                  <span>Daily Limit Reached (3/3 Used)</span>
-                </>
-              ) : isCheckedIn ? (
-                <>
-                  <LogOut size={15} />
-                  <span>Punch Out of Library</span>
-                </>
-              ) : (
-                <>
-                  <CalendarCheck size={15} />
-                  <span>Punch In to Library</span>
-                </>
-              )}
-            </button>
+          {/* 2. Overlapping Floating Overview Card (Dribbble Overview Card) */}
+          <div className="-mt-7 bg-white rounded-2xl border border-[#EDF1F7] shadow-xl shadow-slate-900/5 p-3.5 relative z-20">
+            <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-[#EDF1F7]/80">
+              <span className="text-xs font-black text-[#192038] tracking-tight">
+                Overview
+              </span>
+              <span
+                className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                  isDemo
+                    ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                    : isInactive
+                    ? 'bg-slate-100 text-slate-700 border border-slate-300'
+                    : isOverdue
+                    ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                    : isDueSoon
+                    ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                    : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                }`}
+              >
+                {isDemo
+                  ? 'Demo'
+                  : isInactive
+                  ? 'Inactive'
+                  : isOverdue
+                  ? 'Overdue'
+                  : isDueSoon
+                  ? 'Due Soon'
+                  : 'Active'}
+              </span>
+            </div>
 
-            {/* Mobile Status Subtext */}
-            <div className="text-[11px] text-center font-medium">
+            <div className="grid grid-cols-3 divide-x divide-slate-100 text-center">
+              {/* Col 1: Status */}
+              <div className="px-1.5">
+                <div className="w-7 h-7 mx-auto rounded-full bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-1">
+                  <CheckCircle2 size={13} />
+                </div>
+                <div className="text-xs font-black text-[#192038] flex items-center justify-center gap-1 truncate">
+                  {isCheckedIn ? (
+                    <>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A] animate-ping shrink-0" />
+                      <span>Inside</span>
+                    </>
+                  ) : (
+                    <span>Outside</span>
+                  )}
+                </div>
+                <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
+                  Status
+                </div>
+              </div>
+
+              {/* Col 2: Total Hours */}
+              <div className="px-1.5">
+                <div className="w-7 h-7 mx-auto rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-1">
+                  <Clock size={13} />
+                </div>
+                <div className="text-xs font-black text-[#192038] font-mono truncate">
+                  {todayTotalDuration}
+                </div>
+                <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
+                  Total Hours
+                </div>
+              </div>
+
+              {/* Col 3: Seat No */}
+              <div className="px-1.5">
+                <div className="w-7 h-7 mx-auto rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mb-1">
+                  <Armchair size={13} />
+                </div>
+                <div className="text-xs font-black text-[#192038] truncate">
+                  {!isInactive && studentData?.seatNo && studentData.seatNo !== '-'
+                    ? `Seat #${studentData.seatNo}`
+                    : 'No Seat'}
+                </div>
+                <div className="text-[10px] text-[#8F9BB3] font-medium mt-0.5">
+                  Desk
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Highlight Attendance Punch Card (Dribbble Style "Let's Get Start Today") */}
+          <div className="bg-gradient-to-br from-[#EBF2FE] via-[#F3F0FE] to-[#FBF8FF] border border-[#DCE4F8] rounded-2xl p-4 shadow-xs relative overflow-hidden">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <span className="text-[9px] font-black tracking-widest text-indigo-600 uppercase">
+                  Welcome
+                </span>
+                <h3 className="text-sm font-black text-[#192038] leading-tight m-0 mt-0.5">
+                  Let's Get Start Today
+                </h3>
+                <p className="text-[11px] text-[#6B778C] font-medium m-0 mt-0.5">
+                  Flexible Library Attendance Tracking
+                </p>
+
+                <div className="mt-3 space-y-0.5">
+                  <div className="text-[11px] font-black text-[#192038]">
+                    Last Punch: <span className="text-indigo-600">{lastPunch.time}</span>
+                  </div>
+                  <div className="text-[10px] text-[#8F9BB3] font-medium">
+                    {lastPunch.date}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const el = document.getElementById('attendance-history-section');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-indigo-600 hover:text-indigo-700 active:text-indigo-800 pt-1 cursor-pointer transition-colors"
+                  >
+                    <span>View History</span>
+                    <ArrowRight size={11} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Action Button (Squircle thumb-friendly) */}
+              <div className="shrink-0 flex flex-col items-center">
+                <button
+                  type="button"
+                  onClick={handleTogglePunch}
+                  disabled={punchLoading}
+                  className={`w-20 h-20 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
+                    isPunchBlocked || isDailyLimitReached
+                      ? 'bg-slate-200 text-slate-600 border border-slate-300'
+                      : isCheckedIn
+                      ? 'bg-gradient-to-tr from-rose-500 to-rose-600 text-white shadow-rose-500/30 hover:shadow-rose-500/40'
+                      : 'bg-gradient-to-tr from-[#00A97A] to-[#00C992] text-white shadow-[#00A97A]/30 hover:shadow-[#00A97A]/40'
+                  }`}
+                >
+                  {punchLoading ? (
+                    <>
+                      <RefreshCw size={20} className="animate-spin text-white" />
+                      <span className="text-[10px] font-bold">Wait...</span>
+                    </>
+                  ) : isPunchBlocked ? (
+                    <>
+                      <Lock size={20} className="text-slate-500" />
+                      <span className="text-[10px] font-bold">Locked</span>
+                    </>
+                  ) : isDailyLimitReached ? (
+                    <>
+                      <Lock size={20} className="text-amber-600" />
+                      <span className="text-[9px] font-bold text-center leading-tight">Limit 3/3</span>
+                    </>
+                  ) : isCheckedIn ? (
+                    <>
+                      <LogOut size={22} className="text-white" />
+                      <span className="text-[10px] font-black tracking-tight">Punch Out</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogIn size={22} className="text-white" />
+                      <span className="text-[10px] font-black tracking-tight">Punch In</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom status alert / helpline */}
+            <div className="mt-3 pt-2.5 border-t border-indigo-100/70 text-[10px] font-medium">
               {isPunchBlocked ? (
-                <span className="text-slate-600 font-bold">
-                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800">{adminPhone}</a>
+                <span className="text-slate-600 font-bold block text-center">
+                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-indigo-600">{adminPhone}</a>
                 </span>
               ) : isDailyLimitReached ? (
-                <span className="text-amber-600 font-bold">
+                <span className="text-amber-700 font-bold block text-center">
                   Daily limit reached (Maximum 3 check-ins per day)
                 </span>
               ) : isCheckedIn ? (
                 <span className="text-[#00A97A] font-bold flex items-center justify-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A] animate-ping" />
-                  Live Checked In ({formatDisplayTime(checkInTime) || 'Active'})
+                  Live Checked In • Since {formatDisplayTime(checkInTime)}
                 </span>
               ) : (
-                <span className="text-[#8F9BB3]">Tap to mark your arrival in the library</span>
+                <span className="text-[#6B778C] block text-center">
+                  Tap button to mark arrival in the library
+                </span>
               )}
             </div>
           </div>
-
         </div>
 
         {/* 4 Quick Stat Metric Cards (2x2 on Mobile, 4-col on Laptop) */}
@@ -823,7 +1034,7 @@ export const StudentDashboardPage: React.FC = () => {
         {/* ======================================================== */}
         {/* ATTENDANCE LOGS: with 5-Item Pagination & Mobile Cards    */}
         {/* ======================================================== */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-4 sm:p-6 shadow-xs">
+        <div id="attendance-history-section" className="bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-4 sm:p-6 shadow-xs scroll-mt-6">
           
           <div className="flex items-center justify-between mb-3.5 sm:mb-4">
             <div className="flex items-center gap-2">
