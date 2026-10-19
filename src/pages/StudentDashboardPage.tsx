@@ -789,15 +789,6 @@ export const StudentDashboardPage: React.FC = () => {
               <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
-                  onClick={fetchStudentProfile}
-                  disabled={isLoading}
-                  className="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 active:bg-white/35 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/20"
-                  title="Refresh"
-                >
-                  <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} />
-                </button>
-                <button
-                  type="button"
                   onClick={() => setIsChangePassOpen(true)}
                   className="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 active:bg-white/35 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/20"
                   title="Change Password"
