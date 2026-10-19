@@ -21,7 +21,7 @@ export const ModulePlaceholderPage: React.FC<ModulePlaceholderPageProps> = ({
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00A97A]/15 text-[#00A97A] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-primary-light text-primary flex items-center justify-center font-bold">
               <Icon size={22} />
             </div>
             <div>
@@ -29,7 +29,7 @@ export const ModulePlaceholderPage: React.FC<ModulePlaceholderPageProps> = ({
                 <h2 className="text-2xl font-extrabold tracking-tight text-[#192038] m-0">
                   {title}
                 </h2>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#00A97A]/10 text-[#00A97A] border border-[#00A97A]/20">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary-light text-primary border border-primary-subtle">
                   {badge}
                 </span>
               </div>
@@ -44,14 +44,14 @@ export const ModulePlaceholderPage: React.FC<ModulePlaceholderPageProps> = ({
           to="/admin"
           className="px-3.5 py-2 rounded-xl text-xs font-bold border border-[#EDF1F7] bg-white text-[#192038] hover:bg-[#F8FAFD] shadow-xs inline-flex items-center gap-1.5 transition-all"
         >
-          <ArrowLeft size={14} className="text-[#00A97A]" />
+          <ArrowLeft size={14} className="text-primary" />
           <span>Back to Dashboard</span>
         </Link>
       </div>
 
       {/* Feature Preview Card */}
       <div className="bg-white rounded-2xl border border-[#EDF1F7] p-8 shadow-xs text-center max-w-2xl mx-auto my-12">
-        <div className="w-16 h-16 rounded-2xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <div className="w-16 h-16 rounded-2xl bg-primary-light text-primary flex items-center justify-center mx-auto mb-4 shadow-sm">
           <Icon size={32} />
         </div>
         <h3 className="text-lg font-bold text-[#192038] m-0">
@@ -64,7 +64,7 @@ export const ModulePlaceholderPage: React.FC<ModulePlaceholderPageProps> = ({
         <div className="mt-6 pt-6 border-t border-[#EDF1F7] flex items-center justify-center gap-3">
           <Link
             to="/admin"
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-[#00A97A] text-white hover:bg-[#008f67] transition-all"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-primary hover:bg-primary-hover text-white transition-all"
           >
             Go to Main Dashboard
           </Link>

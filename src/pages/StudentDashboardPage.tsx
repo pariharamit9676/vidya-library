@@ -648,11 +648,11 @@ export const StudentDashboardPage: React.FC = () => {
         {/* MOBILE SECTION (Dribbble Inspired Native App Experience) */}
         {/* ======================================================== */}
         <div className="sm:hidden space-y-3.5">
-          {/* 1. Curved Deep Navy App Header */}
-          <div className="bg-gradient-to-br from-[#122b5e] via-[#1a3875] to-[#224b96] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-12 rounded-b-[2.5rem] shadow-lg shadow-[#122b5e]/20 relative overflow-hidden">
+          {/* 1. Curved Primary Emerald App Header */}
+          <div className="bg-gradient-to-br from-[#00A97A] via-[#00966C] to-[#007A56] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-12 rounded-b-[2.5rem] shadow-lg shadow-[#00A97A]/25 relative overflow-hidden">
             {/* Ambient Background Circles */}
-            <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -left-10 bottom-0 w-32 h-32 bg-[#00A97A]/10 rounded-full blur-xl pointer-events-none" />
+            <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -left-10 bottom-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
 
             {/* Top Bar: Title + Quick Actions */}
             <div className="flex items-center justify-between gap-3 mb-4 relative z-10">
@@ -660,7 +660,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <h2 className="text-lg font-black text-white tracking-tight m-0 leading-tight">
                   Dashboard
                 </h2>
-                <span className="text-[10px] text-blue-200/90 font-semibold tracking-wide">
+                <span className="text-[10px] text-emerald-100 font-semibold tracking-wide">
                   Vidya Library Student Portal
                 </span>
               </div>
@@ -670,7 +670,7 @@ export const StudentDashboardPage: React.FC = () => {
                   type="button"
                   onClick={fetchStudentProfile}
                   disabled={isLoading}
-                  className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/10"
+                  className="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 active:bg-white/35 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/20"
                   title="Refresh"
                 >
                   <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} />
@@ -678,7 +678,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsChangePassOpen(true)}
-                  className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/10"
+                  className="w-8 h-8 rounded-xl bg-white/15 hover:bg-white/25 active:bg-white/35 text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-white/20"
                   title="Change Password"
                 >
                   <KeyRound size={13} />
@@ -686,7 +686,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="w-8 h-8 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 active:bg-rose-500/40 text-rose-200 border border-rose-400/30 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                  className="w-8 h-8 rounded-xl bg-white/15 hover:bg-rose-500/80 active:bg-rose-600 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
                   title="Log Out"
                 >
                   <LogOut size={13} />
@@ -697,15 +697,15 @@ export const StudentDashboardPage: React.FC = () => {
             {/* User Greeting Row */}
             <div className="flex items-center gap-3 relative z-10">
               <div className="relative shrink-0">
-                <div className="w-12 h-12 rounded-full border-2 border-white/40 bg-[#00A97A] text-white font-black text-lg flex items-center justify-center shadow-md shadow-black/25">
+                <div className="w-12 h-12 rounded-full border-2 border-white/50 bg-white text-[#00A97A] font-black text-lg flex items-center justify-center shadow-md shadow-black/20">
                   {(studentData?.name || 'S').charAt(0).toUpperCase()}
                 </div>
                 <div
-                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#1a3875] flex items-center justify-center ${
-                    isCheckedIn ? 'bg-[#00A97A]' : 'bg-slate-400'
+                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#00966C] flex items-center justify-center ${
+                    isCheckedIn ? 'bg-white' : 'bg-slate-300'
                   }`}
                 >
-                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-white animate-pulse' : 'bg-slate-600'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-[#00A97A] animate-pulse' : 'bg-slate-500'}`} />
                 </div>
               </div>
 
@@ -713,7 +713,7 @@ export const StudentDashboardPage: React.FC = () => {
                 <h1 className="text-base font-black text-white m-0 truncate tracking-tight">
                   Hello, {studentData?.name || 'Student'} 👋
                 </h1>
-                <p className="text-[11px] text-blue-100 font-medium m-0 mt-0.5 truncate">
+                <p className="text-[11px] text-emerald-50 font-medium m-0 mt-0.5 truncate">
                   {getGreeting()} • ID #{cleanStudentId}
                 </p>
               </div>
@@ -762,7 +762,7 @@ export const StudentDashboardPage: React.FC = () => {
 
               {/* Col 2: Total Hours */}
               <div className="px-1.5">
-                <div className="w-7 h-7 mx-auto rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-1">
+                <div className="w-7 h-7 mx-auto rounded-full bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-1">
                   <Clock size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] font-mono truncate">
@@ -775,7 +775,7 @@ export const StudentDashboardPage: React.FC = () => {
 
               {/* Col 3: Seat No */}
               <div className="px-1.5">
-                <div className="w-7 h-7 mx-auto rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mb-1">
+                <div className="w-7 h-7 mx-auto rounded-full bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center mb-1">
                   <Armchair size={13} />
                 </div>
                 <div className="text-xs font-black text-[#192038] truncate">
@@ -790,11 +790,11 @@ export const StudentDashboardPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 3. Highlight Attendance Punch Card (Dribbble Style "Let's Get Start Today") */}
-          <div className="bg-gradient-to-br from-[#EBF2FE] via-[#F3F0FE] to-[#FBF8FF] border border-[#DCE4F8] rounded-2xl p-4 shadow-xs relative overflow-hidden">
+          {/* 3. Highlight Attendance Punch Card (Primary Color Styled) */}
+          <div className="bg-gradient-to-br from-[#E8F8F3] via-[#F4FCF8] to-[#FFFFFF] border border-[#00A97A]/25 rounded-2xl p-4 shadow-xs relative overflow-hidden">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <span className="text-[9px] font-black tracking-widest text-indigo-600 uppercase">
+                <span className="text-[9px] font-black tracking-widest text-[#00A97A] uppercase">
                   Welcome
                 </span>
                 <h3 className="text-sm font-black text-[#192038] leading-tight m-0 mt-0.5">
@@ -806,7 +806,7 @@ export const StudentDashboardPage: React.FC = () => {
 
                 <div className="mt-3 space-y-0.5">
                   <div className="text-[11px] font-black text-[#192038]">
-                    Last Punch: <span className="text-indigo-600">{lastPunch.time}</span>
+                    Last Punch: <span className="text-[#00A97A] font-mono">{lastPunch.time}</span>
                   </div>
                   <div className="text-[10px] text-[#8F9BB3] font-medium">
                     {lastPunch.date}
@@ -814,7 +814,7 @@ export const StudentDashboardPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigate('/student/attendance')}
-                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-indigo-600 hover:text-indigo-700 active:text-indigo-800 pt-1 cursor-pointer transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#00A97A] hover:text-[#008f67] active:text-[#007454] pt-1 cursor-pointer transition-colors"
                   >
                     <span>View Attendance History</span>
                     <ArrowRight size={11} />
@@ -867,10 +867,10 @@ export const StudentDashboardPage: React.FC = () => {
             </div>
 
             {/* Bottom status alert / helpline */}
-            <div className="mt-3 pt-2.5 border-t border-indigo-100/70 text-[10px] font-medium">
+            <div className="mt-3 pt-2.5 border-t border-[#00A97A]/20 text-[10px] font-medium">
               {isPunchBlocked ? (
                 <span className="text-slate-600 font-bold block text-center">
-                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-indigo-600">{adminPhone}</a>
+                  Locked: Account is inactive • Admin Helpline: <a href={`tel:${adminPhone}`} className="underline hover:text-slate-800 text-[#00A97A]">{adminPhone}</a>
                 </span>
               ) : isDailyLimitReached ? (
                 <span className="text-amber-700 font-bold block text-center">
@@ -917,7 +917,7 @@ export const StudentDashboardPage: React.FC = () => {
           <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5 sm:mb-2">
               <span className="text-[11px] sm:text-xs font-bold text-[#8F9BB3]">Plan Type</span>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
                 <BookOpen size={14} className="sm:w-4 sm:h-4" />
               </div>
             </div>
@@ -995,7 +995,7 @@ export const StudentDashboardPage: React.FC = () => {
           <div className="bg-white p-3.5 sm:p-5 rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5 sm:mb-2">
               <span className="text-[11px] sm:text-xs font-bold text-[#8F9BB3]">Study Shift</span>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
                 <Clock size={14} className="sm:w-4 sm:h-4" />
               </div>
             </div>

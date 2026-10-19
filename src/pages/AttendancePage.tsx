@@ -269,7 +269,7 @@ export const AttendancePage: React.FC = () => {
               {Math.round((insideStudents.length / (students.length || 1)) * 100)}% occupancy
             </div>
           </div>
-          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-2xs shrink-0">
+          <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-primary-light text-primary flex items-center justify-center shadow-2xs shrink-0">
             <Users size={16} className="sm:w-5 sm:h-5" />
           </div>
         </div>

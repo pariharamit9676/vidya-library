@@ -180,13 +180,7 @@ export const LoginPage = () => {
 
           {/* Header */}
           <div className="text-center mb-6">
-            <div
-              className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3 shadow-xs border transition-all ${
-                activeRole === 'student'
-                  ? 'bg-[#E8F8F3] text-[#00A97A] border-[#00A97A]/20'
-                  : 'bg-indigo-50 text-indigo-600 border-indigo-200'
-              }`}
-            >
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3 shadow-xs border border-primary-subtle bg-primary-light text-primary transition-all">
               {activeRole === 'student' ? (
                 <GraduationCap size={30} />
               ) : (

@@ -200,7 +200,7 @@ export const ReportsPage: React.FC = () => {
               {insideStudents} of {totalStudents} seats active
             </div>
           </div>
-          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary-light text-primary flex items-center justify-center shrink-0">
             <Layers size={16} className="sm:hidden" />
             <Layers size={22} className="hidden sm:block" />
           </div>

@@ -174,7 +174,7 @@ export const StudentAttendancePage: React.FC = () => {
           <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold text-[#8F9BB3]">Total Sessions</span>
-              <div className="w-7 h-7 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
                 <CalendarCheck size={14} />
               </div>
             </div>
@@ -190,7 +190,7 @@ export const StudentAttendancePage: React.FC = () => {
           <div className="col-span-2 sm:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl border border-[#EDF1F7] shadow-2xs">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold text-[#8F9BB3]">Assigned Seat</span>
-              <div className="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
                 <Armchair size={14} />
               </div>
             </div>
