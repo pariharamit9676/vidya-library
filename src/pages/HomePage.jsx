@@ -287,9 +287,7 @@ export const HomePage = () => {
   const [trialForm, setTrialForm] = useState({
     name: '',
     phone: '',
-    referralCode: '',
-    exam: 'UPSC CSE',
-    shift: 'Full Day (24/7 Access)'
+    referralCode: ''
   });
   const [trialSubmitted, setTrialSubmitted] = useState(false);
   const [isSubmittingTrial, setIsSubmittingTrial] = useState(false);
@@ -309,7 +307,7 @@ export const HomePage = () => {
       return;
     }
     if (cleanPhone.length < 10) {
-      if (showToast) showToast('Please enter a valid 10-digit WhatsApp number', 'error');
+      if (showToast) showToast('Please enter a valid 10-digit mobile number', 'error');
       return;
     }
 
@@ -327,17 +325,17 @@ export const HomePage = () => {
         studentType: 'Demo',
         status: 'Demo',
         plan: 'Daily',
-        shift: trialForm.shift || 'Full Day',
+        shift: 'Full Day',
         seatNo: '-',
         seatCategory: 'Normal',
-        exam: trialForm.exam || 'General',
+        exam: 'General',
         dueAmount: 0,
         admissionDate: new Date().toISOString().slice(0, 10),
         referredBy: verifiedReferrer ? (verifiedReferrer.studentId || verifiedReferrer.id) : null,
         referrerName: verifiedReferrer ? verifiedReferrer.name : null,
         referralCodeUsed: trialForm.referralCode.trim().toUpperCase() || null,
         referralStatus: verifiedReferrer ? 'Pending' : null,
-        notes: `Free Trial Desk • ${trialForm.exam} • Shift: ${trialForm.shift}`
+        notes: 'Free Trial Desk Registration from Website'
       };
 
       let createdStudent = null;
@@ -1204,7 +1202,7 @@ export const HomePage = () => {
 
                   <div>
                     <label className="text-xs font-bold text-[#192038] block mb-1">
-                      WhatsApp Mobile Number *
+                      Mobile Number *
                     </label>
                     <input
                       type="tel"
@@ -1258,42 +1256,6 @@ export const HomePage = () => {
                         Code not recognized, but you can still reserve your free trial desk.
                       </p>
                     ) : null}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs font-bold text-[#192038] block mb-1">
-                        Preparing For
-                      </label>
-                      <select
-                        value={trialForm.exam}
-                        onChange={(e) => setTrialForm({ ...trialForm, exam: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white text-[#192038]"
-                      >
-                        <option value="UPSC CSE">UPSC CSE</option>
-                        <option value="SSC CGL">SSC CGL</option>
-                        <option value="NEET">NEET</option>
-                        <option value="JEE Mains/Adv">JEE Mains</option>
-                        <option value="CA Final/Inter">CA Exam</option>
-                        <option value="Other">Other Exam</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-[#192038] block mb-1">
-                        Preferred Shift
-                      </label>
-                      <select
-                        value={trialForm.shift}
-                        onChange={(e) => setTrialForm({ ...trialForm, shift: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-xl border border-[#CBD5E1] text-xs outline-none bg-white font-medium text-[#192038]"
-                      >
-                        <option value="Full Day (24/7 Access)">Full Day (24/7 Access)</option>
-                        <option value="Morning Shift (6 AM - 2 PM)">Morning (6 AM - 2 PM)</option>
-                        <option value="Evening Shift (2 PM - 10 PM)">Evening (2 PM - 10 PM)</option>
-                        <option value="Night Shift (10 PM - 6 AM)">Night (10 PM - 6 AM)</option>
-                      </select>
-                    </div>
                   </div>
                 </div>
 
