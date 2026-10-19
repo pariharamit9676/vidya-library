@@ -10,7 +10,6 @@ import {
   LogIn,
   LogOut,
   History,
-  QrCode,
   Calendar,
   X,
   ChevronDown
@@ -18,7 +17,6 @@ import {
 import { useStudents, useToggleCheckIn } from '../services/useLibraryQueries';
 import { calculateDuration, formatTimeOnly, formatDateOnly } from '../utils/storage';
 import { LiveStayTimer } from '../components/admin/LiveStayTimer';
-import { QuickPunchModal } from '../components/admin/QuickPunchModal';
 import { CommonTable, CommonTableColumn } from '../components/common/CommonTable';
 
 export const AttendancePage: React.FC = () => {
@@ -31,7 +29,6 @@ export const AttendancePage: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<string>('all');
 
   // Modal states
-  const [isQuickPunchOpen, setIsQuickPunchOpen] = useState<boolean>(false);
   const [selectedStudentForHistory, setSelectedStudentForHistory] = useState<any | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
@@ -199,15 +196,6 @@ export const AttendancePage: React.FC = () => {
           </p>
         </div>
 
-        {/* Quick Punch Button */}
-        <button
-          onClick={() => setIsQuickPunchOpen(true)}
-          className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-extrabold bg-[#00A97A] text-white hover:bg-[#008f67] shadow-sm shadow-[#00A97A]/30 inline-flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
-        >
-          <QrCode size={15} />
-          <span className="hidden sm:inline">Quick Mark Attendance</span>
-          <span className="sm:hidden">Mark In/Out</span>
-        </button>
       </div>
 
       {/* 2. Top Summary KPI Cards (2x2 on Mobile) */}
@@ -531,13 +519,6 @@ export const AttendancePage: React.FC = () => {
         />
       </div>
 
-      {/* Quick Punch Modal */}
-      <QuickPunchModal
-        isOpen={isQuickPunchOpen}
-        onClose={() => setIsQuickPunchOpen(false)}
-        students={students}
-        onToggleCheckIn={handleToggleCheckIn}
-      />
 
       {/* Individual Student History Modal */}
       {selectedStudentForHistory && (
