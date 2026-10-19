@@ -78,6 +78,15 @@ export const StudentDashboardPage: React.FC = () => {
   const [paymentPage, setPaymentPage] = useState<number>(1);
   const PAYMENT_PAGE_SIZE = 5;
 
+  // Auto-dismiss feedback toast after 4 seconds
+  useEffect(() => {
+    if (!feedbackMsg) return;
+    const timer = setTimeout(() => {
+      setFeedbackMsg(null);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [feedbackMsg]);
+
   // Close profile dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -488,27 +497,37 @@ export const StudentDashboardPage: React.FC = () => {
       {/* Main Content Body */}
       <main className="max-w-6xl mx-auto px-3.5 sm:px-8 pt-4 sm:pt-6 space-y-4 sm:space-y-6">
         
-        {/* Feedback Alert Banner */}
-        {feedbackMsg && (
+      {/* Floating Toast Notification (Never shifts or disrupts layout) */}
+      {feedbackMsg && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-auto">
           <div
-            className={`p-3 sm:p-4 rounded-2xl border text-xs font-bold flex items-center justify-between shadow-2xs animate-in fade-in duration-200 ${
+            className={`p-3.5 sm:p-4 rounded-2xl border text-xs font-bold flex items-center justify-between shadow-2xl backdrop-blur-md ${
               feedbackMsg.type === 'success'
-                ? 'bg-[#E8F8F3] border-[#00A97A]/30 text-[#00A97A]'
-                : 'bg-rose-50 border-rose-200 text-rose-600'
+                ? 'bg-white/95 border-[#00A97A]/30 text-[#00A97A] shadow-[#00A97A]/20'
+                : 'bg-white/95 border-rose-300 text-rose-600 shadow-rose-500/20'
             }`}
           >
-            <div className="flex items-center gap-2">
-              <span className="text-base">{feedbackMsg.type === 'success' ? '✔' : '⚠'}</span>
-              <span>{feedbackMsg.text}</span>
+            <div className="flex items-center gap-2.5 min-w-0 pr-2">
+              <span
+                className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-black ${
+                  feedbackMsg.type === 'success'
+                    ? 'bg-[#E8F8F3] text-[#00A97A]'
+                    : 'bg-rose-100 text-rose-600'
+                }`}
+              >
+                {feedbackMsg.type === 'success' ? '✔' : '⚠'}
+              </span>
+              <span className="truncate sm:whitespace-normal">{feedbackMsg.text}</span>
             </div>
             <button
               onClick={() => setFeedbackMsg(null)}
-              className="text-xs opacity-70 hover:opacity-100 cursor-pointer p-1"
+              className="text-xs p-1 rounded-lg opacity-60 hover:opacity-100 hover:bg-slate-100 cursor-pointer shrink-0 transition-all"
             >
               ✕
             </button>
           </div>
-        )}
+        </div>
+      )}
 
         {/* ======================================================== */}
         {/* HERO SECTION: Responsive (Distinct Laptop vs Mobile)     */}
