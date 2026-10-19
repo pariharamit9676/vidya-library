@@ -648,8 +648,8 @@ export const StudentDashboardPage: React.FC = () => {
         {/* MOBILE SECTION (Dribbble Inspired Native App Experience) */}
         {/* ======================================================== */}
         <div className="sm:hidden space-y-3.5">
-          {/* 1. Curved Primary Emerald App Header */}
-          <div className="bg-gradient-to-br from-[#00A97A] via-[#00966C] to-[#007A56] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-12 rounded-b-[2.5rem] shadow-lg shadow-[#00A97A]/25 relative overflow-hidden">
+          {/* 1. Primary Emerald App Header (Flat bottom, no rounded bottom corners) */}
+          <div className="bg-gradient-to-br from-[#00A97A] via-[#00966C] to-[#007A56] text-white -mx-3.5 -mt-4 px-4 pt-4 pb-10 shadow-md relative overflow-hidden">
             {/* Ambient Background Circles */}
             <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -left-10 bottom-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
