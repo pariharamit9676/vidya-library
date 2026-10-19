@@ -55,6 +55,9 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 4.5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -63,16 +66,37 @@ html {
 
 html, body, button, input, select, textarea {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   background-color: var(--bg-dashboard);
   color: var(--text-main);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
+
+/* Poppins weight calibration: Softens heavy weights so Poppins looks sleek, modern and crisp */
+.font-black {
+  font-weight: 700 !important;
+}
+
+.font-extrabold {
+  font-weight: 650 !important;
+}
+
+.font-bold {
+  font-weight: 600 !important;
+}
+
 
 /* Custom sleek scrollbar for compact tables & navigation */
 ::-webkit-scrollbar {
