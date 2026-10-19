@@ -710,25 +710,34 @@ export const StudentDashboardPage: React.FC = () => {
             <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute -left-10 bottom-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
 
-            {/* Top Bar: Title + Quick Actions */}
-            <div className="flex items-center justify-between gap-3 mb-4 relative z-10">
-              <div className="flex items-center gap-2.5">
-                <img
-                  src="/vidya-library-logo.png"
-                  alt="Vidya Library Logo"
-                  className="h-9 w-auto object-contain shrink-0"
-                />
-                <div>
-                  <h2 className="text-lg font-black text-white tracking-tight m-0 leading-tight">
-                    Dashboard
-                  </h2>
-                  <span className="text-[10px] text-white/80 font-semibold tracking-wide">
-                    Vidya Library Student Portal
-                  </span>
+            {/* User Greeting Row with Quick Actions (Clean, Non-redundant Mobile Header) */}
+            <div className="flex items-center justify-between gap-2.5 relative z-10">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative shrink-0">
+                  <div className="w-11 h-11 rounded-full border-2 border-white/50 bg-white text-[#544bec] font-black text-base flex items-center justify-center shadow-md shadow-black/20">
+                    {(studentData?.name || 'S').charAt(0).toUpperCase()}
+                  </div>
+                  <div
+                    className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#483ed8] flex items-center justify-center ${
+                      isCheckedIn ? 'bg-white' : 'bg-slate-300'
+                    }`}
+                  >
+                    <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-[#544bec] animate-pulse' : 'bg-slate-500'}`} />
+                  </div>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-sm font-black text-white m-0 truncate tracking-tight">
+                    Hello, {studentData?.name || 'Student'} 👋
+                  </h1>
+                  <p className="text-[11px] text-white/80 font-medium m-0 mt-0.5 truncate">
+                    {getGreeting()} • ID #{cleanStudentId}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Quick Actions */}
+              <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={fetchStudentProfile}
@@ -754,31 +763,6 @@ export const StudentDashboardPage: React.FC = () => {
                 >
                   <LogOut size={13} />
                 </button>
-              </div>
-            </div>
-
-            {/* User Greeting Row */}
-            <div className="flex items-center gap-3 relative z-10">
-              <div className="relative shrink-0">
-                <div className="w-12 h-12 rounded-full border-2 border-white/50 bg-white text-[#544bec] font-black text-lg flex items-center justify-center shadow-md shadow-black/20">
-                  {(studentData?.name || 'S').charAt(0).toUpperCase()}
-                </div>
-                <div
-                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#483ed8] flex items-center justify-center ${
-                    isCheckedIn ? 'bg-white' : 'bg-slate-300'
-                  }`}
-                >
-                  <div className={`w-1.5 h-1.5 rounded-full ${isCheckedIn ? 'bg-[#544bec] animate-pulse' : 'bg-slate-500'}`} />
-                </div>
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base font-black text-white m-0 truncate tracking-tight">
-                  Hello, {studentData?.name || 'Student'} 👋
-                </h1>
-                <p className="text-[11px] text-emerald-50 font-medium m-0 mt-0.5 truncate">
-                  {getGreeting()} • ID #{cleanStudentId}
-                </p>
               </div>
             </div>
           </div>
