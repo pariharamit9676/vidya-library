@@ -73,9 +73,6 @@ export const StudentDashboardPage: React.FC = () => {
   const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState<boolean>(false);
 
-  // Attendance Pagination state (5 logs per page)
-  const [attendancePage, setAttendancePage] = useState<number>(1);
-  const ATTENDANCE_PAGE_SIZE = 5;
 
   // Payments Pagination state (5 logs per page)
   const [paymentPage, setPaymentPage] = useState<number>(1);
@@ -153,17 +150,26 @@ export const StudentDashboardPage: React.FC = () => {
   // Punch is locked ONLY for Inactive accounts, NEVER for Overdue accounts!
   const isPunchBlocked = !isDemo && isInactive;
 
-  // Maximum 3 check-ins per day per student
-  const todayStr = useMemo(() => new Date().toDateString(), []);
+  const cleanStudentId = useMemo(() => {
+    return (studentData?.studentId || 'STU001').replace(/^#+/, '');
+  }, [studentData?.studentId]);
+
+  // Maximum 3 check-ins per day per student (computed using IST timezone)
+  const todayIST = useMemo(() => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }), []);
   const todayCheckInCount = useMemo(() => {
     if (!studentData?.attendanceHistory || !Array.isArray(studentData.attendanceHistory)) {
       return 0;
     }
     return studentData.attendanceHistory.filter((item: any) => {
-      const itemDate = item.checkInTime ? new Date(item.checkInTime) : (item.date ? new Date(item.date) : null);
-      return itemDate && !isNaN(itemDate.getTime()) && itemDate.toDateString() === todayStr;
+      const itemRaw = item.checkInTime || item.timestamp || item.date;
+      if (!itemRaw) return false;
+      const itemDate = new Date(itemRaw);
+      return (
+        !isNaN(itemDate.getTime()) &&
+        itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
+      );
     }).length;
-  }, [studentData?.attendanceHistory, todayStr]);
+  }, [studentData?.attendanceHistory, todayIST]);
 
   const isDailyLimitReached = !isCheckedIn && todayCheckInCount >= 3;
 
@@ -333,19 +339,6 @@ export const StudentDashboardPage: React.FC = () => {
     navigate('/login');
   };
 
-  // Process and sort attendance logs (most recent first)
-  const attendanceLogs = useMemo(() => {
-    if (!studentData?.attendanceHistory || !Array.isArray(studentData.attendanceHistory)) {
-      return [];
-    }
-    return [...studentData.attendanceHistory].reverse();
-  }, [studentData?.attendanceHistory]);
-
-  const totalAttendancePages = Math.max(1, Math.ceil(attendanceLogs.length / ATTENDANCE_PAGE_SIZE));
-  const paginatedAttendance = useMemo(() => {
-    const start = (attendancePage - 1) * ATTENDANCE_PAGE_SIZE;
-    return attendanceLogs.slice(start, start + ATTENDANCE_PAGE_SIZE);
-  }, [attendanceLogs, attendancePage]);
 
   // Process payment records (most recent first)
   const paymentRecords = useMemo(() => {
@@ -362,7 +355,7 @@ export const StudentDashboardPage: React.FC = () => {
   }, [paymentRecords, paymentPage]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-16">
+    <div className="min-h-screen bg-[#F8FAFD] text-[#192038] font-sans pb-24 sm:pb-12">
       
       {/* Top Navbar - Clean, Admin-matched design (Desktop only) */}
       <header className="hidden sm:block sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#EDF1F7] px-4 sm:px-8 py-2.5 sm:py-3 shadow-2xs">
@@ -721,7 +714,7 @@ export const StudentDashboardPage: React.FC = () => {
                   Hello, {studentData?.name || 'Student'} 👋
                 </h1>
                 <p className="text-[11px] text-blue-100 font-medium m-0 mt-0.5 truncate">
-                  {getGreeting()} • ID #{studentData?.studentId || 'STU'}
+                  {getGreeting()} • ID #{cleanStudentId}
                 </p>
               </div>
             </div>
@@ -730,32 +723,20 @@ export const StudentDashboardPage: React.FC = () => {
           {/* 2. Overlapping Floating Overview Card (Dribbble Overview Card) */}
           <div className="-mt-7 bg-white rounded-2xl border border-[#EDF1F7] shadow-xl shadow-slate-900/5 p-3.5 relative z-20">
             <div className="flex items-center justify-between mb-2.5 pb-2 border-b border-[#EDF1F7]/80">
-              <span className="text-xs font-black text-[#192038] tracking-tight">
-                Overview
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                  isDemo
-                    ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                    : isInactive
-                    ? 'bg-slate-100 text-slate-700 border border-slate-300'
-                    : isOverdue
-                    ? 'bg-rose-50 text-rose-600 border border-rose-200'
-                    : isDueSoon
-                    ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                    : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                }`}
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black text-[#192038] tracking-tight">
+                  Overview
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00A97A]"></span>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/student/attendance')}
+                className="inline-flex items-center gap-1 text-[11px] font-extrabold text-[#00A97A] hover:text-[#008f67] active:text-[#007454] transition-colors cursor-pointer"
               >
-                {isDemo
-                  ? 'Demo'
-                  : isInactive
-                  ? 'Inactive'
-                  : isOverdue
-                  ? 'Overdue'
-                  : isDueSoon
-                  ? 'Due Soon'
-                  : 'Active'}
-              </span>
+                <span>Attendance Logs</span>
+                <ChevronRight size={12} />
+              </button>
             </div>
 
             <div className="grid grid-cols-3 divide-x divide-slate-100 text-center">
@@ -832,13 +813,10 @@ export const StudentDashboardPage: React.FC = () => {
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      const el = document.getElementById('attendance-history-section');
-                      el?.scrollIntoView({ behavior: 'smooth' });
-                    }}
+                    onClick={() => navigate('/student/attendance')}
                     className="inline-flex items-center gap-1 text-[11px] font-extrabold text-indigo-600 hover:text-indigo-700 active:text-indigo-800 pt-1 cursor-pointer transition-colors"
                   >
-                    <span>View History</span>
+                    <span>View Attendance History</span>
                     <ArrowRight size={11} />
                   </button>
                 </div>
@@ -1031,149 +1009,6 @@ export const StudentDashboardPage: React.FC = () => {
 
         </div>
 
-        {/* ======================================================== */}
-        {/* ATTENDANCE LOGS: with 5-Item Pagination & Mobile Cards    */}
-        {/* ======================================================== */}
-        <div id="attendance-history-section" className="bg-white rounded-2xl sm:rounded-3xl border border-[#EDF1F7] p-4 sm:p-6 shadow-xs scroll-mt-6">
-          
-          <div className="flex items-center justify-between mb-3.5 sm:mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-[#E8F8F3] text-[#00A97A] flex items-center justify-center shrink-0">
-                <CalendarCheck size={16} />
-              </div>
-              <div>
-                <h2 className="text-sm sm:text-base font-black text-[#192038] m-0">
-                  Attendance Logs
-                </h2>
-                <p className="text-[10px] sm:text-[11px] text-[#8F9BB3] m-0 hidden sm:block">
-                  Your entry & exit punch timestamps (5 per page)
-                </p>
-              </div>
-            </div>
-
-            <span className="text-[11px] text-[#8F9BB3] font-bold bg-[#F8FAFD] px-2.5 py-1 rounded-lg border border-[#EDF1F7]">
-              Total {attendanceLogs.length} Records
-            </span>
-          </div>
-
-          {attendanceLogs.length > 0 ? (
-            <>
-              {/* Desktop Table View (Hidden on mobile) */}
-              <div className="hidden sm:block overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-[#EDF1F7] text-[#8F9BB3]">
-                      <th className="pb-3 font-bold">Date</th>
-                      <th className="pb-3 font-bold">Punch In</th>
-                      <th className="pb-3 font-bold">Punch Out</th>
-                      <th className="pb-3 font-bold">Duration</th>
-                      <th className="pb-3 font-bold text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#EDF1F7]">
-                    {paginatedAttendance.map((record: any, idx: number) => (
-                      <tr key={record.id || idx} className="hover:bg-[#F8FAFD] transition-colors">
-                        <td className="py-3 font-bold text-[#192038] flex items-center gap-1.5">
-                          <Calendar size={13} className="text-[#8F9BB3]" />
-                          <span>{formatDisplayDate(record.date)}</span>
-                        </td>
-                        <td className="py-3 text-[#00A97A] font-bold font-mono">
-                          {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
-                        </td>
-                        <td className="py-3 text-[#6B778C] font-semibold font-mono">
-                          {record.checkOutTime || record.checkOut ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active In Library'}
-                        </td>
-                        <td className="py-3 font-mono font-bold text-[#192038]">
-                          {record.duration || 'Session in progress'}
-                        </td>
-                        <td className="py-3 text-right">
-                          <span
-                            className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                              record.checkOut
-                                ? 'bg-[#F1F4F9] text-[#6B778C]'
-                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            }`}
-                          >
-                            {record.checkOut ? 'Completed' : 'Currently Active'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile Card List View (Visible only on mobile) */}
-              <div className="sm:hidden space-y-2">
-                {paginatedAttendance.map((record: any, idx: number) => (
-                  <div
-                    key={record.id || idx}
-                    className="p-3 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl flex items-center justify-between gap-2"
-                  >
-                    <div>
-                      <div className="text-xs font-black text-[#192038] flex items-center gap-1.5">
-                        <Calendar size={12} className="text-[#00A97A]" />
-                        <span>{formatDisplayDate(record.date)}</span>
-                      </div>
-                      <div className="text-[11px] text-[#6B778C] mt-1 flex items-center gap-2">
-                        <span>In: <strong className="text-[#00A97A]">{record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}</strong></span>
-                        <span>•</span>
-                        <span>Out: <strong>{record.checkOutTime || record.checkOut ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active'}</strong></span>
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0">
-                      <span className="font-mono text-xs font-black text-[#192038] block">
-                        {record.duration || 'Active'}
-                      </span>
-                      <span
-                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                          record.checkOut ? 'bg-[#EDF1F7] text-[#6B778C]' : 'bg-[#E8F8F3] text-[#00A97A]'
-                        }`}
-                      >
-                        {record.checkOut ? 'Done' : 'In Library'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Attendance Pagination Controls */}
-              {totalAttendancePages > 1 && (
-                <div className="mt-4 pt-3 border-t border-[#EDF1F7] flex items-center justify-between gap-2">
-                  <div className="text-[11px] text-[#8F9BB3] font-medium">
-                    Page <strong className="text-[#192038]">{attendancePage}</strong> of{' '}
-                    <strong className="text-[#192038]">{totalAttendancePages}</strong>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => setAttendancePage((p) => Math.max(1, p - 1))}
-                      disabled={attendancePage <= 1}
-                      className="px-2.5 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
-                    >
-                      <ChevronLeft size={13} />
-                      <span className="hidden sm:inline">Prev</span>
-                    </button>
-
-                    <button
-                      onClick={() => setAttendancePage((p) => Math.min(totalAttendancePages, p + 1))}
-                      disabled={attendancePage >= totalAttendancePages}
-                      className="px-2.5 py-1.5 rounded-lg border border-[#EDF1F7] bg-white text-xs font-bold text-[#192038] hover:bg-[#F8FAFD] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
-                    >
-                      <span className="hidden sm:inline">Next</span>
-                      <ChevronRight size={13} />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-7 text-xs text-[#8F9BB3] border border-dashed border-[#EDF1F7] rounded-xl">
-              No previous attendance records recorded yet. Punch in above when you enter the library!
-            </div>
-          )}
-        </div>
 
         {/* ======================================================== */}
         {/* PAYMENT HISTORY & RECEIPTS: with 1-click Download Slip   */}
@@ -1337,7 +1172,7 @@ export const StudentDashboardPage: React.FC = () => {
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <a
               href={`tel:${adminPhone}`}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-white text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#00A97A] hover:bg-[#008f67] text-white text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
             >
               <Phone size={14} />
               <span>Call Admin ({adminPhone})</span>
@@ -1345,7 +1180,48 @@ export const StudentDashboardPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Sleek App Footer */}
+        <footer className="pt-2 pb-6 text-center space-y-1">
+          <div className="text-[11px] font-bold text-[#8F9BB3] flex items-center justify-center gap-1.5 flex-wrap">
+            <span className="font-black text-[#192038]">Vidya Library</span>
+            <span>•</span>
+            <span>Silent AC Study Zone</span>
+            <span>•</span>
+            <span>Gayatri Nagar, Gwalior</span>
+          </div>
+          <p className="text-[10px] text-[#A0AEC0] m-0">
+            Student Portal • Need help? Call Admin at {adminPhone}
+          </p>
+        </footer>
+
       </main>
+
+      {/* Mobile Bottom Navigation Bar (Docked to bottom on mobile) */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-[#EDF1F7] px-6 py-2 flex items-center justify-around shadow-lg">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex flex-col items-center gap-1 text-[#00A97A] font-black cursor-pointer py-1"
+        >
+          <BookOpen size={18} />
+          <span className="text-[10px] font-black">Dashboard</span>
+        </button>
+
+        <button
+          onClick={() => navigate('/student/attendance')}
+          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer py-1"
+        >
+          <CalendarCheck size={18} />
+          <span className="text-[10px] font-bold">Attendance</span>
+        </button>
+
+        <a
+          href={`tel:${adminPhone}`}
+          className="flex flex-col items-center gap-1 text-[#8F9BB3] hover:text-[#00A97A] cursor-pointer py-1"
+        >
+          <Phone size={18} />
+          <span className="text-[10px] font-bold">Call Admin</span>
+        </a>
+      </nav>
 
       {/* ======================================================== */}
       {/* MODAL 1: CHANGE PASSWORD MODAL                            */}

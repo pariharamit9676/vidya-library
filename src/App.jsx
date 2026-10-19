@@ -19,6 +19,7 @@ const AttendancePage = lazy(() => import('./pages/AttendancePage').then(m => ({ 
 const ReportsPage = lazy(() => import('./pages/ReportsPage').then(m => ({ default: m.ReportsPage })));
 const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage').then(m => ({ default: m.StudentDashboardPage })));
+const StudentAttendancePage = lazy(() => import('./pages/StudentAttendancePage').then(m => ({ default: m.StudentAttendancePage })));
 
 // Sleek lightweight spinner for route transitions
 const PageLoader = () => (
@@ -71,6 +72,14 @@ export default function App() {
                 element={
                   <ProtectedStudentRoute>
                     <StudentDashboardPage />
+                  </ProtectedStudentRoute>
+                }
+              />
+              <Route
+                path="/student/attendance"
+                element={
+                  <ProtectedStudentRoute>
+                    <StudentAttendancePage />
                   </ProtectedStudentRoute>
                 }
               />
