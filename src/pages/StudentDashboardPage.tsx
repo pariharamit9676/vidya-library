@@ -388,9 +388,11 @@ export const StudentDashboardPage: React.FC = () => {
           
           {/* Left Brand */}
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#544bec] text-white flex items-center justify-center shadow-md shadow-[#544bec]/25 shrink-0">
-              <BookOpen size={19} className="sm:w-5 sm:h-5" />
-            </div>
+            <img
+              src="/vidya-library-logo.png"
+              alt="Vidya Library Logo"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-md shadow-[#544bec]/25 shrink-0 border border-[#EDF1F7]"
+            />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="font-extrabold text-sm sm:text-base tracking-tight text-[#192038] truncate">
@@ -691,13 +693,20 @@ export const StudentDashboardPage: React.FC = () => {
 
             {/* Top Bar: Title + Quick Actions */}
             <div className="flex items-center justify-between gap-3 mb-4 relative z-10">
-              <div>
-                <h2 className="text-lg font-black text-white tracking-tight m-0 leading-tight">
-                  Dashboard
-                </h2>
-                <span className="text-[10px] text-emerald-100 font-semibold tracking-wide">
-                  Vidya Library Student Portal
-                </span>
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/vidya-library-logo.png"
+                  alt="Vidya Library Logo"
+                  className="w-9 h-9 rounded-xl object-cover shadow-sm border border-white/25 shrink-0"
+                />
+                <div>
+                  <h2 className="text-lg font-black text-white tracking-tight m-0 leading-tight">
+                    Dashboard
+                  </h2>
+                  <span className="text-[10px] text-white/80 font-semibold tracking-wide">
+                    Vidya Library Student Portal
+                  </span>
+                </div>
               </div>
 
               <div className="flex items-center gap-2">

@@ -5,6 +5,7 @@ import { useLibrary } from '../context/LibraryContext';
 import { useCategories } from '../services/useLibraryQueries';
 import { calculateMultiMonthFee, DEFAULT_DISCOUNTS } from '../utils/discountUtils';
 import waterDropletAudio from '../assets/water-droplet-2.mp3';
+import vidyaLogo from '../assets/vidya-library-logo.png';
 import {
   BookOpenIcon,
   LogInIcon,
@@ -360,9 +361,11 @@ export const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
           {/* Logo & Tagline */}
           <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#544bec] to-teal-400 flex items-center justify-center text-white shadow-md shadow-[#544bec]/25 group-hover:scale-105 transition-transform shrink-0">
-              <BookOpenIcon size={18} />
-            </div>
+            <img
+              src={vidyaLogo}
+              alt="Vidya Library Logo"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl object-cover shadow-md shadow-[#544bec]/25 group-hover:scale-105 transition-transform shrink-0 border border-[#EDF1F7]"
+            />
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="text-sm sm:text-xl font-black tracking-tight text-[#192038] truncate">
@@ -1223,9 +1226,11 @@ export const HomePage = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 pb-10 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-9 h-9 rounded-xl bg-[#544bec] text-white flex items-center justify-center shadow-md">
-                <BookOpenIcon size={20} />
-              </div>
+              <img
+                src={vidyaLogo}
+                alt="Vidya Library Logo"
+                className="w-9 h-9 rounded-xl object-cover shadow-md border border-white/10 shrink-0"
+              />
               <h3 className="text-lg font-black text-white m-0">Vidya Library</h3>
             </div>
             <p className="leading-relaxed text-slate-400">

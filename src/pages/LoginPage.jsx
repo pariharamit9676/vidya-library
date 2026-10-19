@@ -123,9 +123,11 @@ export const LoginPage = () => {
       {/* Top Navbar */}
       <header className="py-4 px-4 sm:px-8 flex items-center justify-between max-w-6xl mx-auto w-full z-10">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-[#544bec] flex items-center justify-center text-white shadow-md shadow-[#544bec]/30 group-hover:scale-105 transition-all">
-            <BookOpen size={20} />
-          </div>
+          <img
+            src="/vidya-library-logo.png"
+            alt="Vidya Library Logo"
+            className="w-10 h-10 rounded-xl object-cover shadow-md shadow-[#544bec]/30 group-hover:scale-105 transition-all border border-[#EDF1F7] shrink-0"
+          />
           <div>
             <div className="text-base sm:text-lg font-black tracking-tight text-[#192038]">
               Vidya Library

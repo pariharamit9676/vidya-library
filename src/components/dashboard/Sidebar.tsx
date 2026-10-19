@@ -60,9 +60,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div>
           <div className="h-18 px-6 flex items-center justify-between border-b border-[#EDF1F7]">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#544bec] text-white flex items-center justify-center shadow-sm">
-                <BookOpen size={20} />
-              </div>
+              <img
+                src="/vidya-library-logo.png"
+                alt="Vidya Library Logo"
+                className="w-9 h-9 rounded-xl object-cover shadow-sm border border-[#EDF1F7] shrink-0"
+              />
               <div>
                 <h1 className="text-base font-extrabold tracking-tight text-[#192038] m-0 leading-tight">
                   Vidya Library
