@@ -66,25 +66,42 @@ export class DashboardController {
     }
   }
 
-  static getCharts(req, res, next) {
+  static async getCharts(req, res, next) {
     try {
-      // Monthly fee collection trend
-      const monthlyCollections = [
-        { month: 'May', amount: 32000, target: 40000 },
-        { month: 'Jun', amount: 38500, target: 40000 },
-        { month: 'Jul', amount: 41200, target: 45000 },
-        { month: 'Aug', amount: 46800, target: 45000 },
-        { month: 'Sep', amount: 49500, target: 50000 },
-        { month: 'Oct', amount: 54200, target: 50000 }
-      ];
+      const payments = await PaymentModel.getAll();
+      const students = await StudentModel.getAll();
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const now = new Date();
+      const curMonth = now.getMonth();
+      const curYear = now.getFullYear();
 
-      // Seat occupancy by shift
-      const shiftOccupancy = [
-        { shift: 'Morning (7AM - 2PM)', seats: 18, capacity: 25 },
-        { shift: 'Evening (2PM - 10PM)', seats: 14, capacity: 25 },
-        { shift: 'Night (10PM - 6AM)', seats: 8, capacity: 25 },
-        { shift: 'Full Day (24/7)', seats: 10, capacity: 15 }
+      const monthlyCollections = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(curYear, curMonth - i, 1);
+        const mIdx = d.getMonth();
+        const y = d.getFullYear();
+        const mName = months[mIdx];
+        const sum = payments.reduce((acc, p) => {
+          const pd = p.date ? new Date(p.date) : (p.createdAt ? new Date(p.createdAt) : null);
+          if (pd && !isNaN(pd.getTime()) && pd.getMonth() === mIdx && pd.getFullYear() === y) {
+            return acc + (Number(p.amount) || 0);
+          }
+          return acc;
+        }, 0);
+        monthlyCollections.push({ month: mName, amount: sum, target: 40000 });
+      }
+
+      const shifts = [
+        'Morning (6 AM - 2 PM)',
+        'Evening (2 PM - 10 PM)',
+        'Night (10 PM - 6 AM)',
+        'Full Day (24/7)'
       ];
+      const shiftOccupancy = shifts.map((shiftName) => ({
+        shift: shiftName,
+        seats: students.filter((s) => s.shift === shiftName && s.seatNo && s.seatNo !== '-').length,
+        capacity: 25
+      }));
 
       return res.status(200).json({
         success: true,

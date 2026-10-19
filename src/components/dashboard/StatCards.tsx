@@ -5,19 +5,19 @@ import { useDashboardStats } from '../../services/useLibraryQueries';
 export const StatCards: React.FC = () => {
   const { data: stats, isLoading } = useDashboardStats();
 
-  const totalStudents = stats?.students?.total ?? 5;
-  const regularStudents = stats?.students?.regular ?? 5;
+  const totalStudents = stats?.students?.total ?? 0;
+  const regularStudents = stats?.students?.regular ?? 0;
   const demoStudents = stats?.students?.demo ?? 0;
 
-  const totalSeats = stats?.seats?.total ?? 164;
-  const occupiedSeats = stats?.seats?.occupied ?? 5;
-  const availableSeats = stats?.seats?.available ?? 159;
+  const totalSeats = stats?.seats?.total ?? 0;
+  const occupiedSeats = stats?.seats?.occupied ?? 0;
+  const availableSeats = stats?.seats?.available ?? (totalSeats - occupiedSeats);
 
-  const monthlyCollection = stats?.financials?.monthlyCollection ?? 11600;
-  const totalTransactions = stats?.financials?.totalTransactions ?? 17;
+  const monthlyCollection = stats?.financials?.monthlyCollection ?? 0;
+  const totalTransactions = stats?.financials?.totalTransactions ?? 0;
 
   const pendingDuesCount = stats?.students?.totalWithDues ?? ((stats?.students?.overdue ?? 0) + (stats?.students?.dueSoon ?? 0));
-  const pendingDuesAmount = stats?.financials?.pendingDues ?? 800;
+  const pendingDuesAmount = stats?.financials?.pendingDues ?? 0;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">

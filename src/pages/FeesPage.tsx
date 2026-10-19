@@ -208,23 +208,24 @@ export const FeesPage: React.FC = () => {
     const currentYear = now.getFullYear();
 
     const collectedThisMonth = receiptsList.reduce((sum, r) => {
-      const d = r.date ? new Date(r.date) : null;
+      const d = r.date ? new Date(r.date) : (r.createdAt ? new Date(r.createdAt) : null);
       if (d && !isNaN(d.getTime())) {
         if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
           return sum + (Number(r.amount) || 0);
         }
+        return sum;
       }
       return sum + (Number(r.amount) || 0);
     }, 0);
 
     return {
-      totalCollected: totalCollected > 0 ? totalCollected : 48200,
+      totalCollected,
       pendingFees,
       pendingCount,
       overdueFees,
       overdueCount,
-      collectedThisMonth: collectedThisMonth > 0 ? collectedThisMonth : 14400,
-      totalTransactions: receiptsList.length > 0 ? receiptsList.length : feeRecords.length
+      collectedThisMonth,
+      totalTransactions: receiptsList.length
     };
   }, [rawReceipts, feeRecords]);
 

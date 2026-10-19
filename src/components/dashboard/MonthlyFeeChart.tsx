@@ -9,20 +9,45 @@ import {
   Cell
 } from 'recharts';
 import { ChevronDown } from 'lucide-react';
-import { useDashboardStats } from '../../services/useLibraryQueries';
+import { useFeeReceipts } from '../../services/useLibraryQueries';
 
 export const MonthlyFeeChart: React.FC = () => {
-  const { data: stats } = useDashboardStats();
-  const currentCollection = stats?.financials?.monthlyCollection ?? 11600;
+  const { data: rawReceipts = [] } = useFeeReceipts();
 
-  const chartData = [
-    { month: 'May', collection: 4000, isCurrent: false },
-    { month: 'Jun', collection: 6000, isCurrent: false },
-    { month: 'Jul', collection: 8500, isCurrent: false },
-    { month: 'Aug', collection: 9200, isCurrent: false },
-    { month: 'Sep', collection: 10400, isCurrent: false },
-    { month: 'Oct', collection: currentCollection, isCurrent: true }
-  ];
+  const chartData = React.useMemo(() => {
+    const receiptsList = Array.isArray(rawReceipts) ? rawReceipts : [];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    const currentMonthIdx = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const data = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(currentYear, currentMonthIdx - i, 1);
+      const mIdx = d.getMonth();
+      const y = d.getFullYear();
+      const mName = months[mIdx];
+
+      const total = receiptsList.reduce((sum: number, r: any) => {
+        const rd = r.date ? new Date(r.date) : (r.createdAt ? new Date(r.createdAt) : null);
+        if (rd && !isNaN(rd.getTime()) && rd.getMonth() === mIdx && rd.getFullYear() === y) {
+          return sum + (Number(r.amount) || 0);
+        }
+        return sum;
+      }, 0);
+
+      data.push({
+        month: mName,
+        collection: total,
+        isCurrent: i === 0
+      });
+    }
+    return data;
+  }, [rawReceipts]);
+
+  const currentMonthData = chartData[chartData.length - 1];
+  const currentCollection = currentMonthData?.collection || 0;
+  const currentMonthLabel = `${currentMonthData?.month || ''} ${new Date().getFullYear()}`;
 
   const formatYAxis = (tickItem: number) => {
     if (tickItem === 0) return '0';
@@ -60,9 +85,9 @@ export const MonthlyFeeChart: React.FC = () => {
 
       {/* Bar Chart Container */}
       <div className="w-full flex-1 relative pt-2">
-        {/* Dynamic Highlight Badge for Oct 2026 */}
+        {/* Dynamic Highlight Badge for Current Month */}
         <div className="absolute top-0 right-14 sm:right-16 z-10 bg-white px-3 py-1.5 rounded-xl border border-[#EDF1F7] shadow-md text-center hidden sm:block pointer-events-none">
-          <div className="text-[10px] text-[#8F9BB3] font-semibold">Oct 2026</div>
+          <div className="text-[10px] text-[#8F9BB3] font-semibold">{currentMonthLabel}</div>
           <div className="text-xs font-extrabold text-[#00A97A]">
             ₹{currentCollection.toLocaleString('en-IN')}
           </div>
