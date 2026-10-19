@@ -336,10 +336,15 @@ export class StudentController {
 
       // Condition: Max 3 check-ins per day applies ONLY to Student Portal self-punch, NOT to Admin!
       if (!byAdmin && !student.isCheckedIn) {
-        const todayStr = new Date().toDateString();
+        const todayIST = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
         const todayCheckIns = (student.attendanceHistory || []).filter((item) => {
-          const itemDate = item.checkInTime ? new Date(item.checkInTime) : (item.date ? new Date(item.date) : null);
-          return itemDate && !isNaN(itemDate.getTime()) && itemDate.toDateString() === todayStr;
+          const itemRaw = item.checkInTime || item.timestamp || item.date;
+          if (!itemRaw) return false;
+          const itemDate = new Date(itemRaw);
+          return (
+            !isNaN(itemDate.getTime()) &&
+            itemDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) === todayIST
+          );
         }).length;
 
         if (todayCheckIns >= 3) {

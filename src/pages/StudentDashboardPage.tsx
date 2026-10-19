@@ -867,10 +867,10 @@ export const StudentDashboardPage: React.FC = () => {
                           <span>{formatDisplayDate(record.date)}</span>
                         </td>
                         <td className="py-3 text-[#00A97A] font-bold font-mono">
-                          {record.checkIn ? formatDisplayTime(record.checkIn) : '—'}
+                          {record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}
                         </td>
                         <td className="py-3 text-[#6B778C] font-semibold font-mono">
-                          {record.checkOut ? formatDisplayTime(record.checkOut) : 'Active In Library'}
+                          {record.checkOutTime || record.checkOut ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active In Library'}
                         </td>
                         <td className="py-3 font-mono font-bold text-[#192038]">
                           {record.duration || 'Session in progress'}
@@ -905,9 +905,9 @@ export const StudentDashboardPage: React.FC = () => {
                         <span>{formatDisplayDate(record.date)}</span>
                       </div>
                       <div className="text-[11px] text-[#6B778C] mt-1 flex items-center gap-2">
-                        <span>In: <strong className="text-[#00A97A]">{record.checkIn ? formatDisplayTime(record.checkIn) : '—'}</strong></span>
+                        <span>In: <strong className="text-[#00A97A]">{record.checkInTime || record.checkIn ? formatDisplayTime(record.checkInTime || record.checkIn) : '—'}</strong></span>
                         <span>•</span>
-                        <span>Out: <strong>{record.checkOut ? formatDisplayTime(record.checkOut) : 'Active'}</strong></span>
+                        <span>Out: <strong>{record.checkOutTime || record.checkOut ? formatDisplayTime(record.checkOutTime || record.checkOut) : 'Active'}</strong></span>
                       </div>
                     </div>
 

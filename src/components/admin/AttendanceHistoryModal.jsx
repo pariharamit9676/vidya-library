@@ -77,7 +77,7 @@ export const AttendanceHistoryModal = ({
                 header: 'Check-In',
                 render: (record) => (
                   <span className="text-[#01a06e] font-medium">
-                    {formatTimeOnly(record.checkIn)}
+                    {formatTimeOnly(record.checkInTime || record.checkIn)}
                   </span>
                 )
               },
@@ -85,7 +85,7 @@ export const AttendanceHistoryModal = ({
                 header: 'Check-Out',
                 render: (record) => (
                   <span className="text-rose-500 font-medium">
-                    {formatTimeOnly(record.checkOut)}
+                    {formatTimeOnly(record.checkOutTime || record.checkOut)}
                   </span>
                 )
               },

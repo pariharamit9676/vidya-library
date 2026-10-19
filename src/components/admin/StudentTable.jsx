@@ -88,7 +88,7 @@ export const StudentTable = ({
                         {student.lastStay.formattedDuration}
                       </strong>
                       <span className="text-[11px] text-[var(--text-muted)]">
-                        {formatDateOnly(student.lastStay.date)} ({formatTimeOnly(student.lastStay.checkIn)} - {formatTimeOnly(student.lastStay.checkOut)})
+                        {formatDateOnly(student.lastStay.date)} ({formatTimeOnly(student.lastStay.checkInTime || student.lastStay.checkIn)} - {formatTimeOnly(student.lastStay.checkOutTime || student.lastStay.checkOut)})
                       </span>
                     </div>
                   ) : (

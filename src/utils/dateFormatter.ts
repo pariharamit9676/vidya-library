@@ -44,6 +44,7 @@ export const formatDisplayDate = (dateVal?: string | Date | number | null): stri
   }
 
   return d.toLocaleDateString('en-GB', {
+    timeZone: 'Asia/Kolkata',
     day: '2-digit',
     month: 'short',
     year: 'numeric'
@@ -187,10 +188,19 @@ export const formatDisplayTime = (timeVal?: string | Date | number | null): stri
     return str.toUpperCase();
   }
 
+  // If 24-hr time like "14:30" or "09:15"
+  if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(str)) {
+    const [h, m] = str.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 || 12;
+    return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
+  }
+
   // Parse Date or ISO string
   const d = new Date(str);
   if (!isNaN(d.getTime())) {
     return d.toLocaleTimeString('en-IN', {
+      timeZone: 'Asia/Kolkata',
       hour: '2-digit',
       minute: '2-digit',
       hour12: true

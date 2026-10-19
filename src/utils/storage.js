@@ -76,14 +76,57 @@ export const calculateDuration = (startTime, endTime = new Date().toISOString())
 
 export const formatTimeOnly = (isoString) => {
   if (!isoString) return "-";
-  const d = new Date(isoString);
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const str = String(isoString).trim();
+  if (!str || str === 'null' || str === 'undefined' || str === '-') return "-";
+
+  // If already in 12-hr format like "10:30 AM" or "04:15 PM"
+  if (/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(str)) {
+    return str.toUpperCase();
+  }
+
+  // If 24-hr time like "14:30" or "09:15"
+  if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(str)) {
+    const [h, m] = str.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const hour12 = h % 12 || 12;
+    return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${period}`;
+  }
+
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return str;
+  return d.toLocaleTimeString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).toUpperCase();
 };
 
 export const formatDateOnly = (dateStr) => {
   if (!dateStr) return "-";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  const str = String(dateStr).trim();
+  if (!str || str === 'null' || str === 'undefined' || str === '-') return "-";
+
+  // If already in DD MMM YYYY (e.g. 19 Oct 2026)
+  if (/^\d{1,2}\s[A-Za-z]{3}\s\d{4}$/.test(str)) {
+    return str;
+  }
+
+  // If YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const [y, m, d] = str.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return str;
+  return d.toLocaleDateString('en-GB', {
+    timeZone: 'Asia/Kolkata',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
 };
 
 export const computeFeeStatus = (nextDueDate) => {

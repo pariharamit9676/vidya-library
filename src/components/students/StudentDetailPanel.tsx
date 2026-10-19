@@ -12,7 +12,7 @@ import {
   Receipt
 } from 'lucide-react';
 import { StudentRecord } from '../../types/student';
-import { formatDisplayDate, computeFeeStatus, computeStudentStatus } from '../../utils/dateFormatter';
+import { formatDisplayDate, formatDisplayTime, computeFeeStatus, computeStudentStatus } from '../../utils/dateFormatter';
 
 interface StudentDetailPanelProps {
   student: StudentRecord | null;
@@ -310,7 +310,7 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                       <span>{a.date}</span>
                     </div>
                     <span className="text-[11px] text-[#8F9BB3]">
-                      In: {a.checkIn} | Out: {a.checkOut}
+                      In: {formatDisplayTime(a.checkInTime || a.checkIn)} | Out: {formatDisplayTime(a.checkOutTime || a.checkOut)}
                     </span>
                   </div>
                   <span className="text-[11px] font-mono font-bold text-[#00A97A] bg-[#E8F8F3] px-2 py-1 rounded-md">

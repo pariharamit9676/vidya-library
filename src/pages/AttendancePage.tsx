@@ -15,6 +15,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { useStudents, useToggleCheckIn } from '../services/useLibraryQueries';
+import { useLibrary } from '../context/LibraryContext';
 import { calculateDuration, formatTimeOnly, formatDateOnly } from '../utils/storage';
 import { LiveStayTimer } from '../components/admin/LiveStayTimer';
 import { CommonTable, CommonTableColumn } from '../components/common/CommonTable';
@@ -22,6 +23,7 @@ import { CommonTable, CommonTableColumn } from '../components/common/CommonTable
 export const AttendancePage: React.FC = () => {
   const { data: rawStudents = [], isLoading } = useStudents();
   const toggleCheckInMutation = useToggleCheckIn();
+  const { showToast, toggleCheckIn } = useLibrary();
 
   // Search and Filter states
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -42,9 +44,24 @@ export const AttendancePage: React.FC = () => {
   const handleToggleCheckIn = async (studentId: string) => {
     setActionLoadingId(studentId);
     try {
-      await toggleCheckInMutation.mutateAsync(studentId);
-    } catch (err) {
+      const res: any = await toggleCheckInMutation.mutateAsync({ id: studentId, byAdmin: true });
+      toggleCheckIn(studentId, true);
+      const studentName = res?.data?.name || 'Student';
+      const isNowInside = res?.data?.isCheckedIn;
+      const msg =
+        res?.message ||
+        (isNowInside
+          ? `🟢 ${studentName} checked in successfully!`
+          : `🔴 ${studentName} checked out successfully!`);
+      if (showToast) {
+        showToast(msg, 'success');
+      }
+    } catch (err: any) {
       console.error('Error toggling check in:', err);
+      const errMsg = err?.message || 'Failed to update attendance punch';
+      if (showToast) {
+        showToast(errMsg, 'error');
+      }
     } finally {
       setActionLoadingId(null);
     }
@@ -124,14 +141,16 @@ export const AttendancePage: React.FC = () => {
       const history = Array.isArray(s.attendanceHistory) ? s.attendanceHistory : [];
       history.forEach((h: any, idx: number) => {
         const ts = getLogTimestamp(h, idx);
+        const checkInVal = h.checkInTime || h.checkIn;
+        const checkOutVal = h.checkOutTime || h.checkOut;
         logs.push({
           id: h.id || `att_${sId}_${idx}`,
           isInside: false,
-          date: h.date || 'Past Session',
+          date: (checkInVal ? formatDateOnly(checkInVal) : null) || h.date || 'Past Session',
           rawTimestamp: ts,
-          checkIn: h.checkIn ? (h.checkIn.includes('T') ? formatTimeOnly(h.checkIn) : h.checkIn) : '-',
+          checkIn: checkInVal ? formatTimeOnly(checkInVal) : '-',
           checkInTimeRaw: h.checkInTime || null,
-          checkOut: h.checkOut ? (h.checkOut.includes('T') ? formatTimeOnly(h.checkOut) : h.checkOut) : '-',
+          checkOut: checkOutVal ? formatTimeOnly(checkOutVal) : '-',
           duration: h.formattedDuration || h.duration || (h.durationMinutes ? `${h.durationMinutes}m` : '-'),
           status: 'Completed',
           studentName: s.name,
@@ -569,7 +588,7 @@ export const AttendancePage: React.FC = () => {
                       <div>
                         <div className="font-bold text-[#192038]">{item.date || 'Recent Session'}</div>
                         <div className="text-[11px] text-[#8F9BB3] mt-0.5">
-                          {item.checkIn} → {item.checkOut}
+                          {formatTimeOnly(item.checkInTime || item.checkIn)} → {formatTimeOnly(item.checkOutTime || item.checkOut)}
                         </div>
                       </div>
                       <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#E8F8F3] text-[#00A97A]">

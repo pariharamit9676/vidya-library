@@ -6,6 +6,7 @@ export const formatDate = (date = new Date()) => {
   const d = new Date(date);
   if (isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-GB', {
+    timeZone: 'Asia/Kolkata',
     day: '2-digit',
     month: 'short',
     year: 'numeric'
@@ -13,16 +14,18 @@ export const formatDate = (date = new Date()) => {
 };
 
 /**
- * Formats time into 12-hour format with AM/PM (e.g. 08:30 AM)
+ * Formats time into 12-hour format with AM/PM in Indian Standard Time (Asia/Kolkata)
  * @param {Date|string} date 
  */
 export const formatTime = (date = new Date()) => {
   const d = new Date(date);
-  return d.toLocaleTimeString('en-US', {
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('en-IN', {
+    timeZone: 'Asia/Kolkata',
     hour: '2-digit',
     minute: '2-digit',
     hour12: true
-  });
+  }).toUpperCase();
 };
 
 /**
