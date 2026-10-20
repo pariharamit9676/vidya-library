@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Edit2, Trash2, IndianRupee, Phone, Armchair, Calendar } from 'lucide-react';
 import { StudentRecord } from '../../types/student';
-import { formatDisplayDate, computeStudentStatus } from '../../utils/dateFormatter';
+import { formatDisplayDate, computeStudentStatus, getStudentLastPaymentDate } from '../../utils/dateFormatter';
 import { CommonTable, CommonTableColumn } from '../common/CommonTable';
 
 interface StudentsTableProps {
@@ -135,9 +135,9 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
       }
     },
     {
-      header: 'Admission Date',
+      header: 'Last Payment Date',
       render: (student) => (
-        <span className="text-[#6B778C] whitespace-nowrap">{formatDisplayDate(student.admissionDate)}</span>
+        <span className="text-[#6B778C] whitespace-nowrap">{getStudentLastPaymentDate(student)}</span>
       )
     },
     {

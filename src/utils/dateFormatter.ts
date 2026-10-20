@@ -249,3 +249,54 @@ export const formatLiveCheckInTime = (timeVal?: string | Date | number | null): 
 
   return timeFormatted;
 };
+
+/**
+ * Resolves the latest payment date for a student:
+ * 1. Checks paymentHistory array for the most recent payment date
+ * 2. Checks explicit lastFeePaidDate property
+ * 3. Returns '-' for Demo students who haven't paid fees
+ * 4. Falls back to student's admission date for regular students with initial admission payment
+ */
+export const getStudentLastPaymentDate = (student: any): string => {
+  if (!student) return '-';
+
+  // 1. If student has paymentHistory array, sort and find latest payment
+  if (Array.isArray(student.paymentHistory) && student.paymentHistory.length > 0) {
+    const valid = student.paymentHistory.filter((p: any) => p && (p.date || p.createdAt));
+    if (valid.length > 0) {
+      // Sort descending by date
+      const sorted = [...valid].sort((a: any, b: any) => {
+        const timeA = new Date(a.date || a.createdAt || 0).getTime();
+        const timeB = new Date(b.date || b.createdAt || 0).getTime();
+        if (isNaN(timeA) || isNaN(timeB)) return 0;
+        return timeB - timeA;
+      });
+      const top = sorted[0];
+      if (top?.date || top?.createdAt) {
+        return formatDisplayDate(top.date || top.createdAt);
+      }
+    }
+  }
+
+  // 2. Explicit lastFeePaidDate property
+  if (student.lastFeePaidDate) {
+    return formatDisplayDate(student.lastFeePaidDate);
+  }
+
+  // 3. Demo students who haven't paid fees
+  const isDemo =
+    student.studentType === 'Demo' ||
+    student.status === 'Demo' ||
+    (typeof student.plan === 'string' && student.plan.includes('Demo'));
+
+  if (isDemo && (!student.paidAmount || Number(student.paidAmount) === 0)) {
+    return '-';
+  }
+
+  // 4. Regular students who paid on admission
+  if (student.admissionDate) {
+    return formatDisplayDate(student.admissionDate);
+  }
+
+  return '-';
+};

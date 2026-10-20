@@ -12,7 +12,7 @@ import {
   Receipt
 } from 'lucide-react';
 import { StudentRecord } from '../../types/student';
-import { formatDisplayDate, formatDisplayTime, computeFeeStatus, computeStudentStatus } from '../../utils/dateFormatter';
+import { formatDisplayDate, formatDisplayTime, computeFeeStatus, computeStudentStatus, getStudentLastPaymentDate } from '../../utils/dateFormatter';
 
 interface StudentDetailPanelProps {
   student: StudentRecord | null;
@@ -220,6 +220,13 @@ export const StudentDetailPanel: React.FC<StudentDetailPanelProps> = ({
                   <span className="text-[#8F9BB3] text-[11px]">Plan</span>
                   <span className="font-semibold text-[#192038]">
                     {student.plan} (₹{student.planAmount})
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-[#8F9BB3] text-[11px]">Last Payment Date</span>
+                  <span className="font-semibold text-emerald-700">
+                    {getStudentLastPaymentDate(student)}
                   </span>
                 </div>
 

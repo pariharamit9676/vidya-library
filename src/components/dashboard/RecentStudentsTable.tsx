@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudents } from '../../services/useLibraryQueries';
-import { formatDisplayDate } from '../../utils/dateFormatter';
+import { formatDisplayDate, getStudentLastPaymentDate } from '../../utils/dateFormatter';
 import { CommonTable, CommonTableColumn } from '../common/CommonTable';
 
 export const RecentStudentsTable: React.FC = () => {
@@ -39,10 +39,10 @@ export const RecentStudentsTable: React.FC = () => {
       )
     },
     {
-      header: 'Admission Date',
+      header: 'Last Payment Date',
       render: (student) => (
         <span className="text-[#192038] font-medium">
-          {formatDisplayDate(student.admissionDate)}
+          {getStudentLastPaymentDate(student)}
         </span>
       )
     },

@@ -570,6 +570,7 @@ export class StudentModel {
       nextDueDate,
       dueAmount,
       balanceDueDate,
+      lastFeePaidDate: paymentRecord.date || formatDate(),
       paymentHistory: [paymentRecord, ...(student.paymentHistory || [])]
     };
 

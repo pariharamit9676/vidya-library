@@ -35,6 +35,7 @@ export const StudentSchema = new mongoose.Schema({
   dueAmount: { type: Number, default: 0 },
   balanceDueDate: { type: String, default: '' },
   admissionDate: { type: String, default: '' },
+  lastFeePaidDate: { type: String, default: '' },
   nextDueDate: { type: String, default: '' },
   status: { type: String, default: 'Active' },
   avatar: { type: String, default: '' },
