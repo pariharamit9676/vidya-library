@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, IndianRupee, Phone, Armchair, Calendar } from 'lucide-react';
+import { Edit2, Trash2, IndianRupee, Phone, Armchair, Calendar, ChevronDown, Eye } from 'lucide-react';
 import { StudentRecord } from '../../types/student';
 import { formatDisplayDate, computeStudentStatus, getStudentLastPaymentDate } from '../../utils/dateFormatter';
 import { CommonTable, CommonTableColumn } from '../common/CommonTable';
@@ -20,11 +20,16 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
   selectedStudent: _selectedStudent,
   selectedIds = [],
   onSelectionChange,
-  onSelectStudent: _onSelectStudent,
+  onSelectStudent,
   onEditStudent,
   onDeleteStudent,
   onCollectFee
 }) => {
+  const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
+
+  const handleToggleCard = (id: string) => {
+    setExpandedStudentId((prev) => (prev === id ? null : id));
+  };
 
   // Dynamic status resolver
   const resolveStudentStatus = (student: StudentRecord): string => {
@@ -210,137 +215,217 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
     }
   ];
 
-  // Mobile card renderer for CommonTable
+  // Mobile card renderer for CommonTable with expandable accordion
   const renderMobileCard = (student: StudentRecord) => {
     const status = resolveStudentStatus(student);
     const dueAmt = Number(student.dueAmount) || 0;
     const isSelected = selectedIds.includes(student.id);
+    const isExpanded = expandedStudentId === student.id;
+    const lastPayment = getStudentLastPaymentDate(student);
 
     return (
-      <div className={`p-3.5 sm:p-4 flex flex-col gap-2.5 transition-colors ${isSelected ? 'bg-[#F5F6FE]' : 'hover:bg-[#F9FBFC]'}`}>
-        {/* Header: Checkbox + Photo + Name + ID + Status */}
-        <div className="flex items-start justify-between gap-2.5">
-          <div className="flex items-center gap-2.5 min-w-0">
-            {onSelectionChange && (
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  if (isSelected) {
-                    onSelectionChange(selectedIds.filter((id) => id !== student.id));
-                  } else {
-                    onSelectionChange([...selectedIds, student.id]);
-                  }
-                }}
-                className="rounded border-[#EDF1F7] accent-[#544bec] cursor-pointer w-4 h-4 shrink-0"
+      <div
+        className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden shadow-2xs ${
+          isSelected
+            ? 'border-[#544bec] ring-2 ring-[#544bec]/20 bg-[#FAF9FF]'
+            : isExpanded
+            ? 'border-[#544bec]/60 shadow-md ring-1 ring-[#544bec]/10'
+            : 'border-slate-200/90 hover:border-slate-300'
+        }`}
+      >
+        {/* Card Header (Always visible - Click to toggle expand/collapse) */}
+        <div
+          onClick={() => handleToggleCard(student.id)}
+          className="p-3.5 sm:p-4 cursor-pointer select-none flex flex-col gap-2.5 active:bg-slate-50/70 transition-colors"
+          role="button"
+          tabIndex={0}
+          aria-expanded={isExpanded}
+        >
+          {/* Top Row: Checkbox, Avatar, Name, Student ID, Status & Chevron */}
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {onSelectionChange && (
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    if (isSelected) {
+                      onSelectionChange(selectedIds.filter((id) => id !== student.id));
+                    } else {
+                      onSelectionChange([...selectedIds, student.id]);
+                    }
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="rounded border-[#EDF1F7] accent-[#544bec] cursor-pointer w-4 h-4 shrink-0"
+                />
+              )}
+              <img
+                src={student.avatar}
+                alt={student.name}
+                className="w-10 h-10 rounded-full object-cover border border-[#EDF1F7] shrink-0"
               />
-            )}
-            <img
-              src={student.avatar}
-              alt={student.name}
-              className="w-10 h-10 rounded-full object-cover border border-[#EDF1F7] shrink-0"
-            />
-            <div className="min-w-0">
-              <h4 className="text-sm font-extrabold text-[#192038] tracking-tight truncate m-0">
-                {student.name}
-              </h4>
-              <div className="text-[10px] font-mono font-medium text-[#8F9BB3] mt-0.5">
-                {student.studentId}
+              <div className="min-w-0">
+                <h4 className="text-sm font-extrabold text-[#192038] tracking-tight truncate m-0">
+                  {student.name}
+                </h4>
+                <div className="text-[10px] font-mono font-medium text-[#8F9BB3] mt-0.5">
+                  {student.studentId}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {getStatusBadge(status)}
+              <div
+                className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-200 ${
+                  isExpanded ? 'rotate-180 bg-[#EEF0FD] text-[#544bec]' : 'bg-slate-100 text-slate-500'
+                }`}
+                title={isExpanded ? 'Collapse card' : 'Tap to expand details and actions'}
+              >
+                <ChevronDown size={14} />
               </div>
             </div>
           </div>
-          <div className="shrink-0">{getStatusBadge(status)}</div>
-        </div>
 
-        {/* Key Details Grid */}
-        <div className="grid grid-cols-2 gap-2 bg-[#F8FAFD] rounded-xl p-2.5 text-xs border border-[#EDF1F7]">
-          {/* Seat */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Armchair size={13} className="text-slate-500 shrink-0" />
-            <span className="text-[11px]">Seat:</span>
-            <strong className="text-[#192038] font-bold text-xs truncate">
-              {student.status !== 'Inactive' && computeStudentStatus(student) !== 'Inactive' && student.seatNo && student.seatNo !== '-'
-                ? `#${student.seatNo}`
-                : 'None'}
-            </strong>
-          </div>
+          {/* Quick Summary Chips Row */}
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[11px]">
+                <Armchair size={11} className="text-slate-500" />
+                {student.status !== 'Inactive' && computeStudentStatus(student) !== 'Inactive' && student.seatNo && student.seatNo !== '-'
+                  ? `#${student.seatNo}`
+                  : 'No Seat'}
+              </span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-[11px]">
+                {student.plan || 'Monthly'}
+              </span>
+            </div>
 
-          {/* Plan */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Calendar size={13} className="text-indigo-500 shrink-0" />
-            <span className="text-[11px]">Plan:</span>
-            <strong className="text-[#192038] font-bold text-xs truncate">
-              {student.plan || 'Monthly'}
-            </strong>
-          </div>
-
-          {/* Phone */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Phone size={13} className="text-slate-400 shrink-0" />
-            <a
-              href={`tel:${student.phone}`}
-              className="text-slate-800 font-bold text-xs hover:underline truncate"
-            >
-              {student.phone}
-            </a>
-          </div>
-
-          {/* Due Date */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <span className="text-[11px]">Due:</span>
-            <strong className="text-[#192038] font-semibold text-[11px] truncate">
-              {formatDisplayDate(student.nextDueDate || student.nextFeeDueDate)}
-            </strong>
+            {dueAmt > 0 ? (
+              <span className="text-[11px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                Due: ₹{dueAmt}
+              </span>
+            ) : (
+              <span className="text-[10px] font-medium text-slate-400">
+                {isExpanded ? 'Tap to close' : 'Tap for actions'}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Due Banner if has pending dues */}
-        {dueAmt > 0 && (
-          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#FFF9F2] border border-amber-200 text-xs">
-            <span className="text-amber-800 font-bold text-[11px]">
-              Due: ₹{dueAmt}
-            </span>
-            <button
-              type="button"
-              onClick={() => onCollectFee(student)}
-              className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-500 text-white hover:bg-amber-600 cursor-pointer shadow-2xs"
-            >
-              Clear
-            </button>
+        {/* Expanded Drawer: Revealed ONLY on Click */}
+        {isExpanded && (
+          <div className="px-3.5 pb-3.5 sm:px-4 sm:pb-4 pt-0 border-t border-slate-100 space-y-3">
+            {/* Extended Details Grid */}
+            <div className="grid grid-cols-2 gap-2 bg-[#F8FAFD] rounded-xl p-2.5 text-xs border border-[#EDF1F7] mt-3">
+              {/* Phone */}
+              <div className="flex items-center gap-1.5 text-[#6B778C]">
+                <Phone size={13} className="text-[#544bec] shrink-0" />
+                <span className="text-[11px]">Phone:</span>
+                <a
+                  href={`tel:${student.phone}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-slate-800 font-bold text-xs hover:text-[#544bec] hover:underline truncate"
+                >
+                  {student.phone}
+                </a>
+              </div>
+
+              {/* Next Due Date */}
+              <div className="flex items-center gap-1.5 text-[#6B778C]">
+                <Calendar size={13} className="text-amber-600 shrink-0" />
+                <span className="text-[11px]">Due:</span>
+                <strong className="text-[#192038] font-semibold text-[11px] truncate">
+                  {formatDisplayDate(student.nextDueDate || student.nextFeeDueDate)}
+                </strong>
+              </div>
+
+              {/* Last Payment Date */}
+              <div className="flex items-center gap-1.5 text-[#6B778C] col-span-2">
+                <span className="text-[11px]">Last Payment:</span>
+                <strong className="text-[#192038] font-bold text-xs truncate">
+                  {lastPayment}
+                </strong>
+              </div>
+            </div>
+
+            {/* Pending Dues Banner if any */}
+            {dueAmt > 0 && (
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#FFF9F2] border border-amber-200 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="text-amber-900 font-extrabold text-xs">
+                    Pending Due: ₹{dueAmt}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCollectFee(student);
+                  }}
+                  className="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-amber-500 text-white hover:bg-amber-600 cursor-pointer shadow-xs transition-colors"
+                >
+                  Clear Due
+                </button>
+              </div>
+            )}
+
+            {/* Action Buttons Row (Hidden until expanded) */}
+            <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#EDF1F7]">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCollectFee(student);
+                }}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-2xs transition-all cursor-pointer active:scale-98"
+              >
+                <IndianRupee size={13} />
+                <span>Collect Fee</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectStudent?.(student);
+                }}
+                className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
+                title="View full details"
+              >
+                <Eye size={13} />
+                <span>View</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditStudent(student);
+                }}
+                className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold text-[#3366FF] bg-[#EAF2FF] hover:bg-[#d8e6ff] transition-colors cursor-pointer"
+                title="Edit student"
+              >
+                <Edit2 size={13} />
+                <span>Edit</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteStudent(student);
+                }}
+                className="p-2 rounded-xl text-rose-500 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer"
+                title="Delete student"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
           </div>
         )}
-
-        {/* Action Buttons Row */}
-        <div className="flex items-center justify-between pt-1 border-t border-[#EDF1F7]/80">
-          <button
-            type="button"
-            onClick={() => onCollectFee(student)}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-2xs transition-colors cursor-pointer"
-          >
-            <IndianRupee size={12} />
-            <span>Collect Fee</span>
-          </button>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => onEditStudent(student)}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-[#3366FF] bg-[#EAF2FF] hover:bg-[#d8e6ff] transition-colors cursor-pointer"
-            >
-              <Edit2 size={12} />
-              <span>Edit</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onDeleteStudent(student)}
-              className="p-1.5 rounded-xl text-rose-500 bg-rose-50 hover:bg-rose-100 transition-colors cursor-pointer"
-              title="Delete"
-            >
-              <Trash2 size={13} />
-            </button>
-          </div>
-        </div>
       </div>
     );
   };
@@ -350,6 +435,7 @@ export const StudentsTable: React.FC<StudentsTableProps> = ({
       data={students}
       columns={columns}
       renderMobileCard={renderMobileCard}
+      mobileCardLayout="cards"
       selectable={true}
       selectedIds={selectedIds}
       onSelectionChange={onSelectionChange}

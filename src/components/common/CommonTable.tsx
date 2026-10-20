@@ -28,6 +28,7 @@ export interface CommonTableProps<T> {
   onRowClick?: (row: T) => void;
   minWidth?: string;
   className?: string;
+  mobileCardLayout?: 'cards' | 'list';
 }
 
 export function CommonTable<T>({
@@ -45,7 +46,8 @@ export function CommonTable<T>({
   getRowId = (row: any, i) => row.id || row._id || String(i),
   onRowClick,
   minWidth = '840px',
-  className = ''
+  className = '',
+  mobileCardLayout = 'list'
 }: CommonTableProps<T>) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(initialPageSize);
@@ -87,15 +89,24 @@ export function CommonTable<T>({
     }
   };
 
+  const isCardsMode = mobileCardLayout === 'cards';
+
   return (
-    <div className={`bg-white rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-xs overflow-hidden flex flex-col ${className}`}>
+    <div className={`${isCardsMode ? 'bg-[#F8FAFD] sm:bg-white rounded-xl sm:rounded-2xl sm:border sm:border-[#EDF1F7] sm:shadow-xs overflow-hidden flex flex-col' : 'bg-white rounded-xl sm:rounded-2xl border border-[#EDF1F7] shadow-xs overflow-hidden flex flex-col'} ${className}`}>
       {/* ========================================================================= */}
       {/* 1. Mobile Cards View (< lg screens) */}
       {/* ========================================================================= */}
-      <div className="lg:hidden divide-y divide-[#EDF1F7]">
+      <div className={isCardsMode ? 'lg:hidden space-y-3 p-1.5 sm:p-2 bg-[#F8FAFD]' : 'lg:hidden divide-y divide-[#EDF1F7]'}>
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={`skel-card-${i}`} className="p-4 space-y-2.5 animate-pulse bg-white">
+            <div
+              key={`skel-card-${i}`}
+              className={
+                isCardsMode
+                  ? 'p-4 space-y-2.5 animate-pulse bg-white rounded-2xl border border-slate-200/80 shadow-2xs'
+                  : 'p-4 space-y-2.5 animate-pulse bg-white'
+              }
+            >
               <div className="flex items-center justify-between">
                 <div className="h-4 w-32 bg-slate-100 rounded-md" />
                 <div className="h-5 w-16 bg-slate-100 rounded-full" />
@@ -107,7 +118,7 @@ export function CommonTable<T>({
             </div>
           ))
         ) : paginatedData.length === 0 ? (
-          <div className="py-10 px-4 text-center text-xs text-[#8F9BB3]">
+          <div className="py-10 px-4 text-center text-xs text-[#8F9BB3] bg-white rounded-2xl border border-[#EDF1F7]">
             {emptyMessage}
           </div>
         ) : (
