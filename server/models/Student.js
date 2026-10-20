@@ -511,7 +511,6 @@ export class StudentModel {
     today.setHours(0, 0, 0, 0);
 
     // If student was Inactive or due date was in past, cycle starts strictly from today (payment date)
-    if (wasInactive || (parsedDue && !isNaN(parsedDue.getTime()) && parsedDue.getTime() <= today.getTime())) {
     const planStr = paymentRecord.plan || student.plan || 'Monthly';
     const match = planStr.match(/(\d+)\s*Month/i);
     const months = match ? parseInt(match[1], 10) : 1;
