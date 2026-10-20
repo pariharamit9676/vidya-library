@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLibrary } from '../context/LibraryContext';
 import { studentService, settingsService } from '../services/api';
 import { FeeReceiptModal } from '../components/admin/FeeReceiptModal';
 import {
@@ -46,6 +47,7 @@ import {
 
 export const StudentDashboardPage: React.FC = () => {
   const { user, logout, updateUser } = useAuth();
+  const { showToast } = useLibrary();
   const navigate = useNavigate();
 
   const [studentData, setStudentData] = useState<any>(() => {
@@ -257,23 +259,30 @@ export const StudentDashboardPage: React.FC = () => {
   // Handle Quick Punch In/Out
   const handleTogglePunch = async () => {
     if (isPunchBlocked) {
+      const msg = `Locked: Account is inactive • Admin Helpline: ${adminPhone}`;
       setFeedbackMsg({
         type: 'error',
-        text: `Locked: Account is inactive • Admin Helpline: ${adminPhone}`
+        text: msg
       });
+      showToast(msg, 'error');
       return;
     }
 
     if (isDailyLimitReached) {
+      const msg = `Daily Limit Reached: Maximum ${MAX_DAILY_CHECKINS} check-ins allowed per day. You have already completed ${MAX_DAILY_CHECKINS} check-ins today.`;
       setFeedbackMsg({
         type: 'error',
-        text: `Daily Limit Reached: Maximum ${MAX_DAILY_CHECKINS} check-ins allowed per day. You have already completed ${MAX_DAILY_CHECKINS} check-ins today.`
+        text: msg
       });
+      showToast(msg, 'warning');
       return;
     }
 
     const sId = studentData?.id || studentData?._id || user?.id;
-    if (!sId) return;
+    if (!sId) {
+      showToast('Student ID not found. Please log in again.', 'error');
+      return;
+    }
 
     try {
       setPunchLoading(true);
@@ -285,18 +294,22 @@ export const StudentDashboardPage: React.FC = () => {
           updateUser(res.data);
         }
         const isNowIn = Boolean(res.data.isCheckedIn);
+        const succMsg = isNowIn
+          ? 'Punched In successfully! Have a productive study session.'
+          : 'Punched Out successfully! Have a great day.';
         setFeedbackMsg({
           type: 'success',
-          text: isNowIn
-            ? 'Punched In successfully! Have a productive study session.'
-            : 'Punched Out successfully! Have a great day.'
+          text: succMsg
         });
+        showToast(succMsg, 'success');
       }
     } catch (err: any) {
+      const errMsg = err.message || 'Unable to update attendance punch right now.';
       setFeedbackMsg({
         type: 'error',
-        text: err.message || 'Unable to update attendance punch right now.'
+        text: errMsg
       });
+      showToast(errMsg, 'error');
     } finally {
       setPunchLoading(false);
     }
@@ -308,18 +321,24 @@ export const StudentDashboardPage: React.FC = () => {
     setPassError('');
 
     if (!newPassword || newPassword.trim().length < 4) {
-      setPassError('New password must be at least 4 characters long.');
+      const errMsg = 'New password must be at least 4 characters long.';
+      setPassError(errMsg);
+      showToast(errMsg, 'warning');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPassError('New password and confirm password do not match.');
+      const errMsg = 'New password and confirm password do not match.';
+      setPassError(errMsg);
+      showToast(errMsg, 'error');
       return;
     }
 
     const sId = studentData?.id || studentData?._id || user?.id;
     if (!sId) {
-      setPassError('Student session expired. Please sign in again.');
+      const errMsg = 'Student session expired. Please sign in again.';
+      setPassError(errMsg);
+      showToast(errMsg, 'error');
       return;
     }
 
@@ -339,11 +358,16 @@ export const StudentDashboardPage: React.FC = () => {
           type: 'success',
           text: 'Your password has been changed successfully!'
         });
+        showToast('Your password has been changed successfully!', 'success');
       } else {
-        setPassError(res.message || 'Failed to update password.');
+        const errMsg = res.message || 'Failed to update password.';
+        setPassError(errMsg);
+        showToast(errMsg, 'error');
       }
     } catch (err: any) {
-      setPassError(err.message || 'Incorrect current password or server error.');
+      const errMsg = err.message || 'Incorrect current password or server error.';
+      setPassError(errMsg);
+      showToast(errMsg, 'error');
     } finally {
       setIsChangingPass(false);
     }

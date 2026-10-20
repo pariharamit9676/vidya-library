@@ -329,10 +329,13 @@ export const FeesPage: React.FC = () => {
       setIsReceiptModalOpen(true);
 
       if (showToast) {
-        showToast(`Fee payment of ₹${payload.amount} recorded for ${payload.studentName}!`);
+        showToast(`Fee payment of ₹${payload.amount} recorded for ${payload.studentName}!`, 'success');
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error recording fee payment:', e);
+      if (showToast) {
+        showToast(e?.message || 'Failed to record fee payment. Please try again.', 'error');
+      }
     }
   };
 

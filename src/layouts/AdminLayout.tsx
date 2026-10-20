@@ -259,13 +259,6 @@ export const AdminLayout: React.FC = () => {
         receipt={activeReceipt}
         settings={settings}
       />
-
-      {/* Global Toast Notifications */}
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        onClose={clearToast}
-      />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import {
 } from '../utils/storage';
 import { INITIAL_STUDENTS } from '../data/initialData';
 import { PopupDialog } from '../components/common/PopupDialog';
+import { Toast } from '../components/common/Toast';
 import { settingsService } from '../services/api';
 
 const LibraryContext = createContext();
@@ -19,6 +20,20 @@ export const LibraryProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => getStoredSettings());
   const [toast, setToast] = useState({ message: '', type: 'success' });
   const [dialog, setDialog] = useState(null);
+
+  // Global Toast event listener (accessible from api client and anywhere in app)
+  useEffect(() => {
+    const handleGlobalToast = (e) => {
+      if (e?.detail?.message) {
+        setToast({
+          message: e.detail.message,
+          type: e.detail.type || 'error'
+        });
+      }
+    };
+    window.addEventListener('vidya_toast', handleGlobalToast);
+    return () => window.removeEventListener('vidya_toast', handleGlobalToast);
+  }, []);
 
   // Mobile-first custom Confirm & Alert Popups (Promise based)
   const showConfirm = ({
@@ -327,6 +342,11 @@ export const LibraryProvider = ({ children }) => {
     >
       {children}
       {dialog && <PopupDialog {...dialog} />}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={clearToast}
+      />
     </LibraryContext.Provider>
   );
 };

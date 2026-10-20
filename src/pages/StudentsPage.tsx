@@ -166,7 +166,7 @@ export const StudentsPage: React.FC = () => {
             phone: payload.phone
           }
         });
-        if (showToast) showToast(`Student "${payload.name}" updated successfully!`);
+        if (showToast) showToast(`Student "${payload.name}" updated successfully!`, 'success');
       } else {
         await createStudentMutation.mutateAsync({
           name: payload.name,
@@ -188,11 +188,11 @@ export const StudentsPage: React.FC = () => {
           } : undefined,
           notes: payload.notes
         });
-        if (showToast) showToast(`Student "${payload.name}" enrolled successfully!`);
+        if (showToast) showToast(`Student "${payload.name}" enrolled successfully!`, 'success');
       }
     } catch (err: any) {
       console.error('Error saving student:', err);
-      if (showToast) showToast(`Failed to save student: ${err.message || 'Error'}`);
+      if (showToast) showToast(`Failed to save student: ${err.message || 'Error'}`, 'error');
     }
   };
 

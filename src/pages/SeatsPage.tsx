@@ -249,10 +249,11 @@ export const SeatsPage: React.FC = () => {
           localStorage.setItem('viya_library_seat_layout', JSON.stringify(cells));
           localStorage.setItem('viya_library_grid_dims', JSON.stringify({ rows, cols }));
           await seatService.saveLayout({ rows, cols, cells });
-        } catch (e) {
+          if (showToast) showToast('Seating layout saved successfully!', 'success');
+        } catch (e: any) {
           console.error('Error saving layout to backend:', e);
+          if (showToast) showToast(e?.message || 'Failed to save layout to server.', 'error');
         }
-        if (showToast) showToast('Seating layout saved successfully!');
       }
     );
   };
@@ -429,10 +430,11 @@ export const SeatsPage: React.FC = () => {
         );
         try {
           await seatService.assignStudent(cellId, studentData.id);
-        } catch (e) {
+          if (showToast) showToast(`Seat assigned to ${studentData.name} successfully!`, 'success');
+        } catch (e: any) {
           console.warn('API sync assign student failed:', e);
+          if (showToast) showToast(e?.message || 'Failed to sync student assignment to server.', 'error');
         }
-        if (showToast) showToast(`Seat assigned to ${studentData.name} successfully!`);
       }
     );
   };
@@ -472,10 +474,11 @@ export const SeatsPage: React.FC = () => {
         );
         try {
           await seatService.unassignStudent(targetCell.id);
-        } catch (e) {
+          if (showToast) showToast(`${studentName} unassigned from Seat ${targetCell.seatNumber}.`, 'success');
+        } catch (e: any) {
           console.warn('API sync unassign student failed:', e);
+          if (showToast) showToast(e?.message || 'Failed to sync unassign to server.', 'error');
         }
-        if (showToast) showToast(`${studentName} unassigned from Seat ${targetCell.seatNumber}.`);
       }
     );
   };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLibrary } from '../context/LibraryContext';
 import {
   BookOpen,
   Eye,
@@ -18,6 +19,7 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { showToast } = useLibrary();
 
   // Detect whether to start on student or admin tab based on pathname or search params
   const [activeRole, setActiveRole] = useState(() => {
@@ -67,11 +69,12 @@ export const LoginPage = () => {
     setErrorMsg('');
 
     if (!identifier.trim() || !password.trim()) {
-      setErrorMsg(
+      const err =
         activeRole === 'student'
           ? 'Please enter your Roll ID / Mobile and password.'
-          : 'Please enter your email/phone and password.'
-      );
+          : 'Please enter your email/phone and password.';
+      setErrorMsg(err);
+      showToast(err, 'warning');
       return;
     }
 
@@ -94,21 +97,31 @@ export const LoginPage = () => {
           }
         }
 
+        showToast(
+          activeRole === 'student'
+            ? `Welcome back, ${res.user?.name || 'Student'}!`
+            : 'Welcome back, Admin!',
+          'success'
+        );
+
         if (res.user?.role === 'student' || activeRole === 'student') {
           navigate('/student/dashboard');
         } else {
           navigate('/admin');
         }
       } else {
-        setErrorMsg(
+        const err =
           res.message ||
-            (activeRole === 'student'
-              ? 'Invalid Roll ID or password. Please verify your credentials.'
-              : 'Invalid credentials. Please verify your phone/email and password.')
-        );
+          (activeRole === 'student'
+            ? 'Invalid Roll ID or password. Please verify your credentials.'
+            : 'Invalid credentials. Please verify your phone/email and password.');
+        setErrorMsg(err);
+        showToast(err, 'error');
       }
     } catch (err) {
-      setErrorMsg(err.message || 'An unexpected authentication error occurred.');
+      const msg = err.message || 'An unexpected authentication error occurred.';
+      setErrorMsg(msg);
+      showToast(msg, 'error');
     } finally {
       setIsLoading(false);
     }

@@ -15,6 +15,12 @@ interface ApiResponse<T = any> {
   count?: number;
 }
 
+export const showGlobalToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'error') => {
+  if (typeof window !== 'undefined' && message) {
+    window.dispatchEvent(new CustomEvent('vidya_toast', { detail: { message, type } }));
+  }
+};
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
   const token = localStorage.getItem('viya_auth_token');
 
@@ -42,12 +48,17 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     }
 
     if (!response.ok) {
-      throw new Error(data.message || `Request failed with status ${response.status}`);
+      const errMsg = data.message || `Request failed with status ${response.status}`;
+      showGlobalToast(errMsg, 'error');
+      throw new Error(errMsg);
     }
 
     return data;
   } catch (error: any) {
     console.error(`[API Error] ${endpoint}:`, error.message);
+    if (error.name === 'TypeError' && (error.message.includes('fetch') || error.message.includes('Network') || error.message.includes('Failed to fetch'))) {
+      showGlobalToast('Network Error: Unable to connect to server. Please check your internet connection.', 'error');
+    }
     throw error;
   }
 }

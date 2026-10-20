@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLibrary } from '../context/LibraryContext';
 import {
   referralService,
   getStudentReferralCode,
@@ -30,6 +31,7 @@ import {
 
 export const StudentReferralPage: React.FC = () => {
   const { user } = useAuth();
+  const { showToast } = useLibrary();
   const navigate = useNavigate();
 
   const [studentData, setStudentData] = useState<any>(user || null);
@@ -80,7 +82,7 @@ export const StudentReferralPage: React.FC = () => {
         setReferralStats(res.data);
         return;
       }
-    } catch (e) {
+    } catch (e: any) {
       console.warn('API getStudentStats note:', e);
     }
     const stats = referralService.getStudentReferralStats(studentId, referralCode);
@@ -102,7 +104,9 @@ export const StudentReferralPage: React.FC = () => {
           setUpiId(res.data.upiId);
           setIsEditingUpi(false);
         }
-      }).catch(() => {});
+      }).catch((err) => {
+        console.warn('Failed to load student details for UPI:', err);
+      });
     }
   }, [studentId, referralCode, user]);
 
@@ -113,12 +117,14 @@ export const StudentReferralPage: React.FC = () => {
   const handleCopyCode = () => {
     navigator.clipboard.writeText(referralCode);
     setCopiedCode(true);
+    showToast(`Referral code "${referralCode}" copied!`, 'info');
     setTimeout(() => setCopiedCode(false), 2500);
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);
     setCopiedLink(true);
+    showToast('Referral link copied to clipboard!', 'info');
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
@@ -160,7 +166,9 @@ export const StudentReferralPage: React.FC = () => {
     const clean = upiId.trim();
     const validation = validateUpiId(clean);
     if (!validation.isValid) {
-      setUpiError(validation.error || 'Please enter a valid UPI ID');
+      const errMsg = validation.error || 'Please enter a valid UPI ID';
+      setUpiError(errMsg);
+      showToast(errMsg, 'error');
       return;
     }
 
@@ -173,16 +181,20 @@ export const StudentReferralPage: React.FC = () => {
       if (studentId && studentId !== 'STU') {
         try {
           await studentService.updateUpi(studentId, clean);
-        } catch (apiErr) {
+        } catch (apiErr: any) {
           console.warn('Backend UPI sync warning:', apiErr);
+          showToast(apiErr?.message || 'Warning: Cloud UPI sync failed, saved locally.', 'warning');
         }
       }
 
       setIsEditingUpi(false);
       setWithdrawFeedback({ type: 'success', text: 'UPI ID verified and saved successfully!' });
+      showToast('UPI ID verified and saved successfully!', 'success');
       setTimeout(() => setWithdrawFeedback(null), 3000);
     } catch (err: any) {
-      setUpiError(err?.message || 'Failed to save UPI ID.');
+      const errMsg = err?.message || 'Failed to save UPI ID.';
+      setUpiError(errMsg);
+      showToast(errMsg, 'error');
     } finally {
       setIsSavingUpi(false);
     }
@@ -192,7 +204,9 @@ export const StudentReferralPage: React.FC = () => {
     const validation = validateUpiId(upiId);
     if (!validation.isValid) {
       setIsEditingUpi(true);
-      setUpiError(validation.error || 'Please enter and save your valid UPI ID first before requesting payout.');
+      const errMsg = validation.error || 'Please enter and save your valid UPI ID first before requesting payout.';
+      setUpiError(errMsg);
+      showToast(errMsg, 'warning');
       return;
     }
     setWithdrawAmount(referralStats.availableBalance);
@@ -202,7 +216,9 @@ export const StudentReferralPage: React.FC = () => {
   const handleConfirmWithdrawal = async () => {
     if (withdrawAmount <= 0) return;
     if (withdrawAmount > referralStats.availableBalance) {
-      setWithdrawFeedback({ type: 'error', text: 'Requested amount exceeds your available balance.' });
+      const errMsg = 'Requested amount exceeds your available balance.';
+      setWithdrawFeedback({ type: 'error', text: errMsg });
+      showToast(errMsg, 'error');
       return;
     }
 
@@ -234,13 +250,17 @@ export const StudentReferralPage: React.FC = () => {
 
       await reloadStats();
       setIsWithdrawModalOpen(false);
+      const successMsg = `🎉 ₹${withdrawAmount} withdrawal scheduled with Pending status! Wallet balance is now ₹0. Admin will verify and transfer to ${upiId}.`;
       setWithdrawFeedback({
         type: 'success',
-        text: `🎉 ₹${withdrawAmount} withdrawal scheduled with Pending status! Wallet balance is now ₹0. Admin will verify and transfer to ${upiId}.`
+        text: successMsg
       });
+      showToast(`₹${withdrawAmount} withdrawal request submitted successfully!`, 'success');
       setTimeout(() => setWithdrawFeedback(null), 6000);
     } catch (err: any) {
-      setWithdrawFeedback({ type: 'error', text: err?.message || 'Failed to submit withdrawal request.' });
+      const errMsg = err?.message || 'Failed to submit withdrawal request.';
+      setWithdrawFeedback({ type: 'error', text: errMsg });
+      showToast(errMsg, 'error');
     } finally {
       setIsWithdrawing(false);
     }
