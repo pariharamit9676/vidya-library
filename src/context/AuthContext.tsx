@@ -19,6 +19,9 @@ export interface AdminUser {
   isCheckedIn?: boolean;
   currentCheckInTime?: string | null;
   attendanceHistory?: any[];
+  savedUpiId?: string;
+  upiId?: string;
+  referralCode?: string;
 }
 
 interface AuthContextType {

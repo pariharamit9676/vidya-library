@@ -87,7 +87,10 @@ export const studentService = {
     return request(`/students${params ? `?${params}` : ''}`);
   },
 
-  getById: (id: string) => request(`/students/${id}`),
+  getById: (id: string) => {
+    const clean = encodeURIComponent(String(id || '').trim());
+    return request(`/students/${clean}`);
+  },
 
   create: (studentData: any) =>
     request('/students', {
@@ -145,11 +148,11 @@ export const studentService = {
   verifyReferral: (code: string) =>
     request<any>(`/students/verify-referral/${encodeURIComponent(code)}`),
 
-  updateUpi: (id: string, upiId: string) => {
+  updateUpi: (id: string, upiId: string, phone?: string) => {
     const cleanId = String(id || '').replace(/^#+/, '').trim();
     return request('/students/upi', {
       method: 'PUT',
-      body: JSON.stringify({ id: cleanId, studentId: id, upiId })
+      body: JSON.stringify({ id: cleanId, studentId: id, upiId: upiId.trim(), phone })
     });
   }
 };

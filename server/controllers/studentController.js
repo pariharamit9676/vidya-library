@@ -505,9 +505,15 @@ export class StudentController {
 
   static async updateUpi(req, res, next) {
     try {
-      const targetId = req.body?.id || req.body?.studentId || req.params?.id;
-      const { upiId } = req.body;
-      const updated = await StudentModel.updateUpi(targetId, upiId);
+      const targetId = req.body?.id || req.body?.studentId || req.params?.id || req.body?.phone;
+      const { upiId, phone } = req.body;
+      const updated = await StudentModel.updateUpi(targetId, upiId, phone);
+      if (!updated) {
+        return res.status(404).json({
+          success: false,
+          message: 'Student record not found in database to update UPI ID.'
+        });
+      }
       return res.status(200).json({
         success: true,
         message: 'UPI ID updated successfully in database.',

@@ -268,12 +268,15 @@ export const referralService = {
   // Save student's preferred UPI ID for withdrawal
   saveStudentUpiId: (studentId: string, upiId: string) => {
     const cleanUpi = upiId.trim();
+    const unhash = String(studentId || '').replace(/^#+/, '').toLowerCase();
     try {
       const currentStored = localStorage.getItem('vidya_current_user');
       if (currentStored) {
         const cur = JSON.parse(currentStored);
-        if (String(cur.id || cur.studentId || cur._id) === String(studentId)) {
+        const curUnhash = String(cur.studentId || cur.id || cur._id || '').replace(/^#+/, '').toLowerCase();
+        if (curUnhash === unhash || String(cur.id) === String(studentId)) {
           cur.savedUpiId = cleanUpi;
+          cur.upiId = cleanUpi;
           localStorage.setItem('vidya_current_user', JSON.stringify(cur));
         }
       }
@@ -281,13 +284,44 @@ export const referralService = {
       const stored = localStorage.getItem('vidya_local_students');
       if (stored) {
         const students = JSON.parse(stored);
-        const match = students.find((s: any) => String(s.id || s.studentId || s._id) === String(studentId));
+        const match = students.find((s: any) => {
+          const sUnhash = String(s.studentId || s.id || s._id || '').replace(/^#+/, '').toLowerCase();
+          return sUnhash === unhash || String(s.id) === String(studentId);
+        });
         if (match) {
           match.savedUpiId = cleanUpi;
+          match.upiId = cleanUpi;
           localStorage.setItem('vidya_local_students', JSON.stringify(students));
         }
       }
     } catch {}
+  },
+
+  // Retrieve student's preferred UPI ID from local storage caches
+  getStudentUpiId: (studentId: string): string => {
+    const unhash = String(studentId || '').replace(/^#+/, '').toLowerCase();
+    try {
+      const currentStored = localStorage.getItem('vidya_current_user');
+      if (currentStored) {
+        const cur = JSON.parse(currentStored);
+        const curUnhash = String(cur.studentId || cur.id || cur._id || '').replace(/^#+/, '').toLowerCase();
+        if (curUnhash === unhash || String(cur.id) === String(studentId)) {
+          if (cur.upiId || cur.savedUpiId) return cur.upiId || cur.savedUpiId;
+        }
+      }
+      const stored = localStorage.getItem('vidya_local_students');
+      if (stored) {
+        const students = JSON.parse(stored);
+        const match = students.find((s: any) => {
+          const sUnhash = String(s.studentId || s.id || s._id || '').replace(/^#+/, '').toLowerCase();
+          return sUnhash === unhash || String(s.id) === String(studentId);
+        });
+        if (match && (match.upiId || match.savedUpiId)) {
+          return match.upiId || match.savedUpiId;
+        }
+      }
+    } catch {}
+    return '';
   },
 
   // Get student's referral history and wallet stats

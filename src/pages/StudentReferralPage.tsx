@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export const StudentReferralPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const { showToast } = useLibrary();
   const navigate = useNavigate();
 
@@ -50,9 +50,12 @@ export const StudentReferralPage: React.FC = () => {
     availableBalance: 0
   });
 
+  const studentId = user?.studentId || (user as any)?._id || user?.id || 'STU';
+  const initialUpi = user?.savedUpiId || user?.upiId || referralService.getStudentUpiId(studentId) || '';
+
   // UPI State
-  const [upiId, setUpiId] = useState<string>(user?.savedUpiId || '');
-  const [isEditingUpi, setIsEditingUpi] = useState<boolean>(!user?.savedUpiId);
+  const [upiId, setUpiId] = useState<string>(initialUpi);
+  const [isEditingUpi, setIsEditingUpi] = useState<boolean>(!initialUpi);
   const [upiError, setUpiError] = useState<string>('');
   const [isSavingUpi, setIsSavingUpi] = useState<boolean>(false);
 
@@ -62,7 +65,6 @@ export const StudentReferralPage: React.FC = () => {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawFeedback, setWithdrawFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const studentId = user?.studentId || (user as any)?._id || user?.id || 'STU';
   const [dbReferralCode, setDbReferralCode] = useState<string>(user?.referralCode || '');
   const referralCode = useMemo(() => {
     return dbReferralCode || user?.referralCode || getStudentReferralCode(user);
@@ -91,8 +93,10 @@ export const StudentReferralPage: React.FC = () => {
 
   useEffect(() => {
     reloadStats();
-    if (user?.savedUpiId) {
-      setUpiId(user.savedUpiId);
+    const currentUpi = user?.savedUpiId || user?.upiId || referralService.getStudentUpiId(studentId);
+    if (currentUpi) {
+      setUpiId(currentUpi);
+      setIsEditingUpi(false);
     }
     // Fetch latest referralCode and UPI ID from database
     if (studentId && studentId !== 'STU') {
@@ -100,15 +104,20 @@ export const StudentReferralPage: React.FC = () => {
         if (res?.data?.referralCode) {
           setDbReferralCode(res.data.referralCode);
         }
-        if (res?.data?.upiId) {
-          setUpiId(res.data.upiId);
+        const serverUpi = res?.data?.upiId || res?.data?.savedUpiId;
+        if (serverUpi) {
+          setUpiId(serverUpi);
           setIsEditingUpi(false);
+          referralService.saveStudentUpiId(studentId, serverUpi);
+          if (updateUser) {
+            updateUser({ upiId: serverUpi, savedUpiId: serverUpi });
+          }
         }
       }).catch((err) => {
         console.warn('Failed to load student details for UPI:', err);
       });
     }
-  }, [studentId, referralCode, user]);
+  }, [studentId, referralCode, user?.id, user?.studentId]);
 
   // Share URL & WhatsApp message
   const shareUrl = `${window.location.origin}/`;
@@ -177,10 +186,15 @@ export const StudentReferralPage: React.FC = () => {
       // 1. Save in local storage store
       referralService.saveStudentUpiId(studentId, clean);
 
-      // 2. Sync to MongoDB database
+      // 2. Sync to auth context & current user
+      if (updateUser) {
+        updateUser({ savedUpiId: clean, upiId: clean });
+      }
+
+      // 3. Sync to MongoDB database
       if (studentId && studentId !== 'STU') {
         try {
-          await studentService.updateUpi(studentId, clean);
+          await studentService.updateUpi(studentId, clean, user?.phone);
         } catch (apiErr: any) {
           console.warn('Backend UPI sync warning:', apiErr);
           showToast(apiErr?.message || 'Warning: Cloud UPI sync failed, saved locally.', 'warning');
@@ -485,11 +499,11 @@ export const StudentReferralPage: React.FC = () => {
                   >
                     {isSavingUpi ? 'Saving...' : 'Save UPI ID'}
                   </button>
-                  {user?.savedUpiId && (
+                  {(user?.savedUpiId || user?.upiId || upiId) && (
                     <button
                       type="button"
                       onClick={() => setIsEditingUpi(false)}
-                      className="px-2.5 py-1.5 rounded-lg border border-[#EDF1F7] text-xs font-medium text-[#6B778C]"
+                      className="px-2.5 py-1.5 rounded-lg border border-[#EDF1F7] text-xs font-medium text-[#6B778C] cursor-pointer hover:bg-slate-50"
                     >
                       Cancel
                     </button>

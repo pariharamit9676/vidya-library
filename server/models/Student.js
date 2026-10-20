@@ -122,8 +122,49 @@ export class StudentModel {
   }
 
   static async getById(id) {
+    if (!id) return null;
+    const clean = String(id || '').trim();
+    const unhashed = clean.replace(/^#+/, '');
+    const cleanLower = unhashed.toLowerCase();
+
+    // 1. Try direct Mongo search first if connected
+    if (isMongoConnected()) {
+      try {
+        const orConditions = [
+          { studentId: clean },
+          { studentId: `#${unhashed}` },
+          { studentId: unhashed },
+          { studentId: { $regex: new RegExp(`^#?${unhashed}$`, 'i') } },
+          { phone: clean }
+        ];
+        if (clean.length === 24) {
+          orConditions.push({ _id: clean });
+        }
+        const found = await StudentMongo.findOne({ $or: orConditions }).lean();
+        if (found) {
+          return {
+            ...found,
+            id: found.id || String(found._id)
+          };
+        }
+      } catch (err) {
+        console.warn('Mongo getById fallback to getAll:', err.message);
+      }
+    }
+
     const all = await this.getAll();
-    return all.find((s) => s.id === id || s.studentId === id || String(s._id) === id) || null;
+    return all.find((s) => {
+      const sUnhashed = String(s.studentId || '').replace(/^#+/, '').toLowerCase();
+      return (
+        s.id === clean ||
+        String(s._id) === clean ||
+        s.studentId === clean ||
+        s.studentId === `#${unhashed}` ||
+        s.studentId === unhashed ||
+        sUnhashed === cleanLower ||
+        s.phone === clean
+      );
+    }) || null;
   }
 
   static async getNextStudentId() {
@@ -720,7 +761,7 @@ export class StudentModel {
   /**
    * Update student UPI ID in database with validation
    */
-  static async updateUpi(id, upiId) {
+  static async updateUpi(id, upiId, fallbackPhone = '') {
     const cleanUpi = String(upiId || '').trim();
     const UPI_REGEX = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
     if (!cleanUpi || !UPI_REGEX.test(cleanUpi)) {
@@ -729,6 +770,7 @@ export class StudentModel {
 
     const cleanId = String(id || '').trim();
     const unhashId = cleanId.replace(/^#+/, '');
+    const cleanPhone = String(fallbackPhone || '').trim();
 
     let updated = null;
     if (isMongoConnected()) {
@@ -737,16 +779,19 @@ export class StudentModel {
           { studentId: cleanId },
           { studentId: `#${unhashId}` },
           { studentId: unhashId },
-          { id: cleanId },
+          { studentId: { $regex: new RegExp(`^#?${unhashId}$`, 'i') } },
           { phone: cleanId }
         ];
+        if (cleanPhone) {
+          orConditions.push({ phone: cleanPhone });
+        }
         if (cleanId && cleanId.length === 24) {
           orConditions.push({ _id: cleanId });
         }
         updated = await StudentMongo.findOneAndUpdate(
           { $or: orConditions },
           { $set: { upiId: cleanUpi } },
-          { returnDocument: 'after' }
+          { returnDocument: 'after', new: true }
         ).lean();
       } catch (err) {
         console.error('Mongo updateUpi error:', err.message);
@@ -760,7 +805,10 @@ export class StudentModel {
         s.studentId === cleanId ||
         s.studentId === `#${unhashId}` ||
         s.studentId === unhashId ||
-        String(s._id) === cleanId
+        String(s.studentId || '').replace(/^#+/, '').toLowerCase() === unhashId.toLowerCase() ||
+        String(s._id) === cleanId ||
+        s.phone === cleanId ||
+        (cleanPhone && s.phone === cleanPhone)
     );
     if (idx !== -1) {
       localStudents[idx].upiId = cleanUpi;
