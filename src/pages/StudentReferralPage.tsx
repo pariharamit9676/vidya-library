@@ -60,7 +60,7 @@ export const StudentReferralPage: React.FC = () => {
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [withdrawFeedback, setWithdrawFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const studentId = user?.id || user?.studentId || (user as any)?._id || 'STU';
+  const studentId = user?.studentId || (user as any)?._id || user?.id || 'STU';
   const [dbReferralCode, setDbReferralCode] = useState<string>(user?.referralCode || '');
   const referralCode = useMemo(() => {
     return dbReferralCode || user?.referralCode || getStudentReferralCode(user);
@@ -207,19 +207,23 @@ export const StudentReferralPage: React.FC = () => {
     }
 
     setIsWithdrawing(true);
+    setWithdrawFeedback(null);
     try {
-      try {
-        await referralApiService.requestPayout({
-          studentId,
-          studentName: user?.name || 'Student',
-          studentPhone: user?.phone || '',
-          upiId: upiId.trim(),
-          amount: withdrawAmount
-        });
-      } catch (apiErr: any) {
-        console.warn('Backend payout request note:', apiErr);
+      // 1. Submit to Backend API (MongoDB Atlas)
+      const apiRes = await referralApiService.requestPayout({
+        studentId,
+        referralCode,
+        studentName: user?.name || 'Student',
+        studentPhone: user?.phone || '',
+        upiId: upiId.trim(),
+        amount: withdrawAmount
+      });
+
+      if (apiRes && apiRes.success === false) {
+        throw new Error(apiRes.message || 'Failed to submit withdrawal request.');
       }
 
+      // 2. Sync to local storage
       referralService.requestUpiPayout({
         studentId,
         studentName: user?.name || 'Student',

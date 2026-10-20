@@ -4,6 +4,7 @@ export const PayoutSchema = new mongoose.Schema({
   studentId: { type: String, required: true },
   studentName: { type: String, required: true },
   studentPhone: { type: String, default: '' },
+  referralCode: { type: String, default: '' },
   upiId: { type: String, required: true },
   amount: { type: Number, required: true },
   status: { type: String, enum: ['Pending', 'Completed', 'Rejected'], default: 'Pending' },

@@ -134,10 +134,40 @@ export class ReferralModel {
     const unhashId = cleanId.replace(/^#+/, '');
     const cleanCode = String(code || '').trim().toUpperCase();
 
+    // 1. Gather all student identifiers by looking up DB student
+    let dbStudent = null;
+    if (isMongoConnected()) {
+      try {
+        const studentOrConditions = [
+          { studentId: cleanId },
+          { studentId: `#${unhashId}` },
+          { studentId: unhashId }
+        ];
+        if (cleanId.length === 24 && mongoose.Types.ObjectId.isValid(cleanId)) {
+          studentOrConditions.push({ _id: cleanId });
+        }
+        if (cleanCode) {
+          studentOrConditions.push({ referralCode: cleanCode });
+        }
+        dbStudent = await StudentMongo.findOne({ $or: studentOrConditions }).lean();
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    const resolvedRollId = dbStudent?.studentId || (cleanId.startsWith('#') ? cleanId : `#${unhashId}`);
+    const resolvedCode = cleanCode || dbStudent?.referralCode || '';
+    const resolvedUnhash = resolvedRollId.replace(/^#+/, '');
+
     const idFilters = [
       cleanId,
       `#${unhashId}`,
-      unhashId
+      unhashId,
+      resolvedRollId,
+      `#${resolvedUnhash}`,
+      resolvedUnhash,
+      ...(dbStudent?._id ? [String(dbStudent._id)] : []),
+      ...(dbStudent?.phone ? [String(dbStudent.phone)] : [])
     ];
 
     let allReferrals = [];
@@ -148,11 +178,16 @@ export class ReferralModel {
         const query = {
           $or: [
             { referrerId: { $in: idFilters } },
-            ...(cleanCode ? [{ referrerCode: cleanCode }] : [])
+            ...(resolvedCode ? [{ referrerCode: resolvedCode }] : [])
           ]
         };
         allReferrals = await ReferralMongo.find(query).sort({ createdAt: -1 }).lean();
-        allPayouts = await PayoutMongo.find({ studentId: { $in: idFilters } }).sort({ createdAt: -1 }).lean();
+        allPayouts = await PayoutMongo.find({
+          $or: [
+            { studentId: { $in: idFilters } },
+            ...(resolvedCode ? [{ referralCode: resolvedCode }] : [])
+          ]
+        }).sort({ createdAt: -1 }).lean();
       } catch (err) {
         console.error('Mongo getStatsForStudent error:', err.message);
       }
@@ -161,12 +196,12 @@ export class ReferralModel {
     if (allReferrals.length === 0) {
       const localRefs = readJsonFile(REFERRALS_FILE, []);
       allReferrals = localRefs.filter(r => 
-        idFilters.includes(r.referrerId) || (cleanCode && r.referrerCode === cleanCode)
+        idFilters.includes(r.referrerId) || (resolvedCode && r.referrerCode === resolvedCode)
       );
     }
     if (allPayouts.length === 0) {
       const localPays = readJsonFile(PAYOUTS_FILE, []);
-      allPayouts = localPays.filter(p => idFilters.includes(p.studentId));
+      allPayouts = localPays.filter(p => idFilters.includes(p.studentId) || (resolvedCode && p.referralCode === resolvedCode));
     }
 
     const formattedRefs = allReferrals.map(r => ({ ...r, id: String(r._id || r.id) }));
@@ -202,6 +237,7 @@ export class ReferralModel {
     const studentId = String(data.studentId || '').trim();
     const upiId = String(data.upiId || '').trim();
     const amount = Number(data.amount) || 0;
+    const referralCode = String(data.referralCode || data.studentCode || data.code || '').trim().toUpperCase();
 
     if (!upiId || !upiId.includes('@')) {
       throw new Error('Please enter a valid UPI ID (e.g. mobile@upi or name@oksbi)');
@@ -210,13 +246,29 @@ export class ReferralModel {
       throw new Error('Withdrawal amount must be greater than ₹0');
     }
 
-    const stats = await this.getStatsForStudent(studentId);
+    const stats = await this.getStatsForStudent(studentId, referralCode);
     if (amount > stats.availableBalance) {
       throw new Error(`Insufficient referral balance. Available balance is ₹${stats.availableBalance}`);
     }
 
+    // Resolve standardized student roll ID (e.g. #STU001)
+    let standardId = studentId;
+    if (isMongoConnected()) {
+      try {
+        const s = await StudentMongo.findOne({
+          $or: [
+            { studentId: studentId },
+            { studentId: `#${studentId.replace(/^#+/, '')}` },
+            { referralCode: referralCode }
+          ]
+        }).lean();
+        if (s?.studentId) standardId = s.studentId;
+      } catch {}
+    }
+
     const newPayout = {
-      studentId: studentId,
+      studentId: standardId,
+      referralCode: referralCode,
       studentName: data.studentName || 'Student',
       studentPhone: data.studentPhone || '',
       upiId: upiId,
