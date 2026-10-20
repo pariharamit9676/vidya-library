@@ -276,9 +276,11 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
   const [transactionRef, setTransactionRef] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isDueWaived, setIsDueWaived] = useState<boolean>(false);
 
   // Sync on student change
   useEffect(() => {
+    setIsDueWaived(false);
     if (currentStudent) {
       const isInactive = currentStudent.status === 'Inactive' || computeStudentStatus(currentStudent) === 'Inactive';
       const studentDue = Number(currentStudent.dueAmount || 0);
@@ -306,6 +308,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
 
   const handleTabSwitch = (tab: 'clear_due' | 'renew') => {
     setActiveTab(tab);
+    setIsDueWaived(false);
     if (tab === 'clear_due') {
       setAmountReceived(existingPendingDue);
       setNotes(`Cleared pending balance of ₹${existingPendingDue}`);
@@ -323,6 +326,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
   const handleDurationChange = (newMonths: number) => {
     const safe = Math.max(1, Math.min(24, newMonths));
     setDurationMonths(safe);
+    setIsDueWaived(false);
     const calc = calculateMultiMonthFee(safe, monthlyRate, multiMonthDiscounts);
     setAmountReceived(calc.finalTotal);
     setNotes(
@@ -379,9 +383,10 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
     }
   }, [autoNextDueDate, isManualDueDate]);
 
-  // Reset manual edit flag whenever a different student is selected or modal opens
+  // Reset manual edit flag and waived due state whenever a different student is selected or modal opens
   useEffect(() => {
     setIsManualDueDate(false);
+    setIsDueWaived(false);
   }, [selectedStudentId, isOpen]);
 
   const effectiveNextDueDate = isManualDueDate && customDueDate.trim() ? customDueDate.trim() : autoNextDueDate;
@@ -415,6 +420,9 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
         ? `${durationMonths} Months (${discountCalculation.savingsText})`
         : `${durationMonths} Months`;
 
+      const finalDueAmount = isDueWaived ? 0 : remainingDue;
+      const finalBalanceDueDate = (!isDueWaived && isPartialPayment) ? formatDisplayDate(balanceDueDate) : '';
+
       await onRecordPayment({
         studentId: currentStudent.id || currentStudent._id,
         studentName: currentStudent.name,
@@ -422,12 +430,14 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
         mode: paymentMode,
         plan: planName,
         newDueDate: effectiveNextDueDate,
-        dueAmount: remainingDue,
-        balanceDueDate: isPartialPayment ? formatDisplayDate(balanceDueDate) : '',
+        dueAmount: finalDueAmount,
+        balanceDueDate: finalBalanceDueDate,
         seatNo: selectedSeatNo || currentStudent.seatNo || '-',
         seatCategory: selectedCategory,
         reference: transactionRef.trim() || undefined,
-        notes: notes.trim() || undefined
+        notes: isDueWaived && remainingDue > 0
+          ? `${notes.trim() ? notes.trim() + ' | ' : ''}Remaining ₹${remainingDue} due waived by admin`
+          : notes.trim() || undefined
       });
 
       onClose();
@@ -832,7 +842,10 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                   min="1"
                   required
                   value={amountReceived}
-                  onChange={(e) => setAmountReceived(Number(e.target.value) || 0)}
+                  onChange={(e) => {
+                    setAmountReceived(Number(e.target.value) || 0);
+                    setIsDueWaived(false);
+                  }}
                   className="w-full pl-8 pr-3 py-2.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-sm font-black text-[#192038] focus:outline-hidden focus:border-slate-800 focus:bg-white transition-all"
                 />
               </div>
@@ -840,7 +853,10 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
               {activeTab === 'renew' ? (
                 <button
                   type="button"
-                  onClick={() => setAmountReceived(effectivePlanExpected)}
+                  onClick={() => {
+                    setAmountReceived(effectivePlanExpected);
+                    setIsDueWaived(false);
+                  }}
                   className="px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-all cursor-pointer shrink-0"
                 >
                   Pay Full (₹{effectivePlanExpected})
@@ -848,7 +864,10 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
               ) : (
                 <button
                   type="button"
-                  onClick={() => setAmountReceived(existingPendingDue)}
+                  onClick={() => {
+                    setAmountReceived(existingPendingDue);
+                    setIsDueWaived(false);
+                  }}
                   className="px-3.5 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100 font-bold text-xs transition-all cursor-pointer shrink-0"
                 >
                   Clear All (₹{existingPendingDue})
@@ -857,11 +876,22 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
             </div>
 
             {/* Partial Dues Alert */}
-            {isPartialPayment && (
+            {isPartialPayment && !isDueWaived && (
               <div className="p-2.5 bg-[#FFF9F2] border border-[#FFE0B2] rounded-xl space-y-1.5 text-xs text-amber-900 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between font-bold">
-                  <span>Remaining Pending Due:</span>
-                  <span className="font-black text-amber-700">₹{remainingDue}</span>
+                  <span className="text-amber-900">Remaining Pending Due:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-black text-amber-700">₹{remainingDue}</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsDueWaived(true)}
+                      className="w-5 h-5 rounded-full bg-amber-200/80 hover:bg-amber-300 text-amber-900 flex items-center justify-center transition-colors cursor-pointer"
+                      title="Remove / Waive remaining due"
+                      aria-label="Remove remaining due"
+                    >
+                      <X size={12} strokeWidth={2.5} />
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between gap-2 pt-1 border-t border-amber-200/60">
                   <span className="text-[11px] text-amber-800">Promise Date for Balance:</span>
@@ -872,6 +902,23 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                     className="bg-white border border-amber-300 rounded-lg px-2 py-0.5 text-xs font-bold text-amber-900 focus:outline-hidden"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* If Waived/Removed: Show clean confirmation with Restore option */}
+            {isPartialPayment && isDueWaived && (
+              <div className="flex items-center justify-between px-3 py-2 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-emerald-800 animate-in fade-in duration-150">
+                <span className="text-[11px] font-medium flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Remaining ₹{remainingDue} due removed (₹0 due will be recorded)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsDueWaived(false)}
+                  className="text-[11px] font-extrabold text-emerald-700 hover:text-emerald-900 underline cursor-pointer"
+                >
+                  Restore Due
+                </button>
               </div>
             )}
           </div>
