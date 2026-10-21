@@ -77,7 +77,10 @@ export const FeesPage: React.FC = () => {
         (r) => r.studentId === s.id || r.studentName?.toLowerCase() === s.name?.toLowerCase()
       );
 
-      const historyPayments = Array.isArray(s.paymentHistory) ? s.paymentHistory : [];
+      const historyPayments = [
+        ...(Array.isArray(s.feeHistory) ? s.feeHistory : []),
+        ...(Array.isArray(s.paymentHistory) ? s.paymentHistory : [])
+      ];
       const totalPaid = studentReceipts.length > 0
         ? studentReceipts.reduce((sum, r) => sum + (Number(r.amount) || 0), 0)
         : historyPayments.length > 0

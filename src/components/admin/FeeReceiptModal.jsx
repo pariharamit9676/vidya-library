@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Download, MessageSquare, CheckCircle, Printer, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Download, MessageSquare, CheckCircle, Printer, FileText, Edit2, Check, Plus } from 'lucide-react';
 import { formatDateOnly } from '../../utils/storage';
 import { downloadReceiptPDF, shareReceiptOnWhatsApp, createReceiptPDF } from '../../utils/pdfReceiptGenerator';
 
@@ -22,20 +22,68 @@ export const FeeReceiptModal = ({
     return saved !== null ? saved === 'true' : true;
   });
 
+  // Note state for receipt (with inline edit support)
+  const [currentNote, setCurrentNote] = useState(receipt.notes || receipt.remarks || '');
+  const [isEditingNote, setIsEditingNote] = useState(false);
+  const [noteInput, setNoteInput] = useState('');
+
+  useEffect(() => {
+    const initialNote = receipt.notes || receipt.remarks || '';
+    setCurrentNote(initialNote);
+    setNoteInput(initialNote);
+    setIsEditingNote(false);
+  }, [receipt]);
+
+  const handleSaveNote = () => {
+    const trimmed = noteInput.trim();
+    setCurrentNote(trimmed);
+    receipt.notes = trimmed;
+    receipt.remarks = trimmed;
+    setIsEditingNote(false);
+
+    try {
+      const stored = localStorage.getItem('viya_library_payments');
+      if (stored) {
+        const payments = JSON.parse(stored);
+        const p = payments.find((x) => x.receiptNo === receiptNo || x.id === receipt.id);
+        if (p) {
+          p.notes = trimmed;
+          localStorage.setItem('viya_library_payments', JSON.stringify(payments));
+        }
+      }
+    } catch {}
+
+    try {
+      const storedStudents = localStorage.getItem('viya_library_students');
+      if (storedStudents) {
+        const students = JSON.parse(storedStudents);
+        const stu = students.find((x) => x.id === receipt.studentId || x.studentId === receipt.studentId || x.name === receipt.studentName);
+        if (stu) {
+          stu.notes = trimmed;
+          if (Array.isArray(stu.feeHistory)) {
+            const h = stu.feeHistory.find((x) => x.receiptNo === receiptNo || x.id === receipt.id);
+            if (h) h.notes = trimmed;
+          }
+          localStorage.setItem('viya_library_students', JSON.stringify(students));
+        }
+      }
+    } catch {}
+  };
+
   // 1. Download official A5 PDF
   const handleDownload = () => {
-    downloadReceiptPDF(receipt, settings, { showRemainingDue: includeRemainingDue });
+    downloadReceiptPDF({ ...receipt, notes: currentNote }, settings, { showRemainingDue: includeRemainingDue });
   };
 
   // 2. Share PDF on WhatsApp
   const handleWhatsApp = async () => {
-    await shareReceiptOnWhatsApp(receipt, settings, { showRemainingDue: includeRemainingDue });
+    await shareReceiptOnWhatsApp({ ...receipt, notes: currentNote }, settings, { showRemainingDue: includeRemainingDue });
   };
 
   // 3. Direct Print PDF
   const handlePrint = () => {
     try {
-      const doc = createReceiptPDF(receipt, settings, { showRemainingDue: includeRemainingDue });
+      const doc = createReceiptPDF({ ...receipt, notes: currentNote }, settings, { showRemainingDue: includeRemainingDue });
       const blobUrl = doc.output('bloburl');
       const printWindow = window.open(blobUrl, '_blank');
       if (printWindow) {
@@ -128,14 +176,83 @@ export const FeeReceiptModal = ({
                 <span className="font-mono text-[#192038] text-right break-words max-w-[190px]">{receipt.reference}</span>
               </div>
             )}
-            {(receipt.notes || receipt.remarks) && (
-              <div className="flex justify-between items-start gap-2 pt-1 border-t border-[#EDF1F7]">
-                <span className="text-[#8F9BB3] shrink-0 font-medium">Notes / Remarks:</span>
-                <span className="text-[#192038] font-semibold text-right break-words max-w-[190px] bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
-                  {receipt.notes || receipt.remarks}
+            {/* Note / Remarks Row (Always visible with inline edit) */}
+            <div className="pt-1.5 border-t border-[#EDF1F7] text-xs">
+              <div className="flex justify-between items-start gap-2">
+                <span className="text-[#8F9BB3] shrink-0 font-medium flex items-center gap-1 mt-0.5">
+                  <FileText size={12} className="text-[#544bec]" />
+                  <span>Note / Remarks:</span>
                 </span>
+
+                {!isEditingNote ? (
+                  <div className="flex items-center gap-1.5 justify-end text-right min-w-0 max-w-[210px]">
+                    {currentNote ? (
+                      <span className="text-[#192038] font-semibold break-words bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200 text-[11px]">
+                        {currentNote}
+                      </span>
+                    ) : (
+                      <span className="text-[#8F9BB3] text-[11px] italic">No note added</span>
+                    )}
+                    {!isStudentView && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setNoteInput(currentNote);
+                          setIsEditingNote(true);
+                        }}
+                        className="text-[11px] text-[#544bec] hover:text-[#4338ca] font-bold p-1 rounded-md hover:bg-[#EEF0FD] transition-colors cursor-pointer shrink-0"
+                        title={currentNote ? 'Edit note' : 'Add note'}
+                      >
+                        {currentNote ? <Edit2 size={12} /> : '+ Add Note'}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex-1 space-y-1.5 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="text"
+                        autoFocus
+                        value={noteInput}
+                        onChange={(e) => setNoteInput(e.target.value)}
+                        placeholder="Add note or remarks..."
+                        className="w-full px-2 py-1 text-xs font-medium bg-white border border-[#544bec] rounded-lg focus:outline-hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveNote}
+                        className="p-1 rounded-lg bg-[#544bec] text-white hover:bg-[#4338ca] cursor-pointer shrink-0"
+                        title="Save note"
+                      >
+                        <Check size={13} strokeWidth={2.5} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingNote(false)}
+                        className="p-1 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer shrink-0"
+                        title="Cancel"
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+
+                    {/* Quick suggestion tags when adding note */}
+                    <div className="flex items-center gap-1 flex-wrap">
+                      {['Paid via UPI', 'Cash received', 'Balance promised soon'].map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => setNoteInput((prev) => (prev ? `${prev}, ${tag}` : tag))}
+                          className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-700 hover:bg-[#EEF0FD] hover:text-[#544bec] cursor-pointer"
+                        >
+                          + {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
             {receipt.newDueDate && (
               <div className="flex justify-between pt-1 border-t border-[#EDF1F7]">
                 <span className="text-[#8F9BB3]">Next Due Date:</span>
