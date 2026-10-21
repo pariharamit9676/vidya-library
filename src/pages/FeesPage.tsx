@@ -309,7 +309,9 @@ export const FeesPage: React.FC = () => {
           balanceDueDate: payload.balanceDueDate,
           seatNo: payload.seatNo,
           seatCategory: payload.seatCategory,
-          receiptNo
+          receiptNo,
+          notes: payload.notes,
+          reference: payload.reference
         });
       } catch (err) {
         console.warn('API sync payment failed, fallback to local context:', err);

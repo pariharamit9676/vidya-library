@@ -9,7 +9,8 @@ import {
   Clock,
   RefreshCw,
   Check,
-  Armchair
+  Armchair,
+  FileText
 } from 'lucide-react';
 import { formatDisplayDate, addMonthsFormatted, computeStudentStatus } from '../../utils/dateFormatter';
 import { useLibrary } from '../../context/LibraryContext';
@@ -289,19 +290,11 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
       if (studentDue > 0 && !isInactive) {
         setActiveTab('clear_due');
         setAmountReceived(studentDue);
-        setNotes(`Cleared pending balance for ${currentStudent.name}`);
       } else {
         setActiveTab('renew');
         const defaultRate = categoryRates[selectedCategory] || 600;
         const calc = calculateMultiMonthFee(durationMonths, defaultRate, multiMonthDiscounts);
         setAmountReceived(calc.finalTotal);
-        setNotes(
-          isInactive
-            ? `Membership re-activation for ${currentStudent.name} (starting from ${formatDisplayDate(paymentDate || new Date())})`
-            : calc.hasDiscount
-            ? `Fee payment for ${durationMonths} month(s) - Seat ${selectedSeatNo || currentStudent.seatNo || '-'} (${calc.savingsText})`
-            : `Fee payment for ${durationMonths} month(s) - Seat ${selectedSeatNo || currentStudent.seatNo || '-'}`
-        );
       }
     }
   }, [currentStudent, isInactiveStudent, selectedCategory, selectedSeatNo, durationMonths, categoryRates]);
@@ -311,15 +304,9 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
     setIsDueWaived(false);
     if (tab === 'clear_due') {
       setAmountReceived(existingPendingDue);
-      setNotes(`Cleared pending balance of ₹${existingPendingDue}`);
     } else {
       const calc = calculateMultiMonthFee(durationMonths, monthlyRate, multiMonthDiscounts);
       setAmountReceived(calc.finalTotal);
-      setNotes(
-        calc.hasDiscount
-          ? `Fee payment for ${durationMonths} month(s) (${calc.savingsText})`
-          : `Fee payment for ${durationMonths} month(s)`
-      );
     }
   };
 
@@ -329,11 +316,6 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
     setIsDueWaived(false);
     const calc = calculateMultiMonthFee(safe, monthlyRate, multiMonthDiscounts);
     setAmountReceived(calc.finalTotal);
-    setNotes(
-      calc.hasDiscount
-        ? `Fee payment for ${safe} month(s) (${calc.savingsText})`
-        : `Fee payment for ${safe} month(s)`
-    );
   };
 
   const [customDueDate, setCustomDueDate] = useState<string>('');
@@ -383,10 +365,11 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
     }
   }, [autoNextDueDate, isManualDueDate]);
 
-  // Reset manual edit flag and waived due state whenever a different student is selected or modal opens
+  // Reset manual edit flag, waived due, and notes whenever a different student is selected or modal opens
   useEffect(() => {
     setIsManualDueDate(false);
     setIsDueWaived(false);
+    setNotes('');
   }, [selectedStudentId, isOpen]);
 
   const effectiveNextDueDate = isManualDueDate && customDueDate.trim() ? customDueDate.trim() : autoNextDueDate;
@@ -948,7 +931,7 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
             </div>
           </div>
 
-          {/* 6. Date & Optional Remarks */}
+          {/* 6. Date & Optional Reference */}
           <div className="grid grid-cols-2 gap-2.5">
             <div>
               <label className="text-[11px] font-bold text-[#192038] block mb-1">
@@ -974,6 +957,61 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                 placeholder="UPI / Bank Ref"
                 className="w-full px-2.5 py-1.5 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-slate-800 transition-all"
               />
+            </div>
+          </div>
+
+          {/* 7. Note / Remarks Section */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-bold text-[#192038] flex items-center gap-1.5">
+                <FileText size={13} className="text-[#8F9BB3]" />
+                <span>Note / Remarks</span>
+                <span className="text-[#8F9BB3] font-normal text-[10px]">(Optional)</span>
+              </label>
+              {notes && (
+                <button
+                  type="button"
+                  onClick={() => setNotes('')}
+                  className="text-[10px] font-semibold text-rose-500 hover:text-rose-700 hover:underline cursor-pointer"
+                >
+                  Clear note
+                </button>
+              )}
+            </div>
+
+            <textarea
+              rows={2}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Add payment note or remarks (e.g. Paid via father's UPI, cash discount, remaining balance promised on 25th...)"
+              className="w-full px-3 py-2 bg-[#F8FAFD] border border-[#EDF1F7] rounded-xl text-xs font-medium text-[#192038] placeholder-[#8F9BB3] focus:outline-hidden focus:border-slate-800 focus:bg-white transition-all resize-none"
+            />
+
+            {/* Quick Note Suggestions */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+              <span className="text-[10px] font-semibold text-[#8F9BB3]">Suggestions:</span>
+              {[
+                'Full payment received',
+                'Paid via UPI',
+                'Cash received',
+                'Balance promised soon'
+              ].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => {
+                    setNotes((prev) => {
+                      const trimmed = prev.trim();
+                      if (!trimmed) return tag;
+                      if (trimmed.includes(tag)) return trimmed;
+                      return `${trimmed}, ${tag}`;
+                    });
+                  }}
+                  className="px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-white border border-[#EDF1F7] text-[#6B778C] hover:text-[#544bec] hover:border-[#544bec]/40 hover:bg-[#F8FAFD] transition-all cursor-pointer"
+                >
+                  + {tag}
+                </button>
+              ))}
             </div>
           </div>
         </form>

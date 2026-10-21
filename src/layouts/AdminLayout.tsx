@@ -213,7 +213,9 @@ export const AdminLayout: React.FC = () => {
               balanceDueDate: payload.balanceDueDate,
               seatNo: payload.seatNo,
               seatCategory: payload.seatCategory,
-              receiptNo
+              receiptNo,
+              notes: payload.notes,
+              reference: payload.reference
             });
           } catch (e: any) {
             console.error('Error recording payment in backend:', e);
