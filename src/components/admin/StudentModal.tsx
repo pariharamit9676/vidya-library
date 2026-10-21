@@ -148,12 +148,14 @@ export const StudentModal: React.FC<StudentModalProps> = ({
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isDueWaived, setIsDueWaived] = useState<boolean>(false);
 
   // Clear errors and refresh seats whenever modal opens
   useEffect(() => {
     if (isOpen) {
       setSubmitError(null);
       setIsSubmitting(false);
+      setIsDueWaived(false);
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.seats });
     }
   }, [isOpen, queryClient]);
@@ -362,7 +364,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
     : isBasicValid &&
       Boolean(seatNo) &&
       Number(paidAmount) >= 0 &&
-      (remainingDue > 0 ? Boolean(balanceDueDate) : true);
+      ((remainingDue > 0 && !isDueWaived) ? Boolean(balanceDueDate) : true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -404,6 +406,9 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         await onSave(demoPayload, studentToEdit?.id);
       } else {
         // Regular payload with duration, partial payment, and calculated next due date
+        const finalDue = isDueWaived ? 0 : remainingDue;
+        const finalBalanceDueDate = (!isDueWaived && remainingDue > 0) ? displayBalanceDueDate : '';
+
         const regularPayload = {
           name: name.trim(),
           phone: phone.trim(),
@@ -419,14 +424,16 @@ export const StudentModal: React.FC<StudentModalProps> = ({
           planMonths: durationMonths,
           planAmount: totalPlanFee,
           paidAmount: Number(paidAmount) || 0,
-          dueAmount: remainingDue,
-          balanceDueDate: remainingDue > 0 ? displayBalanceDueDate : '',
+          dueAmount: finalDue,
+          balanceDueDate: finalBalanceDueDate,
           nextDueDate: computedNextDueDate,
           nextFeeDueDate: computedNextDueDate,
-          feeStatus: remainingDue > 0 ? 'DUE_SOON' : 'PAID',
+          feeStatus: finalDue > 0 ? 'DUE_SOON' : 'PAID',
           password: 'amit2580',
           role: 'student',
-          notes: notes.trim() || undefined,
+          notes: isDueWaived && remainingDue > 0
+            ? `${notes.trim() ? notes.trim() + ' | ' : ''}Remaining ₹${remainingDue} due waived by admin`
+            : notes.trim() || undefined,
           status: status,
           seatNo: status === 'Inactive' ? '-' : (seatNo || studentToEdit?.seatNo || '-'),
           initialPayment: studentToEdit ? undefined : {
@@ -442,8 +449,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             seatNo: seatNo || '-',
             seatCategory: category,
             newDueDate: computedNextDueDate,
-            dueAmount: remainingDue,
-            balanceDueDate: remainingDue > 0 ? displayBalanceDueDate : ''
+            dueAmount: finalDue,
+            balanceDueDate: finalBalanceDueDate
           }
         };
         await onSave(regularPayload, studentToEdit?.id);
@@ -1077,16 +1084,27 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                 </div>
 
                 {/* PARTIAL PAYMENT / DUE BALANCE NOTICE & DUE DATE PICKER */}
-                {remainingDue > 0 && (
+                {remainingDue > 0 && !isDueWaived && (
                   <div className="p-3.5 bg-[#FFF9F2] border border-[#FFE0B2] rounded-xl space-y-3 animate-in fade-in duration-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
                         <AlertCircle size={16} className="text-amber-600 shrink-0" />
                         <span>Remaining Balance to be Collected:</span>
                       </div>
-                      <strong className="text-sm font-black text-amber-700">
-                        ₹{remainingDue}
-                      </strong>
+                      <div className="flex items-center gap-2">
+                        <strong className="text-sm font-black text-amber-700">
+                          ₹{remainingDue}
+                        </strong>
+                        <button
+                          type="button"
+                          onClick={() => setIsDueWaived(true)}
+                          className="w-5 h-5 rounded-full bg-amber-200/80 hover:bg-amber-300 text-amber-900 flex items-center justify-center transition-colors cursor-pointer"
+                          title="Remove / Waive remaining due"
+                          aria-label="Remove remaining due"
+                        >
+                          <X size={12} strokeWidth={2.5} />
+                        </button>
+                      </div>
                     </div>
 
                     <div className="pt-2 border-t border-[#FFE0B2]/60 grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
@@ -1106,6 +1124,25 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                         Student will pay the remaining <strong>₹{remainingDue}</strong> on or before this date. A pending fee alert will appear in the student list.
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* If Waived/Removed: Show clean confirmation with Restore option (Exactly like CollectFeeModal) */}
+                {remainingDue > 0 && isDueWaived && (
+                  <div className="flex items-center justify-between px-3.5 py-2.5 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-emerald-800 animate-in fade-in duration-150">
+                    <span className="text-[11px] font-medium flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                      <span>
+                        Remaining <strong>₹{remainingDue}</strong> due removed (₹0 due balance will be recorded)
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsDueWaived(false)}
+                      className="text-[11px] font-extrabold text-emerald-700 hover:text-emerald-900 underline cursor-pointer shrink-0 ml-2"
+                    >
+                      Restore Due
+                    </button>
                   </div>
                 )}
               </div>
@@ -1152,7 +1189,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
               {studentToEdit ? null : studentType === 'Regular' ? (
                 <span>
                   Due Date: <strong className="text-slate-800">{computedNextDueDate}</strong>
-                  {remainingDue > 0 && <span className="text-amber-600 font-bold ml-1.5">(₹{remainingDue} pending)</span>}
+                  {remainingDue > 0 && !isDueWaived && <span className="text-amber-600 font-bold ml-1.5">(₹{remainingDue} pending)</span>}
+                  {remainingDue > 0 && isDueWaived && <span className="text-emerald-600 font-bold ml-1.5">(Due waived)</span>}
                 </span>
               ) : null}
             </div>
