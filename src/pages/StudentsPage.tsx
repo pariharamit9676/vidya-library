@@ -149,8 +149,8 @@ export const StudentsPage: React.FC = () => {
       payload.nextFeeDueDate ||
       (payload.studentType === 'Demo' ? payload.trialEndDate : '');
 
-    const isEdit = Boolean(studentId || targetStudent);
-    const targetId = studentId || targetStudent?.id;
+    const isEdit = Boolean(studentId || editingStudent);
+    const targetId = studentId || editingStudent?.id;
 
     try {
       if (isEdit && targetId) {
