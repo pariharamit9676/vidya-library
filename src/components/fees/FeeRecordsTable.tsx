@@ -1,5 +1,5 @@
-import React from 'react';
-import { IndianRupee, FileText, Crown, Archive, Armchair, Phone, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { IndianRupee, FileText, Crown, Archive, Armchair, Phone, Calendar, ChevronDown } from 'lucide-react';
 import { formatDisplayDate } from '../../utils/dateFormatter';
 import { CommonTable, CommonTableColumn } from '../common/CommonTable';
 
@@ -18,6 +18,7 @@ export interface FeeRecordRow {
   nextDueDate: string;
   feeStatus: 'Paid' | 'Partial' | 'Due' | 'Overdue' | 'Inactive';
   lastPaymentDate?: string;
+  notes?: string;
   lastReceipt?: any;
   studentRef: any;
 }
@@ -33,6 +34,8 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
   onCollectFee,
   onViewReceipt
 }) => {
+  const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
+
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case 'Premium':
@@ -121,6 +124,12 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
           <div className="min-w-0">
             <span className="font-extrabold text-[#192038] block truncate">{row.name}</span>
             <span className="text-[10px] font-mono text-[#8F9BB3] block truncate">{row.studentId}</span>
+            {row.notes && (
+              <span className="text-[10px] text-slate-500 italic truncate max-w-[160px] flex items-center gap-1 mt-0.5" title={row.notes}>
+                <FileText size={10} className="text-[#544bec] shrink-0" />
+                <span className="truncate">{row.notes}</span>
+              </span>
+            )}
           </div>
         </div>
       )
@@ -216,109 +225,177 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
     }
   ];
 
-  // Mobile Card Renderer for Fee Records
+  // Mobile Card Renderer for Fee Records with Click-to-Expand
   const renderMobileCard = (row: FeeRecordRow) => {
+    const isExpanded = expandedRowId === row.id;
+
     return (
-      <div className="p-3.5 sm:p-4 flex flex-col gap-2.5 transition-colors hover:bg-[#F9FBFC]">
-        {/* Header: Avatar + Name + ID + Status */}
-        <div className="flex items-start justify-between gap-2.5">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <img
-              src={row.avatar}
-              alt={row.name}
-              className="w-10 h-10 rounded-full object-cover border border-[#EDF1F7] shrink-0"
-            />
-            <div className="min-w-0">
-              <h4 className="text-sm font-extrabold text-[#192038] tracking-tight truncate m-0">
-                {row.name}
-              </h4>
-              <div className="text-[10px] font-mono font-medium text-[#8F9BB3] mt-0.5">
-                {row.studentId}
+      <div
+        onClick={() => setExpandedRowId(isExpanded ? null : row.id)}
+        className={`flex flex-col rounded-2xl border transition-all cursor-pointer ${
+          isExpanded
+            ? 'bg-white border-[#544bec]/40 shadow-sm ring-1 ring-[#544bec]/20'
+            : 'bg-white border-[#EDF1F7] hover:border-slate-300 hover:shadow-2xs'
+        }`}
+      >
+        {/* Compact Card Header (Always Visible) */}
+        <div className="p-3.5 flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <img
+                src={row.avatar}
+                alt={row.name}
+                className="w-10 h-10 rounded-full object-cover border border-[#EDF1F7] shrink-0"
+              />
+              <div className="min-w-0">
+                <h4 className="text-sm font-extrabold text-[#192038] tracking-tight truncate m-0">
+                  {row.name}
+                </h4>
+                <div className="text-[10px] font-mono font-medium text-[#8F9BB3] mt-0.5">
+                  {row.studentId}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {getStatusBadge(row.feeStatus)}
+              <div
+                className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-200 ${
+                  isExpanded ? 'rotate-180 bg-[#EEF0FD] text-[#544bec]' : 'bg-slate-100 text-slate-500'
+                }`}
+                title={isExpanded ? 'Collapse card' : 'Tap to expand details and actions'}
+              >
+                <ChevronDown size={14} />
               </div>
             </div>
           </div>
-          <div className="shrink-0">{getStatusBadge(row.feeStatus)}</div>
-        </div>
 
-        {/* Details Grid */}
-        <div className="grid grid-cols-2 gap-2 bg-[#F8FAFD] rounded-xl p-2.5 text-xs border border-[#EDF1F7]">
-          {/* Seat & Category */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Armchair size={13} className="text-[#544bec] shrink-0" />
-            <span className="text-[11px]">Seat:</span>
-            <strong className="text-[#192038] font-bold text-xs truncate">
-              {row.seatNo && row.seatNo !== '-' ? `#${row.seatNo}` : 'None'}
-            </strong>
-          </div>
+          {/* Quick Summary Strip */}
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 text-xs">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-[11px]">
+                <Armchair size={11} className="text-slate-500" />
+                {row.seatNo && row.seatNo !== '-' ? `#${row.seatNo}` : 'No Seat'}
+              </span>
+              <span className="text-[11px] font-bold text-slate-600">
+                ₹{row.monthlyFee}/mo
+              </span>
+            </div>
 
-          {/* Monthly Fee */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <span className="text-[11px]">Fee:</span>
-            <strong className="text-[#192038] font-bold text-xs truncate">
-              ₹{row.monthlyFee}/mo
-            </strong>
-          </div>
-
-          {/* Phone */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Phone size={13} className="text-[#544bec] shrink-0" />
-            <a
-              href={`tel:${row.phone}`}
-              className="text-[#544bec] font-bold text-xs hover:underline truncate"
-            >
-              {row.phone}
-            </a>
-          </div>
-
-          {/* Next Due */}
-          <div className="flex items-center gap-1.5 text-[#6B778C]">
-            <Calendar size={13} className="text-[#3366FF] shrink-0" />
-            <span className="text-[11px]">Due:</span>
-            <strong className="text-[#192038] font-semibold text-[11px] truncate">
-              {formatDisplayDate(row.nextDueDate)}
-            </strong>
-          </div>
-        </div>
-
-        {/* Outstanding Balance Banner if any */}
-        {row.dueAmount > 0 ? (
-          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#FFF9F2] border border-amber-200 text-xs">
-            <span className="text-amber-800 font-bold text-[11px]">
-              Pending Due: ₹{row.dueAmount}
-            </span>
-            {row.balanceDueDate && (
-              <span className="text-[10px] text-amber-700">
-                (by {formatDisplayDate(row.balanceDueDate)})
+            {row.dueAmount > 0 ? (
+              <span className="text-[11px] font-extrabold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                Due: ₹{row.dueAmount}
+              </span>
+            ) : (
+              <span className="text-[10px] font-medium text-slate-400">
+                {isExpanded ? 'Tap to close' : 'Tap for actions'}
               </span>
             )}
           </div>
-        ) : (
-          <div className="flex items-center justify-between px-2.5 py-1 text-[11px] text-[#544bec] font-bold bg-[#EEF0FD]/60 rounded-lg">
-            <span>✓ All dues cleared</span>
-            <span>Paid: ₹{row.amountPaid}</span>
+        </div>
+
+        {/* Expanded Drawer: Revealed ONLY on Click */}
+        {isExpanded && (
+          <div className="px-3.5 pb-3.5 pt-0 border-t border-slate-100 space-y-2.5 animate-in fade-in duration-150">
+            {/* Details Grid */}
+            <div className="grid grid-cols-2 gap-2 bg-[#F8FAFD] rounded-xl p-2.5 text-xs border border-[#EDF1F7] mt-3">
+              {/* Category */}
+              <div className="flex items-center gap-1.5 text-[#6B778C]">
+                <Armchair size={13} className="text-[#544bec] shrink-0" />
+                <span className="text-[11px]">Category:</span>
+                <strong className="text-[#192038] font-bold text-xs truncate">
+                  {row.seatCategory}
+                </strong>
+              </div>
+
+              {/* Monthly Fee */}
+              <div className="flex items-center gap-1.5 text-[#6B778C]">
+                <span className="text-[11px]">Rate:</span>
+                <strong className="text-[#192038] font-bold text-xs truncate">
+                  ₹{row.monthlyFee}/mo
+                </strong>
+              </div>
+
+              {/* Phone */}
+              <div className="flex items-center gap-1.5 text-[#6B778C]">
+                <Phone size={13} className="text-[#544bec] shrink-0" />
+                <a
+                  href={`tel:${row.phone}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-[#544bec] font-bold text-xs hover:underline truncate"
+                >
+                  {row.phone}
+                </a>
+              </div>
+
+              {/* Next Due */}
+              <div className="flex items-center gap-1.5 text-[#6B778C]">
+                <Calendar size={13} className="text-[#3366FF] shrink-0" />
+                <span className="text-[11px]">Due:</span>
+                <strong className="text-[#192038] font-semibold text-[11px] truncate">
+                  {formatDisplayDate(row.nextDueDate)}
+                </strong>
+              </div>
+            </div>
+
+            {/* Note / Remarks if present */}
+            {row.notes && (
+              <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-start gap-1.5 text-slate-700">
+                <FileText size={13} className="text-[#544bec] shrink-0 mt-0.5" />
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold text-[#8F9BB3] block uppercase">Note / Remarks</span>
+                  <p className="text-xs font-medium text-slate-800 m-0 break-words">{row.notes}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Outstanding Balance Banner if any */}
+            {row.dueAmount > 0 ? (
+              <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#FFF9F2] border border-amber-200 text-xs">
+                <span className="text-amber-800 font-bold text-[11px]">
+                  Pending Due: ₹{row.dueAmount}
+                </span>
+                {row.balanceDueDate && (
+                  <span className="text-[10px] text-amber-700">
+                    (by {formatDisplayDate(row.balanceDueDate)})
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between px-2.5 py-1 text-[11px] text-[#544bec] font-bold bg-[#EEF0FD]/60 rounded-lg">
+                <span>✓ All dues cleared</span>
+                <span>Paid: ₹{row.amountPaid}</span>
+              </div>
+            )}
+
+            {/* Action Row */}
+            <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#EDF1F7]/80">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCollectFee(row.studentRef);
+                }}
+                className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-3 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-2xs cursor-pointer transition-all active:scale-98"
+              >
+                <IndianRupee size={13} />
+                <span>Collect Fee</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewReceipt(row.studentRef, row.lastReceipt);
+                }}
+                className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-3 rounded-xl text-xs font-bold text-[#192038] hover:text-[#544bec] bg-[#F7F9FC] border border-[#EDF1F7] hover:bg-white cursor-pointer transition-all shadow-2xs active:scale-98"
+              >
+                <FileText size={13} className="text-[#544bec]" />
+                <span>Receipt</span>
+              </button>
+            </div>
           </div>
         )}
-
-        {/* Action Row */}
-        <div className="flex items-center justify-between pt-1 border-t border-[#EDF1F7]/80">
-          <button
-            type="button"
-            onClick={() => onCollectFee(row.studentRef)}
-            className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-xs cursor-pointer transition-all"
-          >
-            <IndianRupee size={12} />
-            <span>Collect Fee</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onViewReceipt(row.studentRef, row.lastReceipt)}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-[#6B778C] hover:text-[#3366FF] bg-[#F7F9FC] border border-[#EDF1F7] cursor-pointer transition-all"
-          >
-            <FileText size={13} />
-            <span>Receipt</span>
-          </button>
-        </div>
       </div>
     );
   };
@@ -328,6 +405,7 @@ export const FeeRecordsTable: React.FC<FeeRecordsTableProps> = ({
       data={records}
       columns={columns}
       renderMobileCard={renderMobileCard}
+      mobileCardLayout="cards"
       emptyMessage="No fee records found matching your search or filters."
       initialPageSize={10}
       pageSizeOptions={[10, 20, 50]}

@@ -30,6 +30,10 @@ export const ReceiptsPage: React.FC = () => {
   // Modals state
   const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState<boolean>(false);
+  const [showDueOnReceipts, setShowDueOnReceipts] = useState<boolean>(() => {
+    const saved = localStorage.getItem('viya_receipt_show_due');
+    return saved !== null ? saved === 'true' : true;
+  });
 
   // Filters state
   const [filters, setFilters] = useState<ReceiptFilterOptions>({
@@ -212,7 +216,7 @@ export const ReceiptsPage: React.FC = () => {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* 1. Receipts Page Header */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight text-[#192038] m-0 truncate">
             Receipts
@@ -220,6 +224,26 @@ export const ReceiptsPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-[#8F9BB3] mt-0.5 sm:mt-1 m-0 truncate">
             View, search, and manage student payment vouchers
           </p>
+        </div>
+
+        {/* Global Admin Toggle: Include Remaining Due on Receipts */}
+        <div className="flex items-center gap-2.5 px-3 py-2 bg-white border border-[#EDF1F7] rounded-xl shadow-2xs self-start sm:self-auto">
+          <span className="text-xs font-bold text-[#192038]">
+            Include Due on Slip:
+          </span>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showDueOnReceipts}
+              onChange={(e) => {
+                const val = e.target.checked;
+                setShowDueOnReceipts(val);
+                localStorage.setItem('viya_receipt_show_due', String(val));
+              }}
+              className="sr-only peer"
+            />
+            <div className="w-8 h-4 bg-slate-300 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#544bec]"></div>
+          </label>
         </div>
       </div>
 

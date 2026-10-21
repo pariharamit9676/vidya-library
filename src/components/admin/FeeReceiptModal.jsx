@@ -16,20 +16,26 @@ export const FeeReceiptModal = ({
   const libraryAddress = settings?.address || '66W8+4FH, Gayatri Nagar, Gwalior, Madhya Pradesh 474005';
   const receiptNo = receipt.receiptNo || receipt.id || `REC-${Date.now().toString().slice(-4)}`;
 
+  // Admin preference: toggle whether to include remaining due on receipt
+  const [includeRemainingDue, setIncludeRemainingDue] = useState(() => {
+    const saved = localStorage.getItem('viya_receipt_show_due');
+    return saved !== null ? saved === 'true' : true;
+  });
+
   // 1. Download official A5 PDF
   const handleDownload = () => {
-    downloadReceiptPDF(receipt, settings);
+    downloadReceiptPDF(receipt, settings, { showRemainingDue: includeRemainingDue });
   };
 
   // 2. Share PDF on WhatsApp
   const handleWhatsApp = async () => {
-    await shareReceiptOnWhatsApp(receipt, settings);
+    await shareReceiptOnWhatsApp(receipt, settings, { showRemainingDue: includeRemainingDue });
   };
 
   // 3. Direct Print PDF
   const handlePrint = () => {
     try {
-      const doc = createReceiptPDF(receipt, settings);
+      const doc = createReceiptPDF(receipt, settings, { showRemainingDue: includeRemainingDue });
       const blobUrl = doc.output('bloburl');
       const printWindow = window.open(blobUrl, '_blank');
       if (printWindow) {
@@ -122,10 +128,12 @@ export const FeeReceiptModal = ({
                 <span className="font-mono text-[#192038] text-right break-words max-w-[190px]">{receipt.reference}</span>
               </div>
             )}
-            {receipt.notes && (
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-[#8F9BB3] shrink-0">Notes:</span>
-                <span className="text-[#6B778C] italic text-right break-words max-w-[190px]">{receipt.notes}</span>
+            {(receipt.notes || receipt.remarks) && (
+              <div className="flex justify-between items-start gap-2 pt-1 border-t border-[#EDF1F7]">
+                <span className="text-[#8F9BB3] shrink-0 font-medium">Notes / Remarks:</span>
+                <span className="text-[#192038] font-semibold text-right break-words max-w-[190px] bg-slate-50 px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                  {receipt.notes || receipt.remarks}
+                </span>
               </div>
             )}
             {receipt.newDueDate && (
@@ -144,16 +152,53 @@ export const FeeReceiptModal = ({
             </span>
           </div>
 
-          {/* Remaining Due Box if Partial */}
+          {/* Remaining Due Box with Admin Toggle */}
           {Number(receipt.dueAmount || 0) > 0 && (
-            <div className="p-2.5 bg-[#FFF9F2] border border-[#FFE0B2] rounded-xl flex items-center justify-between text-xs text-amber-900">
-              <span className="font-bold text-amber-800">Remaining Balance:</span>
-              <div className="text-right">
-                <span className="font-extrabold text-amber-700">₹{receipt.dueAmount}</span>
-                {receipt.balanceDueDate && (
-                  <span className="block text-[10px] text-amber-600">Due: {receipt.balanceDueDate}</span>
-                )}
-              </div>
+            <div className="space-y-1.5 pt-0.5">
+              {!isStudentView && (
+                <div className="flex items-center justify-between px-2.5 py-1.5 bg-slate-100/90 border border-slate-200 rounded-xl text-[11px]">
+                  <span className="font-bold text-slate-700">Include Remaining Due on Receipt:</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={includeRemainingDue}
+                      onChange={(e) => {
+                        const val = e.target.checked;
+                        setIncludeRemainingDue(val);
+                        localStorage.setItem('viya_receipt_show_due', String(val));
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-8 h-4 bg-slate-300 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#544bec]"></div>
+                  </label>
+                </div>
+              )}
+
+              {includeRemainingDue ? (
+                <div className="p-2.5 bg-[#FFF9F2] border border-[#FFE0B2] rounded-xl flex items-center justify-between text-xs text-amber-900 transition-all">
+                  <span className="font-bold text-amber-800">Remaining Balance:</span>
+                  <div className="text-right">
+                    <span className="font-extrabold text-amber-700">₹{receipt.dueAmount}</span>
+                    {receipt.balanceDueDate && (
+                      <span className="block text-[10px] text-amber-600">Due: {receipt.balanceDueDate}</span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="px-2.5 py-1.5 bg-slate-100/70 border border-dashed border-slate-200 rounded-xl flex items-center justify-between text-[11px] text-slate-500">
+                  <span>Remaining balance (₹{receipt.dueAmount}) omitted from receipt</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIncludeRemainingDue(true);
+                      localStorage.setItem('viya_receipt_show_due', 'true');
+                    }}
+                    className="text-[#544bec] font-bold underline cursor-pointer"
+                  >
+                    Show
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

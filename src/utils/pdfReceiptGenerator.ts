@@ -28,12 +28,17 @@ export interface LibrarySettings {
   tagline?: string;
 }
 
+export interface ReceiptPdfOptions {
+  showRemainingDue?: boolean;
+}
+
 /**
  * Generate a beautifully styled, high-resolution A5 PDF Receipt
  */
 export const createReceiptPDF = (
   receipt: ReceiptData,
-  settings: LibrarySettings = {}
+  settings: LibrarySettings = {},
+  options: ReceiptPdfOptions = {}
 ): jsPDF => {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -60,11 +65,12 @@ export const createReceiptPDF = (
   const seatCategory = receipt.seatCategory || 'Normal';
   const plan = receipt.plan || 'Monthly';
   const mode = receipt.mode || 'Cash';
+  const showRemainingDue = options.showRemainingDue !== undefined ? options.showRemainingDue : true;
   const amountVal = Number(receipt.amount || 0);
   const dueVal = Number(receipt.dueAmount || 0);
   const nextDueDate = receipt.newDueDate || receipt.nextDueDate || '-';
   const reference = receipt.reference || '';
-  const notes = receipt.notes || '';
+  const notes = receipt.notes || (receipt as any).remarks || '';
 
   // 1. Outer Border & Aesthetic Frame
   doc.setDrawColor(226, 232, 240);
@@ -98,7 +104,7 @@ export const createReceiptPDF = (
   doc.text('FEE PAYMENT RECEIPT', margin + 3, y);
 
   // Status Badge: PAID (Green) or PARTIAL (Amber)
-  const isPaid = dueVal <= 0;
+  const isPaid = dueVal <= 0 || !showRemainingDue;
   if (isPaid) {
     doc.setFillColor(232, 248, 243);
     doc.setDrawColor(0, 169, 122);
@@ -255,7 +261,7 @@ export const createReceiptPDF = (
   doc.text(`Rs. ${amountVal.toLocaleString('en-IN')}.00`, pageWidth - margin - 8, y + 12, { align: 'right' });
 
   // 7. Remaining Balance Box (if any)
-  if (dueVal > 0) {
+  if (dueVal > 0 && showRemainingDue) {
     y += 21;
     doc.setFillColor(254, 243, 199);
     doc.setDrawColor(245, 158, 11);
@@ -300,9 +306,10 @@ export const createReceiptPDF = (
  */
 export const downloadReceiptPDF = (
   receipt: ReceiptData,
-  settings: LibrarySettings = {}
+  settings: LibrarySettings = {},
+  options: ReceiptPdfOptions = {}
 ): void => {
-  const doc = createReceiptPDF(receipt, settings);
+  const doc = createReceiptPDF(receipt, settings, options);
   const cleanName = (receipt.studentName || 'student').replace(/\s+/g, '_');
   const fileName = `Receipt_${receipt.receiptNo || 'REC'}_${cleanName}.pdf`;
   doc.save(fileName);
@@ -313,9 +320,10 @@ export const downloadReceiptPDF = (
  */
 export const getReceiptPDFFile = (
   receipt: ReceiptData,
-  settings: LibrarySettings = {}
+  settings: LibrarySettings = {},
+  options: ReceiptPdfOptions = {}
 ): File => {
-  const doc = createReceiptPDF(receipt, settings);
+  const doc = createReceiptPDF(receipt, settings, options);
   const cleanName = (receipt.studentName || 'student').replace(/\s+/g, '_');
   const fileName = `Receipt_${receipt.receiptNo || 'REC'}_${cleanName}.pdf`;
   const blob = doc.output('blob');
@@ -329,17 +337,24 @@ export const getReceiptPDFFile = (
  */
 export const shareReceiptOnWhatsApp = async (
   receipt: ReceiptData,
-  settings: LibrarySettings = {}
+  settings: LibrarySettings = {},
+  options: ReceiptPdfOptions = {}
 ): Promise<void> => {
   const cleanName = (receipt.studentName || 'student').replace(/\s+/g, '_');
   const fileName = `Receipt_${receipt.receiptNo || 'REC'}_${cleanName}.pdf`;
   const rawPhone = (receipt.phone || '').replace(/\D/g, '');
   const waPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
   const libraryName = settings.libraryName || 'Vidya Library';
+  const showRemainingDue = options.showRemainingDue !== undefined ? options.showRemainingDue : true;
+  const dueVal = Number(receipt.dueAmount || 0);
 
-  const shareText = `*🧾 FEE PAYMENT RECEIPT - ${libraryName.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━\n*Receipt No:* ${receipt.receiptNo}\n*Student:* ${receipt.studentName}\n*Seat:* ${receipt.seatNo ? 'Seat #' + receipt.seatNo : 'Unassigned'}\n*Amount Paid:* Rs. ${Number(receipt.amount || 0).toLocaleString('en-IN')}\n*Next Due Date:* ${receipt.newDueDate || receipt.nextDueDate || '-'}\n━━━━━━━━━━━━━━━━━━━\nOfficial digital PDF receipt attached. Thank you for studying with us!`;
+  const dueLine = (dueVal > 0 && showRemainingDue)
+    ? `\n*Remaining Due:* Rs. ${dueVal}${receipt.balanceDueDate ? ' (by ' + receipt.balanceDueDate + ')' : ''}`
+    : '';
 
-  const pdfFile = getReceiptPDFFile(receipt, settings);
+  const shareText = `*🧾 FEE PAYMENT RECEIPT - ${libraryName.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━\n*Receipt No:* ${receipt.receiptNo}\n*Student:* ${receipt.studentName}\n*Seat:* ${receipt.seatNo ? 'Seat #' + receipt.seatNo : 'Unassigned'}\n*Amount Paid:* Rs. ${Number(receipt.amount || 0).toLocaleString('en-IN')}\n*Next Due Date:* ${receipt.newDueDate || receipt.nextDueDate || '-'}${dueLine}\n━━━━━━━━━━━━━━━━━━━\nOfficial digital PDF receipt attached. Thank you for studying with us!`;
+
+  const pdfFile = getReceiptPDFFile(receipt, settings, options);
 
   // 1. Check if native Web Share with Files is supported (Mobile / supported desktop browsers)
   if (
@@ -362,7 +377,7 @@ export const shareReceiptOnWhatsApp = async (
 
   // 2. Fallback for Desktop WhatsApp Web:
   // Automatically download the official PDF file to their computer
-  downloadReceiptPDF(receipt, settings);
+  downloadReceiptPDF(receipt, settings, options);
 
   // Open WhatsApp Web with student pre-selected
   const waUrl = waPhone

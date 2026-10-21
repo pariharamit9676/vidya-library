@@ -103,7 +103,9 @@ export const FeesPage: React.FC = () => {
             date: baseReceipt.date || s.lastFeePaidDate || s.admissionDate || '18 Oct 2026',
             newDueDate: baseReceipt.newDueDate || baseReceipt.nextDueDate || dueDate,
             dueAmount: baseReceipt.dueAmount !== undefined ? Number(baseReceipt.dueAmount) : dueAmount,
-            balanceDueDate: baseReceipt.balanceDueDate || s.balanceDueDate || ''
+            balanceDueDate: baseReceipt.balanceDueDate || s.balanceDueDate || '',
+            notes: baseReceipt.notes || baseReceipt.remarks || s.notes || s.remarks || '',
+            reference: baseReceipt.reference || s.reference || ''
           }
         : {
             id: `pay_${s.id}`,
@@ -120,7 +122,9 @@ export const FeesPage: React.FC = () => {
             date: s.lastFeePaidDate || s.admissionDate || '18 Oct 2026',
             newDueDate: dueDate,
             dueAmount: dueAmount,
-            balanceDueDate: s.balanceDueDate || ''
+            balanceDueDate: s.balanceDueDate || '',
+            notes: s.notes || s.remarks || '',
+            reference: s.reference || ''
           };
 
       return {
@@ -138,6 +142,7 @@ export const FeesPage: React.FC = () => {
         nextDueDate: dueDate || '-',
         feeStatus,
         lastPaymentDate: s.lastFeePaidDate,
+        notes: baseReceipt?.notes || baseReceipt?.remarks || s.notes || s.remarks || '',
         lastReceipt,
         studentRef: s
       };
@@ -253,7 +258,9 @@ export const FeesPage: React.FC = () => {
       date: rawReceipt.date || student?.lastFeePaidDate || student?.admissionDate || '18 Oct 2026',
       newDueDate: rawReceipt.newDueDate || rawReceipt.nextDueDate || student?.nextDueDate || student?.nextFeeDueDate || '',
       dueAmount: rawReceipt.dueAmount !== undefined ? Number(rawReceipt.dueAmount) : Number(student?.dueAmount || 0),
-      balanceDueDate: rawReceipt.balanceDueDate || student?.balanceDueDate || ''
+      balanceDueDate: rawReceipt.balanceDueDate || student?.balanceDueDate || '',
+      notes: rawReceipt.notes || rawReceipt.remarks || student?.notes || student?.remarks || '',
+      reference: rawReceipt.reference || student?.reference || ''
     };
 
     setActiveReceipt(targetReceipt);
