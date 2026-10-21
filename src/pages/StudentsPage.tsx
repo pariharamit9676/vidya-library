@@ -149,11 +149,6 @@ export const StudentsPage: React.FC = () => {
       payload.nextFeeDueDate ||
       (payload.studentType === 'Demo' ? payload.trialEndDate : '');
 
-    // Close modal immediately for responsive UX — TanStack Query refetches in background
-    setIsAddModalOpen(false);
-    const targetStudent = editingStudent;
-    setEditingStudent(null);
-
     const isEdit = Boolean(studentId || targetStudent);
     const targetId = studentId || targetStudent?.id;
 
@@ -166,6 +161,8 @@ export const StudentsPage: React.FC = () => {
             phone: payload.phone
           }
         });
+        setIsAddModalOpen(false);
+        setEditingStudent(null);
         if (showToast) showToast(`Student "${payload.name}" updated successfully!`, 'success');
       } else {
         await createStudentMutation.mutateAsync({
@@ -188,11 +185,15 @@ export const StudentsPage: React.FC = () => {
           } : undefined,
           notes: payload.notes
         });
+        setIsAddModalOpen(false);
+        setEditingStudent(null);
         if (showToast) showToast(`Student "${payload.name}" enrolled successfully!`, 'success');
       }
     } catch (err: any) {
       console.error('Error saving student:', err);
-      if (showToast) showToast(`Failed to save student: ${err.message || 'Error'}`, 'error');
+      const errMsg = err?.message || 'Failed to save student';
+      if (showToast) showToast(`Failed to save student: ${errMsg}`, 'error');
+      throw err; // Rethrow so StudentModal catches it and keeps modal open with error banner
     }
   };
 

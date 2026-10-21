@@ -16,12 +16,14 @@ import {
   Minus,
   Clock,
   IndianRupee,
-  Edit2
+  Edit2,
+  Loader2
 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { formatDisplayDate } from '../../utils/dateFormatter';
 import { useLibrary } from '../../context/LibraryContext';
 import { calculateMultiMonthFee } from '../../utils/discountUtils';
-import { useSeatLayout, useCategories } from '../../services/useLibraryQueries';
+import { useSeatLayout, useCategories, QUERY_KEYS } from '../../services/useLibraryQueries';
 import { SeatGridCell } from '../../types/seatManagement';
 import { initialSeatCells } from '../../data/mockSeatsLayoutData';
 import { StudentStatus } from '../../types/student';
@@ -32,7 +34,7 @@ export type SeatCategory = 'Premium' | 'Locker' | 'Normal';
 export interface StudentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (payload: any, studentId?: string) => void;
+  onSave: (payload: any, studentId?: string) => Promise<any> | void;
   studentToEdit?: any;
   existingStudents?: any[];
 }
@@ -142,6 +144,19 @@ export const StudentModal: React.FC<StudentModalProps> = ({
   
   // Plan Duration in Months (1, 2, 3, 6, 12, etc.)
   const [durationMonths, setDurationMonths] = useState<number>(1);
+
+  const queryClient = useQueryClient();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Clear errors and refresh seats whenever modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setSubmitError(null);
+      setIsSubmitting(false);
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.seats });
+    }
+  }, [isOpen, queryClient]);
 
   // Live queries for seat layout & categories from Seat Management
   const { data: serverLayout } = useSeatLayout();
@@ -349,85 +364,98 @@ export const StudentModal: React.FC<StudentModalProps> = ({
       Number(paidAmount) >= 0 &&
       (remainingDue > 0 ? Boolean(balanceDueDate) : true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid || isSubmitting) return;
 
-    // In Edit mode, ONLY Name and Phone can be modified
-    if (studentToEdit) {
-      onSave({
-        name: name.trim(),
-        phone: phone.trim()
-      }, studentToEdit.id);
-      return;
-    }
+    setSubmitError(null);
+    setIsSubmitting(true);
 
-    const displayAdmissionDate = formatDisplayDate(admissionDate);
-    const displayBalanceDueDate = balanceDueDate ? formatDisplayDate(balanceDueDate) : '';
+    try {
+      // In Edit mode, ONLY Name and Phone can be modified
+      if (studentToEdit) {
+        await onSave({
+          name: name.trim(),
+          phone: phone.trim()
+        }, studentToEdit.id);
+        return;
+      }
 
-    if (studentType === 'Demo') {
-      // Demo payload: no seat or fee properties
-      const demoPayload = {
-        name: name.trim(),
-        phone: phone.trim(),
-        admissionDate: displayAdmissionDate,
-        studentType: 'Demo' as const,
-        trialDurationDays: 3,
-        trialEndDate,
-        nextDueDate: trialEndDate,
-        nextFeeDueDate: trialEndDate,
-        password: 'amit2580',
-        role: 'student',
-        notes: notes.trim() || undefined,
-        status: 'Demo' as const,
-        seatNo: '-'
-      };
-      onSave(demoPayload, studentToEdit?.id);
-    } else {
-      // Regular payload with duration, partial payment, and calculated next due date
-      const regularPayload = {
-        name: name.trim(),
-        phone: phone.trim(),
-        admissionDate: displayAdmissionDate,
-        studentType: 'Regular' as const,
-        category,
-        seatCategory: category,
-        plan: durationMonths === 1
-          ? 'Monthly'
-          : feeCalculation.hasDiscount
-          ? `${durationMonths} Months (${feeCalculation.savingsText})`
-          : `${durationMonths} Months`,
-        planMonths: durationMonths,
-        planAmount: totalPlanFee,
-        paidAmount: Number(paidAmount) || 0,
-        dueAmount: remainingDue,
-        balanceDueDate: remainingDue > 0 ? displayBalanceDueDate : '',
-        nextDueDate: computedNextDueDate,
-        nextFeeDueDate: computedNextDueDate,
-        feeStatus: remainingDue > 0 ? 'DUE_SOON' : 'PAID',
-        password: 'amit2580',
-        role: 'student',
-        notes: notes.trim() || undefined,
-        status: status,
-        seatNo: status === 'Inactive' ? '-' : (seatNo || studentToEdit?.seatNo || '-'),
-        initialPayment: studentToEdit ? undefined : {
-          id: `pay_${Date.now()}`,
-          receiptNo: `REC-${Date.now().toString().slice(-6)}`,
-          date: displayAdmissionDate,
-          amount: Number(paidAmount) || 0,
-          mode: 'Cash',
-          status: 'Paid',
-          plan: durationMonths === 1 ? 'Monthly' : `${durationMonths} Months`,
-          studentName: name.trim(),
+      const displayAdmissionDate = formatDisplayDate(admissionDate);
+      const displayBalanceDueDate = balanceDueDate ? formatDisplayDate(balanceDueDate) : '';
+
+      if (studentType === 'Demo') {
+        // Demo payload: no seat or fee properties
+        const demoPayload = {
+          name: name.trim(),
           phone: phone.trim(),
-          seatNo: seatNo || '-',
+          admissionDate: displayAdmissionDate,
+          studentType: 'Demo' as const,
+          trialDurationDays: 3,
+          trialEndDate,
+          nextDueDate: trialEndDate,
+          nextFeeDueDate: trialEndDate,
+          password: 'amit2580',
+          role: 'student',
+          notes: notes.trim() || undefined,
+          status: 'Demo' as const,
+          seatNo: '-'
+        };
+        await onSave(demoPayload, studentToEdit?.id);
+      } else {
+        // Regular payload with duration, partial payment, and calculated next due date
+        const regularPayload = {
+          name: name.trim(),
+          phone: phone.trim(),
+          admissionDate: displayAdmissionDate,
+          studentType: 'Regular' as const,
+          category,
           seatCategory: category,
-          newDueDate: computedNextDueDate,
+          plan: durationMonths === 1
+            ? 'Monthly'
+            : feeCalculation.hasDiscount
+            ? `${durationMonths} Months (${feeCalculation.savingsText})`
+            : `${durationMonths} Months`,
+          planMonths: durationMonths,
+          planAmount: totalPlanFee,
+          paidAmount: Number(paidAmount) || 0,
           dueAmount: remainingDue,
-          balanceDueDate: remainingDue > 0 ? displayBalanceDueDate : ''
-        }
-      };
-      onSave(regularPayload, studentToEdit?.id);
+          balanceDueDate: remainingDue > 0 ? displayBalanceDueDate : '',
+          nextDueDate: computedNextDueDate,
+          nextFeeDueDate: computedNextDueDate,
+          feeStatus: remainingDue > 0 ? 'DUE_SOON' : 'PAID',
+          password: 'amit2580',
+          role: 'student',
+          notes: notes.trim() || undefined,
+          status: status,
+          seatNo: status === 'Inactive' ? '-' : (seatNo || studentToEdit?.seatNo || '-'),
+          initialPayment: studentToEdit ? undefined : {
+            id: `pay_${Date.now()}`,
+            receiptNo: `REC-${Date.now().toString().slice(-6)}`,
+            date: displayAdmissionDate,
+            amount: Number(paidAmount) || 0,
+            mode: 'Cash',
+            status: 'Paid',
+            plan: durationMonths === 1 ? 'Monthly' : `${durationMonths} Months`,
+            studentName: name.trim(),
+            phone: phone.trim(),
+            seatNo: seatNo || '-',
+            seatCategory: category,
+            newDueDate: computedNextDueDate,
+            dueAmount: remainingDue,
+            balanceDueDate: remainingDue > 0 ? displayBalanceDueDate : ''
+          }
+        };
+        await onSave(regularPayload, studentToEdit?.id);
+      }
+    } catch (err: any) {
+      console.error('Failed to save student:', err);
+      const msg = err?.message || 'Failed to save student. Please verify the details and try again.';
+      setSubmitError(msg);
+      // Invalidate seats to ensure fresh seat availability in layout
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.seats });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -482,6 +510,35 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Scrollable Form Body */}
           <div className="p-3.5 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
+            {/* Prominent Conflict / Error Alert Banner */}
+            {submitError && (
+              <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-3 shadow-xs animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <AlertCircle size={16} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <strong className="text-rose-900 font-bold block">
+                      Conflict / Enrollment Error
+                    </strong>
+                    <button
+                      type="button"
+                      onClick={() => setSubmitError(null)}
+                      className="text-rose-400 hover:text-rose-700 text-xs cursor-pointer p-0.5"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                  <p className="text-rose-700 mt-1 font-medium leading-relaxed">
+                    {submitError}
+                  </p>
+                  <p className="text-[11px] text-rose-600 mt-1">
+                    💡 <strong>Don't worry:</strong> Your entered details are safe above. Please select another seat or adjust student info and click "Add Student" again.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* SECTION 1: Basic Information */}
             <div className="space-y-4">
               {!studentToEdit && (
@@ -1111,15 +1168,24 @@ export const StudentModal: React.FC<StudentModalProps> = ({
 
               <button
                 type="submit"
-                disabled={!isFormValid}
+                disabled={!isFormValid || isSubmitting}
                 className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl font-extrabold text-xs inline-flex items-center justify-center gap-1.5 transition-all shadow-xs ${
-                  isFormValid
+                  isFormValid && !isSubmitting
                     ? 'bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/25 cursor-pointer'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >
-                {studentToEdit ? <Edit2 size={15} /> : <UserPlus size={15} />}
-                <span>{studentToEdit ? 'Save Changes' : 'Add Student'}</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" />
+                    <span>Saving Student...</span>
+                  </>
+                ) : (
+                  <>
+                    {studentToEdit ? <Edit2 size={15} /> : <UserPlus size={15} />}
+                    <span>{studentToEdit ? 'Save Changes' : 'Add Student'}</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

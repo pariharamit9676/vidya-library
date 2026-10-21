@@ -137,8 +137,6 @@ export const AdminLayout: React.FC = () => {
         isOpen={isAddStudentOpen}
         onClose={() => setIsAddStudentOpen(false)}
         onSave={async (data) => {
-          // Close modal immediately for snappy UX
-          setIsAddStudentOpen(false);
           try {
             await createStudentMutation.mutateAsync({
               name: data.name,
@@ -165,14 +163,18 @@ export const AdminLayout: React.FC = () => {
                 referralService.checkAndApproveByStudent(data.phone, data.seatNo);
               } catch {}
             }
+            // Close modal only on success
+            setIsAddStudentOpen(false);
             if (showToast) {
               showToast(`Student "${data.name}" added successfully!`, 'success');
             }
           } catch (e: any) {
             console.error('Header Add Student error:', e);
+            const errMsg = e?.message || 'Failed to add student';
             if (showToast) {
-              showToast(`Failed to add student: ${e?.message || 'Server error'}`, 'error');
+              showToast(errMsg, 'error');
             }
+            throw e; // Rethrow so StudentModal catches it and keeps modal open with error banner
           }
         }}
         existingStudents={activeStudents}
