@@ -165,8 +165,14 @@ export const AdminLayout: React.FC = () => {
                 referralService.checkAndApproveByStudent(data.phone, data.seatNo);
               } catch {}
             }
-          } catch (e) {
+            if (showToast) {
+              showToast(`Student "${data.name}" added successfully!`, 'success');
+            }
+          } catch (e: any) {
             console.error('Header Add Student error:', e);
+            if (showToast) {
+              showToast(`Failed to add student: ${e?.message || 'Server error'}`, 'error');
+            }
           }
         }}
         existingStudents={activeStudents}
