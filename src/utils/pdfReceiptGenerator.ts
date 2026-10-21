@@ -160,9 +160,7 @@ export const createReceiptPDF = (
   if (reference) {
     rows.push({ label: 'Transaction Ref', value: reference });
   }
-  if (notes) {
-    rows.push({ label: 'Notes', value: notes });
-  }
+  // Note: Internal admin notes/remarks are excluded from student PDF receipt for confidentiality
 
   // Value column maximum width inside card (prevent any overflow past card border)
   const valueMaxWidth = contentWidth - 48; // ~80mm width for value text

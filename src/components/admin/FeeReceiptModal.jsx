@@ -181,7 +181,7 @@ export const FeeReceiptModal = ({
               <div className="flex justify-between items-start gap-2">
                 <span className="text-[#8F9BB3] shrink-0 font-medium flex items-center gap-1 mt-0.5">
                   <FileText size={12} className="text-[#544bec]" />
-                  <span>Note / Remarks:</span>
+                  <span>Admin Note (Internal):</span>
                 </span>
 
                 {!isEditingNote ? (
