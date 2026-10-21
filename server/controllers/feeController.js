@@ -45,7 +45,7 @@ export class FeeController {
 
   static async recordPayment(req, res, next) {
     try {
-      const { studentId, amount, mode, plan, newDueDate, dueAmount, balanceDueDate, seatNo, seatCategory } = req.body;
+      const { studentId, amount, mode, plan, newDueDate, dueAmount, balanceDueDate, seatNo, seatCategory, notes, reference } = req.body;
 
       if (!studentId || !amount) {
         return res.status(400).json({
@@ -72,7 +72,9 @@ export class FeeController {
         amount: Number(amount),
         mode: mode || 'Cash',
         plan: plan || student.plan,
-        date: formatDate()
+        date: formatDate(),
+        notes: notes || '',
+        reference: reference || ''
       });
 
       const updatedStudent = await StudentModel.addPayment(student.id, {
@@ -87,7 +89,9 @@ export class FeeController {
         dueAmount: dueAmount !== undefined ? Number(dueAmount) : 0,
         balanceDueDate: balanceDueDate || '',
         seatNo: finalSeatNo,
-        seatCategory: finalCategory
+        seatCategory: finalCategory,
+        notes: notes || '',
+        reference: reference || ''
       });
 
       // Auto-approve referral for referrer immediately when referee pays fee

@@ -124,6 +124,8 @@ export class PaymentModel {
       plan: paymentData.plan || 'Monthly',
       status: 'Paid',
       receivedBy: paymentData.receivedBy || 'Admin',
+      notes: paymentData.notes || '',
+      reference: paymentData.reference || '',
       createdAt: new Date().toISOString()
     };
 

@@ -10,7 +10,9 @@ export const PaymentSchema = new mongoose.Schema({
   mode: { type: String, enum: ['Cash', 'UPI', 'Card', 'Net Banking'], default: 'Cash' },
   plan: { type: String, default: 'Monthly' },
   status: { type: String, default: 'Paid' },
-  receivedBy: { type: String, default: 'Admin' }
+  receivedBy: { type: String, default: 'Admin' },
+  notes: { type: String, default: '' },
+  reference: { type: String, default: '' }
 }, {
   timestamps: true
 });

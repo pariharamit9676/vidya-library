@@ -259,6 +259,7 @@ export const LibraryProvider = ({ children }) => {
         nextFeeDueDate: newDueDate,
         dueAmount: remaining,
         feeStatus: remaining > 0 ? 'DUE_SOON' : computeFeeStatus(newDueDate),
+        notes: payment.notes !== undefined ? payment.notes : s.notes,
         feeHistory: [payment, ...history]
       };
     });
