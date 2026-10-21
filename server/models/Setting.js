@@ -32,7 +32,11 @@ const DEFAULT_SETTINGS = {
     { id: 'disc_3', months: 3, discountType: 'percentage', discountValue: 5, label: '3 Months Advance (5% OFF)', isActive: true },
     { id: 'disc_6', months: 6, discountType: 'percentage', discountValue: 10, label: '6 Months Advance (10% OFF)', isActive: true },
     { id: 'disc_12', months: 12, discountType: 'percentage', discountValue: 15, label: '12 Months Advance (15% OFF)', isActive: true }
-  ]
+  ],
+  geofenceEnabled: false,
+  libraryLatitude: 26.2250,
+  libraryLongitude: 78.1950,
+  geofenceRadius: 100
 };
 
 export class SettingModel {

@@ -38,7 +38,13 @@ export const SettingSchema = new mongoose.Schema({
       { id: 'disc_6', months: 6, discountType: 'percentage', discountValue: 10, label: '6 Months Advance (10% OFF)', isActive: true },
       { id: 'disc_12', months: 12, discountType: 'percentage', discountValue: 15, label: '12 Months Advance (15% OFF)', isActive: true }
     ]
-  }
+  },
+
+  // GPS Attendance & Geofencing Settings
+  geofenceEnabled: { type: Boolean, default: false },
+  libraryLatitude: { type: Number, default: 26.2250 },
+  libraryLongitude: { type: Number, default: 78.1950 },
+  geofenceRadius: { type: Number, default: 100 }
 }, {
   timestamps: true
 });

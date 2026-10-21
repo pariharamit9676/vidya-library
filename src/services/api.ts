@@ -122,11 +122,13 @@ export const studentService = {
     }
   },
 
-  toggleCheckIn: (id: string, byAdmin: boolean = false) =>
-    request(`/students/${id}/check-in`, {
+  toggleCheckIn: (id: string, options: boolean | { byAdmin?: boolean; latitude?: number; longitude?: number } = false) => {
+    const body = typeof options === 'boolean' ? { byAdmin: options } : options;
+    return request(`/students/${id}/check-in`, {
       method: 'POST',
-      body: JSON.stringify({ byAdmin })
-    }),
+      body: JSON.stringify(body)
+    });
+  },
 
   recordPayment: (id: string, paymentData: any) =>
     request(`/students/${id}/payments`, {

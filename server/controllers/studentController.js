@@ -5,6 +5,7 @@ import { SettingModel } from '../models/Setting.js';
 import { ReferralModel } from '../models/Referral.js';
 import { generateReceiptNumber } from '../utils/idGenerator.js';
 import { formatDate, getDaysUntilDue, computeFeeStatus } from '../utils/dateUtils.js';
+import { calculateDistanceInMeters } from '../utils/geoUtils.js';
 
 export class StudentController {
   static async getAll(req, res, next) {
@@ -354,6 +355,40 @@ export class StudentController {
             limitReached: true,
             message: `Daily Limit Reached: Maximum 10 check-ins allowed per day. You have already completed 10 check-in sessions today.`
           });
+        }
+      }
+
+      // Geofence Location Verification for Student Portal Punch
+      if (!byAdmin) {
+        const settings = await SettingModel.get();
+        if (settings.geofenceEnabled && settings.libraryLatitude && settings.libraryLongitude) {
+          const { latitude, longitude } = req.body || {};
+          if (latitude === undefined || longitude === undefined || latitude === null || longitude === null) {
+            return res.status(403).json({
+              success: false,
+              geofenceError: true,
+              message: 'Location verification required: Please turn ON GPS/Location on your device to punch attendance.'
+            });
+          }
+
+          const dist = calculateDistanceInMeters(
+            Number(latitude),
+            Number(longitude),
+            Number(settings.libraryLatitude),
+            Number(settings.libraryLongitude)
+          );
+          const maxRadius = Number(settings.geofenceRadius) || 100;
+
+          if (dist > maxRadius) {
+            const formattedDist = dist >= 1000 ? `${(dist / 1000).toFixed(2)} km` : `${dist} meters`;
+            return res.status(403).json({
+              success: false,
+              geofenceError: true,
+              distance: dist,
+              maxRadius,
+              message: `Location verification failed: You are ${formattedDist} away from the library. Attendance can only be punched within ${maxRadius}m of the library.`
+            });
+          }
         }
       }
 

@@ -23,11 +23,15 @@ import {
   Sparkles,
   Check,
   X,
-  AlertCircle
+  AlertCircle,
+  Navigation,
+  Compass,
+  ExternalLink
 } from 'lucide-react';
 import { useLibrary } from '../context/LibraryContext';
 import { getStoredSettings } from '../utils/storage';
 import { MultiMonthDiscount, DEFAULT_DISCOUNTS, calculateMultiMonthFee } from '../utils/discountUtils';
+import { getCurrentCoordinates } from '../utils/geoUtils';
 
 export const SettingsPage: React.FC = () => {
   const { settings, updateSettings, showToast, showConfirm, resetDemoData, students } = useLibrary();
@@ -65,11 +69,18 @@ export const SettingsPage: React.FC = () => {
     // Multi-Month Discounts
     multiMonthDiscounts: (settings?.multiMonthDiscounts && settings.multiMonthDiscounts.length > 0)
       ? settings.multiMonthDiscounts
-      : DEFAULT_DISCOUNTS
+      : DEFAULT_DISCOUNTS,
+
+    // GPS Geofencing Settings
+    geofenceEnabled: Boolean(settings?.geofenceEnabled),
+    libraryLatitude: Number(settings?.libraryLatitude) || 26.2250,
+    libraryLongitude: Number(settings?.libraryLongitude) || 78.1950,
+    geofenceRadius: Number(settings?.geofenceRadius) || 100
   });
 
-  const [activeSection, setActiveSection] = useState<'profile' | 'shifts' | 'discounts' | 'rules' | 'account'>('profile');
+  const [activeSection, setActiveSection] = useState<'profile' | 'shifts' | 'discounts' | 'rules' | 'account' | 'geofence'>('profile');
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState<boolean>(false);
 
   // Discount Modal State
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
@@ -98,7 +109,11 @@ export const SettingsPage: React.FC = () => {
         adminPhone: settings.adminPhone || settings.phone || prev.adminPhone || prev.phone,
         multiMonthDiscounts: Array.isArray(settings.multiMonthDiscounts) && settings.multiMonthDiscounts.length > 0
           ? settings.multiMonthDiscounts
-          : (prev.multiMonthDiscounts || DEFAULT_DISCOUNTS)
+          : (prev.multiMonthDiscounts || DEFAULT_DISCOUNTS),
+        geofenceEnabled: settings.geofenceEnabled !== undefined ? Boolean(settings.geofenceEnabled) : prev.geofenceEnabled,
+        libraryLatitude: settings.libraryLatitude !== undefined ? Number(settings.libraryLatitude) : prev.libraryLatitude,
+        libraryLongitude: settings.libraryLongitude !== undefined ? Number(settings.libraryLongitude) : prev.libraryLongitude,
+        geofenceRadius: settings.geofenceRadius !== undefined ? Number(settings.geofenceRadius) : prev.geofenceRadius
       }));
     }
   }, [settings]);
@@ -419,6 +434,21 @@ export const SettingsPage: React.FC = () => {
         >
           <Shield size={14} />
           <span>Account & Backup</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSection('geofence')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeSection === 'geofence'
+              ? 'bg-[#544bec] text-white shadow-xs'
+              : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
+          }`}
+        >
+          <MapPin size={14} />
+          <span>GPS & Geofencing</span>
+          {formData.geofenceEnabled && (
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+          )}
         </button>
       </div>
 
@@ -974,6 +1004,221 @@ export const SettingsPage: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 6: GPS ATTENDANCE & GEOFENCING */}
+      {activeSection === 'geofence' && (
+        <div className="bg-white rounded-2xl border border-[#EDF1F7] shadow-xs p-6 space-y-6">
+          <div className="border-b border-[#EDF1F7] pb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h3 className="text-base font-extrabold text-[#192038] m-0 flex items-center gap-2">
+                <MapPin className="text-[#544bec]" size={20} />
+                <span>GPS Attendance & Geo-Fencing (Location Verification)</span>
+              </h3>
+              <p className="text-xs text-[#8F9BB3] mt-1 m-0">
+                Ensure students are physically present inside the library to punch attendance. Blocks check-ins from home or outside.
+              </p>
+            </div>
+
+            {/* Status Badge */}
+            <div className={`px-3 py-1.5 rounded-xl text-xs font-extrabold inline-flex items-center gap-2 shrink-0 self-start sm:self-auto ${
+              formData.geofenceEnabled
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                : 'bg-slate-100 text-slate-600 border border-slate-200'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${formData.geofenceEnabled ? 'bg-emerald-500 animate-ping' : 'bg-slate-400'}`} />
+              <span>{formData.geofenceEnabled ? `Geo-Fencing Active (${formData.geofenceRadius}m)` : 'Geo-Fencing Disabled'}</span>
+            </div>
+          </div>
+
+          {/* Master Enable Toggle Card */}
+          <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+            formData.geofenceEnabled
+              ? 'bg-gradient-to-r from-emerald-50/60 to-indigo-50/30 border-emerald-200'
+              : 'bg-[#F8FAFD] border-[#EDF1F7]'
+          }`}>
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-extrabold text-[#192038] m-0 flex items-center gap-2">
+                  <span>Require Student Physical Presence for Punch</span>
+                  {formData.geofenceEnabled && (
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-500 text-white">
+                      Strict Mode
+                    </span>
+                  )}
+                </h4>
+                <p className="text-xs text-[#6B778C] m-0">
+                  When enabled, student's phone browser will verify GPS location before punching in/out. Punches outside library radius will be blocked.
+                </p>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, geofenceEnabled: !prev.geofenceEnabled }))}
+                className={`relative inline-flex h-7 w-13 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                  formData.geofenceEnabled ? 'bg-[#544bec]' : 'bg-slate-300'
+                }`}
+                role="switch"
+                aria-checked={formData.geofenceEnabled}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    formData.geofenceEnabled ? 'translate-x-6' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Coordinates & Detection Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h4 className="text-xs uppercase font-extrabold text-[#8F9BB3] tracking-wider m-0">
+                Library Center Coordinates (GPS Lat & Long)
+              </h4>
+
+              {/* Auto Detect Button */}
+              <button
+                type="button"
+                disabled={isDetectingLocation}
+                onClick={async () => {
+                  setIsDetectingLocation(true);
+                  try {
+                    showToast('Detecting current GPS coordinates from your device...', 'info');
+                    const coords = await getCurrentCoordinates();
+                    setFormData((prev) => ({
+                      ...prev,
+                      libraryLatitude: Number(coords.latitude.toFixed(6)),
+                      libraryLongitude: Number(coords.longitude.toFixed(6))
+                    }));
+                    showToast(`📍 Location detected! Accuracy: ±${Math.round(coords.accuracy)}m`, 'success');
+                  } catch (err: any) {
+                    showToast(err.message || 'Failed to detect location', 'error');
+                  } finally {
+                    setIsDetectingLocation(false);
+                  }
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-white border border-[#544bec]/40 hover:bg-[#EEF0FD] text-[#544bec] text-xs font-bold transition-all shadow-xs inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <Navigation size={13} className={isDetectingLocation ? 'animate-spin' : ''} />
+                <span>{isDetectingLocation ? 'Detecting Location...' : '📍 Auto-Detect Current Location'}</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Latitude */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#192038]">
+                  Library Latitude (Lat) <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  name="libraryLatitude"
+                  value={formData.libraryLatitude}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, libraryLatitude: parseFloat(e.target.value) || 0 }))}
+                  placeholder="e.g. 26.225000"
+                  className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
+                />
+                <span className="text-[10px] text-[#8F9BB3]">e.g. 26.2250 (North-South Coordinate)</span>
+              </div>
+
+              {/* Longitude */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#192038]">
+                  Library Longitude (Long) <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  name="libraryLongitude"
+                  value={formData.libraryLongitude}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, libraryLongitude: parseFloat(e.target.value) || 0 }))}
+                  placeholder="e.g. 78.195000"
+                  className="w-full px-4 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-none focus:border-[#544bec] focus:bg-white transition-all"
+                />
+                <span className="text-[10px] text-[#8F9BB3]">e.g. 78.1950 (East-West Coordinate)</span>
+              </div>
+            </div>
+
+            {/* View on Google Maps Link */}
+            {formData.libraryLatitude && formData.libraryLongitude ? (
+              <div className="flex items-center gap-2 pt-1">
+                <a
+                  href={`https://www.google.com/maps?q=${formData.libraryLatitude},${formData.libraryLongitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-[#544bec] hover:underline inline-flex items-center gap-1"
+                >
+                  <ExternalLink size={13} />
+                  <span>View library pin on Google Maps ({formData.libraryLatitude}, {formData.libraryLongitude})</span>
+                </a>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Allowed Radius Selection */}
+          <div className="space-y-3 pt-4 border-t border-[#EDF1F7]">
+            <label className="text-xs font-bold text-[#192038] block">
+              Allowed Geofence Radius (Maximum distance student can be from library to punch)
+            </label>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {[
+                { val: 50, label: '50 Meters', desc: 'Strict (Inside Library Hall)' },
+                { val: 100, label: '100 Meters', desc: 'Recommended (Building & Gate)' },
+                { val: 150, label: '150 Meters', desc: 'Premises & Parking' },
+                { val: 200, label: '200 Meters', desc: 'Wide Block Radius' }
+              ].map((r) => {
+                const isSelected = Number(formData.geofenceRadius) === r.val;
+                return (
+                  <button
+                    key={r.val}
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, geofenceRadius: r.val }))}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'border-[#544bec] bg-[#EEF0FD] text-[#544bec] shadow-xs ring-1 ring-[#544bec]'
+                        : 'border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#6B778C]'
+                    }`}
+                  >
+                    <div className="text-xs font-black text-[#192038]">{r.label}</div>
+                    <div className="text-[10px] text-[#8F9BB3] mt-0.5">{r.desc}</div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Custom Radius input */}
+            <div className="pt-2 flex items-center gap-2">
+              <span className="text-xs text-[#6B778C]">Or custom radius:</span>
+              <input
+                type="number"
+                min="20"
+                max="5000"
+                value={formData.geofenceRadius}
+                onChange={(e) => setFormData((prev) => ({ ...prev, geofenceRadius: parseInt(e.target.value, 10) || 100 }))}
+                className="w-24 px-3 py-1 bg-[#F7F9FC] border border-[#EDF1F7] rounded-lg text-xs font-bold text-[#192038]"
+              />
+              <span className="text-xs text-[#6B778C]">meters</span>
+            </div>
+          </div>
+
+          {/* Informational Guidance Box */}
+          <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-xl space-y-2 text-xs text-indigo-900">
+            <div className="flex items-center gap-2 font-bold text-indigo-950">
+              <Compass size={16} className="text-[#544bec]" />
+              <span>How Geo-Fencing Works for Students:</span>
+            </div>
+            <ul className="list-disc pl-5 space-y-1 text-indigo-800 text-[11px] leading-relaxed">
+              <li>When student taps <strong>"Punch In"</strong> or <strong>"Punch Out"</strong> on their phone, the browser asks for one-time GPS permission.</li>
+              <li>The system calculates the exact distance using the Haversine spherical formula.</li>
+              <li>If the student is within <strong>{formData.geofenceRadius} meters</strong>, the punch succeeds immediately.</li>
+              <li>If the student tries to punch from home, hostel, or anywhere outside, it blocks them and shows: <em>"You are X meters away from the library."</em></li>
+            </ul>
           </div>
         </div>
       )}

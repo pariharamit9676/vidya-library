@@ -42,12 +42,15 @@ import {
   Calendar,
   Lock,
   ArrowRight,
-  Gift
+  Gift,
+  Navigation,
+  MapPin
 } from 'lucide-react';
+import { calculateDistanceInMeters, formatDistance, getCurrentCoordinates } from '../utils/geoUtils';
 
 export const StudentDashboardPage: React.FC = () => {
   const { user, logout, updateUser } = useAuth();
-  const { showToast } = useLibrary();
+  const { showToast, settings } = useLibrary();
   const navigate = useNavigate();
 
   const [studentData, setStudentData] = useState<any>(() => {
@@ -65,7 +68,8 @@ export const StudentDashboardPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
   const [punchLoading, setPunchLoading] = useState<boolean>(false);
-  const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isVerifyingGps, setIsVerifyingGps] = useState<boolean>(false);
+  const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
   // Admin contact phone fetched from database settings
   const [adminPhone, setAdminPhone] = useState<string>('9685912333');
@@ -287,7 +291,54 @@ export const StudentDashboardPage: React.FC = () => {
     try {
       setPunchLoading(true);
       setFeedbackMsg(null);
-      const res: any = await studentService.toggleCheckIn(sId);
+
+      let locationPayload: { latitude?: number; longitude?: number } = {};
+
+      // GPS Geofence Verification for Student Self Punch
+      if (settings?.geofenceEnabled && settings?.libraryLatitude && settings?.libraryLongitude) {
+        setIsVerifyingGps(true);
+        setFeedbackMsg({
+          type: 'info',
+          text: '📍 Verifying your GPS location with library...'
+        });
+
+        try {
+          const coords = await getCurrentCoordinates();
+          locationPayload = {
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          };
+
+          const distance = calculateDistanceInMeters(
+            coords.latitude,
+            coords.longitude,
+            Number(settings.libraryLatitude),
+            Number(settings.libraryLongitude)
+          );
+          const maxRadius = Number(settings.geofenceRadius) || 100;
+
+          if (distance > maxRadius) {
+            const distStr = formatDistance(distance);
+            const err = `🚫 Location verification failed: You are ${distStr} away from the library. Allowed radius is ${maxRadius}m. Please punch attendance inside the library premises.`;
+            setFeedbackMsg({ type: 'error', text: err });
+            showToast(err, 'error');
+            setPunchLoading(false);
+            setIsVerifyingGps(false);
+            return;
+          }
+        } catch (geoErr: any) {
+          const err = geoErr.message || 'Please enable GPS/Location in your browser to punch attendance.';
+          setFeedbackMsg({ type: 'error', text: err });
+          showToast(err, 'error');
+          setPunchLoading(false);
+          setIsVerifyingGps(false);
+          return;
+        } finally {
+          setIsVerifyingGps(false);
+        }
+      }
+
+      const res: any = await studentService.toggleCheckIn(sId, locationPayload);
       if (res && res.success && res.data) {
         setStudentData(res.data);
         if (updateUser) {
@@ -295,8 +346,8 @@ export const StudentDashboardPage: React.FC = () => {
         }
         const isNowIn = Boolean(res.data.isCheckedIn);
         const succMsg = isNowIn
-          ? 'Punched In successfully! Have a productive study session.'
-          : 'Punched Out successfully! Have a great day.';
+          ? '✓ Location verified! Punched In successfully. Have a productive study session.'
+          : '✓ Location verified! Punched Out successfully. Have a great day.';
         setFeedbackMsg({
           type: 'success',
           text: succMsg
@@ -312,6 +363,7 @@ export const StudentDashboardPage: React.FC = () => {
       showToast(errMsg, 'error');
     } finally {
       setPunchLoading(false);
+      setIsVerifyingGps(false);
     }
   };
 
@@ -741,6 +793,11 @@ export const StudentDashboardPage: React.FC = () => {
                     <span className="w-3.5 h-3.5 rounded-full border-2 border-slate-400 border-t-[#544bec] animate-spin" />
                     <span>Syncing Status...</span>
                   </>
+                ) : isVerifyingGps ? (
+                  <>
+                    <Navigation size={16} className="animate-spin text-amber-500" />
+                    <span>Verifying GPS Location...</span>
+                  </>
                 ) : punchLoading ? (
                   <>
                     <RefreshCw size={16} className="animate-spin" />
@@ -982,6 +1039,11 @@ export const StudentDashboardPage: React.FC = () => {
                       <div className="w-5 h-5 rounded-full border-2 border-slate-400 border-t-[#544bec] animate-spin" />
                       <span className="text-[9px] font-bold tracking-tight text-slate-600">Syncing...</span>
                     </div>
+                  ) : isVerifyingGps ? (
+                    <>
+                      <Navigation size={20} className="animate-spin text-amber-300" />
+                      <span className="text-[10px] font-bold">GPS...</span>
+                    </>
                   ) : punchLoading ? (
                     <>
                       <RefreshCw size={20} className="animate-spin text-white" />
