@@ -1,0 +1,9 @@
+# robots.txt for Vidya Library
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /student/dashboard
+Disallow: /student/attendance
+Disallow: /student/referrals
+
+Sitemap: https://vidyalibrary.com/sitemap.xml

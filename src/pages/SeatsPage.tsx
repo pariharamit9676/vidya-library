@@ -701,3 +701,5 @@ export const SeatsPage: React.FC = () => {
     </>
   );
 };
+
+export default SeatsPage;

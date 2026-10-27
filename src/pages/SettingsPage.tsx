@@ -26,7 +26,10 @@ import {
   AlertCircle,
   Navigation,
   Compass,
-  ExternalLink
+  ExternalLink,
+  ChevronRight,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { useLibrary } from '../context/LibraryContext';
 import { getStoredSettings } from '../utils/storage';
@@ -75,10 +78,13 @@ export const SettingsPage: React.FC = () => {
     geofenceEnabled: Boolean(settings?.geofenceEnabled),
     libraryLatitude: Number(settings?.libraryLatitude) || 26.2250,
     libraryLongitude: Number(settings?.libraryLongitude) || 78.1950,
-    geofenceRadius: Number(settings?.geofenceRadius) || 100
+    geofenceRadius: Number(settings?.geofenceRadius) || 100,
+
+    // Student Portal Features
+    showMockTests: settings?.showMockTests !== undefined ? Boolean(settings.showMockTests) : true
   });
 
-  const [activeSection, setActiveSection] = useState<'profile' | 'shifts' | 'discounts' | 'rules' | 'account' | 'geofence'>('profile');
+  const [activeSection, setActiveSection] = useState<'profile' | 'shifts' | 'discounts' | 'rules' | 'features' | 'account' | 'geofence'>('profile');
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState<boolean>(false);
 
@@ -113,7 +119,8 @@ export const SettingsPage: React.FC = () => {
         geofenceEnabled: settings.geofenceEnabled !== undefined ? Boolean(settings.geofenceEnabled) : prev.geofenceEnabled,
         libraryLatitude: settings.libraryLatitude !== undefined ? Number(settings.libraryLatitude) : prev.libraryLatitude,
         libraryLongitude: settings.libraryLongitude !== undefined ? Number(settings.libraryLongitude) : prev.libraryLongitude,
-        geofenceRadius: settings.geofenceRadius !== undefined ? Number(settings.geofenceRadius) : prev.geofenceRadius
+        geofenceRadius: settings.geofenceRadius !== undefined ? Number(settings.geofenceRadius) : prev.geofenceRadius,
+        showMockTests: settings.showMockTests !== undefined ? Boolean(settings.showMockTests) : (prev.showMockTests !== undefined ? prev.showMockTests : true)
       }));
     }
   }, [settings]);
@@ -259,6 +266,24 @@ export const SettingsPage: React.FC = () => {
       await updateSettings(nextFormData);
     }
     showToast(`Discount for ${months} Months removed!`);
+  };
+
+  const handleToggleMockTests = async (newValue?: boolean) => {
+    const nextVal = typeof newValue === 'boolean' ? newValue : !formData.showMockTests;
+    const nextFormData = {
+      ...formData,
+      showMockTests: nextVal
+    };
+    setFormData(nextFormData);
+    if (updateSettings) {
+      await updateSettings(nextFormData);
+    }
+    showToast(
+      nextVal
+        ? 'Mock Tests & CBT banner is now visible to students!'
+        : 'Mock Tests & CBT banner is now hidden from students!',
+      nextVal ? 'success' : 'info'
+    );
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -422,6 +447,19 @@ export const SettingsPage: React.FC = () => {
         >
           <Wifi size={14} />
           <span>Rules & Wi-Fi</span>
+        </button>
+
+        <button
+          onClick={() => setActiveSection('features')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            activeSection === 'features'
+              ? 'bg-[#544bec] text-white shadow-xs'
+              : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F7F9FC]'
+          }`}
+        >
+          <Sparkles size={14} />
+          <span>Student Portal & Features</span>
+          <span className={`w-2 h-2 rounded-full ml-0.5 ${formData.showMockTests ? 'bg-emerald-400' : 'bg-slate-300'}`} />
         </button>
 
         <button
@@ -900,6 +938,158 @@ export const SettingsPage: React.FC = () => {
               <span className="text-[11px] text-[#8F9BB3]">
                 Total physical study desks available in reading hall
               </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION: STUDENT PORTAL & FEATURES */}
+      {activeSection === 'features' && (
+        <div className="bg-white rounded-2xl border border-[#EDF1F7] shadow-xs p-6 space-y-6">
+          <div className="border-b border-[#EDF1F7] pb-4 flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="text-base font-extrabold text-[#192038] m-0 flex items-center gap-2">
+                <Sparkles size={18} className="text-[#544bec]" />
+                Student Portal Features & Banners
+              </h3>
+              <p className="text-xs text-[#8F9BB3] mt-1 m-0">
+                Admin control for enabling or hiding specific promotional banners and student learning modules.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                formData.showMockTests
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-rose-50 text-rose-700 border border-rose-200'
+              }`}>
+                <span className={`w-2 h-2 rounded-full ${formData.showMockTests ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                {formData.showMockTests ? 'Mock Tests Visible' : 'Mock Tests Hidden'}
+              </span>
+            </div>
+          </div>
+
+          {/* Feature Card: Mock Tests & CBT Banner */}
+          <div className="rounded-2xl border border-[#EDF1F7] bg-[#F7F9FC]/60 p-5 space-y-5">
+            <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
+              <div className="flex items-start gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sparkles size={22} className="text-[#544bec]" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-sm font-extrabold text-[#192038] m-0">
+                      Competitive Exam Mock Tests & CBT (AI Practice)
+                    </h4>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">
+                      AI Generator
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#6B778C] mt-1.5 leading-relaxed m-0">
+                    Controls visibility of the Mock Tests banner on the student home dashboard and the practice test link in the student profile menu.
+                  </p>
+                  <p className="text-[11px] text-[#8F9BB3] mt-1 m-0">
+                    Target Exams: SSC, MP Police, Railways & Banking test generator with instant solutions.
+                  </p>
+                </div>
+              </div>
+
+              {/* Toggle Switch */}
+              <div className="flex items-center gap-3 shrink-0 self-start sm:self-center">
+                <span className="text-xs font-bold text-[#192038]">
+                  {formData.showMockTests ? 'Enabled (Show)' : 'Disabled (Hide)'}
+                </span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={formData.showMockTests}
+                  onClick={() => handleToggleMockTests()}
+                  className={`relative inline-flex h-7 w-13 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#544bec] focus:ring-offset-2 ${
+                    formData.showMockTests ? 'bg-[#544bec]' : 'bg-[#C5CEE0]'
+                  }`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      formData.showMockTests ? 'translate-x-6' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Live Visual Preview of how student sees it */}
+            <div className="pt-3 border-t border-[#EDF1F7]">
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-xs font-bold text-[#6B778C] uppercase tracking-wider flex items-center gap-1.5">
+                  <Eye size={14} />
+                  Live Preview on Student Dashboard
+                </span>
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                  formData.showMockTests
+                    ? 'text-emerald-700 bg-emerald-100/60'
+                    : 'text-amber-700 bg-amber-100/60'
+                }`}>
+                  {formData.showMockTests ? 'Student will see this banner' : 'Currently hidden from students'}
+                </span>
+              </div>
+
+              <div className="relative">
+                {/* Preview Banner */}
+                <div
+                  className={`bg-gradient-to-r from-[#1E1B4B] via-[#312E81] to-[#4338CA] rounded-2xl p-4 sm:p-5 text-white shadow-md shadow-indigo-950/20 flex items-center justify-between gap-3 transition-all duration-300 ${
+                    formData.showMockTests ? 'opacity-100' : 'opacity-40 grayscale filter'
+                  }`}
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0">
+                      <Sparkles size={22} className="text-amber-300" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs sm:text-sm font-black tracking-tight">
+                          Competitive Exam Mock Tests & CBT
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">
+                          AI Generator
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-indigo-100/80 mt-0.5 truncate m-0">
+                        SSC, MP Police, Railways & Banking practice tests. Custom topic tests with instant solutions!
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0 bg-white/15 px-3 py-1.5 rounded-xl text-xs font-bold">
+                    <span>Practice</span>
+                    <ChevronRight size={14} />
+                  </div>
+                </div>
+
+                {!formData.showMockTests && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 backdrop-blur-[1px] rounded-2xl border border-dashed border-slate-300">
+                    <div className="bg-white/95 px-4 py-2 rounded-xl shadow-md text-xs font-bold text-slate-700 flex items-center gap-2">
+                      <EyeOff size={15} className="text-rose-500" />
+                      <span>This banner is hidden on Student Dashboard</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick action buttons */}
+            <div className="flex items-center justify-between pt-2 flex-wrap gap-2 text-xs">
+              <span className="text-[#8F9BB3]">
+                Changes take effect immediately on all active student portals upon toggle.
+              </span>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#544bec] text-white hover:bg-[#4338ca] shadow-sm shadow-[#544bec]/20 inline-flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Save size={14} />
+                <span>{isSaving ? 'Saving...' : 'Save Settings'}</span>
+              </button>
             </div>
           </div>
         </div>

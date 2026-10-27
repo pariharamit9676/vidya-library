@@ -137,6 +137,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
   const [admissionDate, setAdmissionDate] = useState<string>(getTodayDate());
   const [studentType, setStudentType] = useState<StudentType>('Regular');
   const [status, setStatus] = useState<StudentStatus>('Active');
+  const [editDueDate, setEditDueDate] = useState<string>(getTodayDate());
+  const [editMonthlyFee, setEditMonthlyFee] = useState<number>(600);
 
   // Section 2: Seat & Duration & Fee Details (Regular students only)
   const [category, setCategory] = useState<SeatCategory>('Premium');
@@ -300,6 +302,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         setName(studentToEdit.name || '');
         setPhone(studentToEdit.phone || '');
         setStatus((studentToEdit.status as StudentStatus) || 'Active');
+        setEditDueDate(toInputDate(studentToEdit.nextDueDate || studentToEdit.nextFeeDueDate) || getTodayDate());
+        setEditMonthlyFee(Number(studentToEdit.planAmount) || Number(studentToEdit.paidAmount) || 600);
         setAdmissionDate(toInputDate(studentToEdit.admissionDate) || getTodayDate());
         setStudentType(studentToEdit.studentType || (studentToEdit.status === 'Demo' ? 'Demo' : 'Regular'));
         
@@ -321,6 +325,8 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         setPhone('');
         setStatus('Active');
         const today = getTodayDate();
+        setEditDueDate(today);
+        setEditMonthlyFee(600);
         setAdmissionDate(today);
         setStudentType('Regular');
         setCategory('Premium');
@@ -374,11 +380,16 @@ export const StudentModal: React.FC<StudentModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      // In Edit mode, ONLY Name and Phone can be modified
+      // In Edit mode, update Name, Phone, Status, Monthly Fee, and Next Due Date
       if (studentToEdit) {
+        const displayDueDate = editDueDate ? formatDisplayDate(editDueDate) : (studentToEdit.nextDueDate || '');
         await onSave({
           name: name.trim(),
-          phone: phone.trim()
+          phone: phone.trim(),
+          status: status,
+          planAmount: Number(editMonthlyFee) || undefined,
+          nextDueDate: displayDueDate,
+          nextFeeDueDate: displayDueDate
         }, studentToEdit.id);
         return;
       }
@@ -408,6 +419,10 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         // Regular payload with duration, partial payment, and calculated next due date
         const finalDue = isDueWaived ? 0 : remainingDue;
         const finalBalanceDueDate = (!isDueWaived && remainingDue > 0) ? displayBalanceDueDate : '';
+        // If remaining due was waived/crossed at admission, the actual agreed monthly fee is what was paid!
+        const effectivePlanAmount = (isDueWaived && Number(paidAmount) > 0)
+          ? Number(paidAmount)
+          : totalPlanFee;
 
         const regularPayload = {
           name: name.trim(),
@@ -422,7 +437,7 @@ export const StudentModal: React.FC<StudentModalProps> = ({
             ? `${durationMonths} Months (${feeCalculation.savingsText})`
             : `${durationMonths} Months`,
           planMonths: durationMonths,
-          planAmount: totalPlanFee,
+          planAmount: effectivePlanAmount,
           paidAmount: Number(paidAmount) || 0,
           dueAmount: finalDue,
           balanceDueDate: finalBalanceDueDate,
@@ -612,6 +627,37 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                   )}
                 </div>
 
+                {/* Monthly Fee Input when Editing Student */}
+                {studentToEdit && (
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-bold text-[#192038] flex items-center gap-1.5">
+                        <IndianRupee size={14} className="text-[#544bec]" />
+                        <span>Monthly Fee (₹)</span>
+                        <span className="text-rose-500">*</span>
+                      </label>
+                      <span className="text-[11px] font-medium text-slate-400">
+                        Category: {studentToEdit.seatCategory || studentToEdit.category || 'Standard'}
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <IndianRupee
+                        size={16}
+                        className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8F9BB3]"
+                      />
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={editMonthlyFee}
+                        onChange={(e) => setEditMonthlyFee(Number(e.target.value) || 0)}
+                        placeholder="Enter agreed monthly fee"
+                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* Status Selector when Editing Student */}
                 {studentToEdit && (
                   <div>
@@ -655,6 +701,60 @@ export const StudentModal: React.FC<StudentModalProps> = ({
                           </button>
                         );
                       })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Next Fee Due Date Editor when Editing Student */}
+                {studentToEdit && (
+                  <div className="pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-bold text-[#192038] flex items-center gap-1.5">
+                        <Calendar size={14} className="text-[#544bec]" />
+                        <span>Next Fee Due Date</span>
+                      </label>
+                      <span className="text-[11px] font-medium text-slate-500">
+                        Current: <strong className="text-[#544bec] font-bold">{studentToEdit.nextDueDate || studentToEdit.nextFeeDueDate || '-'}</strong>
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        value={editDueDate}
+                        onChange={(e) => setEditDueDate(e.target.value)}
+                        className="w-full px-3.5 py-2.5 bg-[#F7F9FC] border border-[#EDF1F7] rounded-xl text-xs font-semibold text-[#192038] focus:outline-hidden focus:border-[#544bec] focus:bg-white transition-all cursor-pointer"
+                      />
+                    </div>
+                    {/* Quick presets for due date */}
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-0.5">Quick:</span>
+                      {[
+                        { label: 'Today', days: 0 },
+                        { label: '+7 Days', days: 7 },
+                        { label: '+15 Days', days: 15 },
+                        { label: '+1 Month', months: 1 },
+                        { label: '+3 Months', months: 3 }
+                      ].map((preset, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            const d = new Date();
+                            if (preset.months) {
+                              d.setMonth(d.getMonth() + preset.months);
+                            } else if (preset.days !== undefined) {
+                              d.setDate(d.getDate() + preset.days);
+                            }
+                            const y = d.getFullYear();
+                            const m = String(d.getMonth() + 1).padStart(2, '0');
+                            const day = String(d.getDate()).padStart(2, '0');
+                            setEditDueDate(`${y}-${m}-${day}`);
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-[#544bec]/10 hover:text-[#544bec] text-[10px] font-bold text-slate-600 transition-colors cursor-pointer"
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}

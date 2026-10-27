@@ -36,7 +36,8 @@ const DEFAULT_SETTINGS = {
   geofenceEnabled: false,
   libraryLatitude: 26.2250,
   libraryLongitude: 78.1950,
-  geofenceRadius: 100
+  geofenceRadius: 100,
+  showMockTests: true
 };
 
 export class SettingModel {

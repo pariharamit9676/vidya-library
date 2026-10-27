@@ -256,3 +256,58 @@ export const referralApiService = {
     })
 };
 
+// 9. Mock Test Service
+export const mockTestService = {
+  getAll: (params?: { exam?: string; subject?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.exam && params.exam !== 'All') q.append('exam', params.exam);
+    if (params?.subject && params.subject !== 'All') q.append('subject', params.subject);
+    const qs = q.toString();
+    return request<any[]>(`/mock-tests${qs ? `?${qs}` : ''}`);
+  },
+
+  getById: (id: string, mode: 'test' | 'review' = 'test') =>
+    request<any>(`/mock-tests/${id}?mode=${mode}`),
+
+  generateTest: (payload: {
+    exam: string;
+    subject: string;
+    topic: string;
+    difficulty: string;
+    count: number;
+    language: string;
+    studentName?: string;
+    studentId?: string;
+  }) =>
+    request<any>('/mock-tests/generate', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
+
+  submitAttempt: (
+    testId: string,
+    payload: {
+      studentId: string;
+      studentName: string;
+      studentRollNo?: string;
+      answers: Record<string, string>;
+      timeSpentSeconds: number;
+    }
+  ) =>
+    request<any>(`/mock-tests/${testId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
+
+  getMyAttempts: (studentId: string) =>
+    request<any[]>(`/mock-tests/attempts/my?studentId=${encodeURIComponent(studentId)}`),
+
+  getAttemptDetails: (attemptId: string) =>
+    request<any>(`/mock-tests/attempts/${attemptId}`),
+
+  deleteTest: (id: string) =>
+    request<any>(`/mock-tests/${id}`, {
+      method: 'DELETE'
+    })
+};
+

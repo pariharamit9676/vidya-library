@@ -36,6 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'seats', label: 'Seat Management', icon: Armchair, path: '/admin/seats', hideOnMobile: true },
     { id: 'fees', label: 'Fees & Payments', icon: CreditCard, path: '/admin/fees' },
     { id: 'attendance', label: 'Attendance', icon: Calendar, path: '/admin/attendance' },
+    { id: 'mock-tests', label: 'Mock Tests (CBT)', icon: BookOpen, path: '/admin/mock-tests' },
     { id: 'referrals', label: 'Refer & Earn', icon: Gift, path: '/admin/referrals' },
     { id: 'receipts', label: 'Receipts', icon: FileText, path: '/admin/receipts' },
     { id: 'reports', label: 'Reports', icon: BarChart2, path: '/admin/reports' },

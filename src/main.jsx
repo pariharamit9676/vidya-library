@@ -6,6 +6,12 @@ import { queryClient } from './services/queryClient'
 import './index.css'
 import App from './App.jsx'
 
+// Auto-reload on dynamic import / chunk load failure (handles server restarts gracefully)
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault();
+  window.location.reload();
+});
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>

@@ -615,6 +615,19 @@ export const StudentDashboardPage: React.FC = () => {
 
                   {/* Menu Options */}
                   <div className="p-1 space-y-0.5">
+                    {settings?.showMockTests !== false && (
+                      <button
+                        onClick={() => {
+                          setIsProfileMenuOpen(false);
+                          navigate('/student/tests');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#192038] hover:bg-[#EEF0FD] hover:text-[#544bec] rounded-xl transition-colors cursor-pointer text-left"
+                      >
+                        <Sparkles size={15} className="text-[#544bec]" />
+                        <span>Mock Tests & CBT (AI Practice)</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => {
                         setIsProfileMenuOpen(false);
@@ -1099,6 +1112,40 @@ export const StudentDashboardPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* ======================================================== */}
+        {/* MOCK TEST & CBT EXAM PROMO BANNER                        */}
+        {/* ======================================================== */}
+        {settings?.showMockTests !== false && (
+          <div
+            onClick={() => navigate('/student/tests')}
+            className="bg-gradient-to-r from-[#1E1B4B] via-[#312E81] to-[#4338CA] rounded-2xl sm:rounded-3xl p-4 sm:p-5 text-white shadow-md shadow-indigo-950/20 flex items-center justify-between gap-3 cursor-pointer hover:shadow-lg transition-all active:scale-[0.99] group"
+          >
+            <div className="flex items-center gap-3.5 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Sparkles size={22} className="text-amber-300" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs sm:text-sm font-black tracking-tight">
+                    Competitive Exam Mock Tests & CBT
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">
+                    AI Generator
+                  </span>
+                </div>
+                <p className="text-[11px] text-indigo-100/80 mt-0.5 truncate m-0">
+                  SSC, MP Police, Railways & Banking practice tests. Custom topic tests with instant solutions!
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1 shrink-0 bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors">
+              <span>Practice</span>
+              <ChevronRight size={14} />
+            </div>
+          </div>
+        )}
 
         {/* ======================================================== */}
         {/* REFER & EARN PROMO BANNER                                */}

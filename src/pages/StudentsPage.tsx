@@ -158,7 +158,10 @@ export const StudentsPage: React.FC = () => {
           id: targetId,
           updates: {
             name: payload.name,
-            phone: payload.phone
+            phone: payload.phone,
+            ...(payload.status ? { status: payload.status } : {}),
+            ...(payload.planAmount !== undefined ? { planAmount: Number(payload.planAmount) } : {}),
+            ...(payload.nextDueDate ? { nextDueDate: payload.nextDueDate, nextFeeDueDate: payload.nextDueDate } : {})
           }
         });
         setIsAddModalOpen(false);

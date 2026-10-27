@@ -56,6 +56,18 @@ const getTodayInput = (): string => {
   return new Date().toISOString().slice(0, 10);
 };
 
+const toInputDate = (dateVal?: string | Date | null): string => {
+  if (!dateVal) return '';
+  const str = String(dateVal).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
 export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
   isOpen,
   onClose,
@@ -253,7 +265,13 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
     return allAvailableSeats.filter((s) => s.category === categoryFilter);
   }, [allAvailableSeats, categoryFilter]);
 
-  const monthlyRate = categoryRates[selectedCategory] || 600;
+  // Preserve student's custom admitted monthly rate if same category
+  const studentCustomRate = Number(currentStudent?.planAmount);
+  const isSameCategory = !selectedCategory || selectedCategory === (currentStudent?.seatCategory || currentStudent?.category);
+  const monthlyRate = (studentCustomRate > 0 && isSameCategory)
+    ? studentCustomRate
+    : (categoryRates[selectedCategory] || 600);
+
   const existingPendingDue = Number(currentStudent?.dueAmount || 0);
 
   // Tab: Clear Due vs Renew
@@ -292,12 +310,14 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
         setAmountReceived(studentDue);
       } else {
         setActiveTab('renew');
-        const defaultRate = categoryRates[selectedCategory] || 600;
+        const defaultRate = (studentCustomRate > 0 && isSameCategory)
+          ? studentCustomRate
+          : (categoryRates[selectedCategory] || 600);
         const calc = calculateMultiMonthFee(durationMonths, defaultRate, multiMonthDiscounts);
         setAmountReceived(calc.finalTotal);
       }
     }
-  }, [currentStudent, isInactiveStudent, selectedCategory, selectedSeatNo, durationMonths, categoryRates]);
+  }, [currentStudent, isInactiveStudent, selectedCategory, selectedSeatNo, durationMonths, categoryRates, studentCustomRate, isSameCategory]);
 
   const handleTabSwitch = (tab: 'clear_due' | 'renew') => {
     setActiveTab(tab);
@@ -713,25 +733,28 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                     <Clock size={12} className="text-slate-400" /> Next Due:
                   </span>
                   {isManualDueDate ? (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <input
-                        type="text"
-                        value={customDueDate}
-                        onChange={(e) => setCustomDueDate(e.target.value)}
-                        placeholder="DD MMM YYYY"
-                        className="px-1.5 py-0.5 text-xs font-black rounded border border-[#544bec] bg-white text-slate-900 w-28 focus:outline-none"
+                        type="date"
+                        value={toInputDate(customDueDate || autoNextDueDate)}
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            setCustomDueDate(formatDisplayDate(e.target.value));
+                          }
+                        }}
+                        className="px-2 py-0.5 text-xs font-black rounded-lg border border-[#544bec] bg-white text-slate-900 focus:outline-hidden cursor-pointer shadow-xs"
                       />
                       <button
                         type="button"
                         onClick={() => setIsManualDueDate(false)}
-                        className="text-[10px] text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                        className="text-[11px] text-slate-500 hover:text-slate-800 underline font-semibold cursor-pointer"
                         title="Reset to auto-calculated date"
                       >
                         Reset
                       </button>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
                       <strong className="text-slate-900 font-black">{autoNextDueDate}</strong>
                       <button
                         type="button"
@@ -739,10 +762,11 @@ export const CollectFeeModal: React.FC<CollectFeeModalProps> = ({
                           setCustomDueDate(autoNextDueDate);
                           setIsManualDueDate(true);
                         }}
-                        className="text-[10px] text-[#544bec] hover:underline font-bold cursor-pointer ml-1"
-                        title="Click to manually adjust date"
+                        className="text-[11px] text-[#544bec] hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5"
+                        title="Click to pick a custom date"
                       >
-                        Edit
+                        <Calendar size={12} />
+                        <span>Edit</span>
                       </button>
                     </div>
                   )}

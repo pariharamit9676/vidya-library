@@ -31,9 +31,18 @@ export class StudentModel {
       const dueDate = s.nextDueDate || s.nextFeeDueDate;
       const daysLeft = getDaysUntilDue(dueDate);
 
-      let dynamicStatus = 'Active';
-      if (isDemo) {
+      let dynamicStatus = s.status || 'Active';
+      if (s.status === 'Inactive') {
+        dynamicStatus = 'Inactive';
+      } else if (isDemo || s.status === 'Demo') {
         dynamicStatus = 'Demo';
+      } else if (s.status === 'Active' || s.status === 'Due Soon' || s.status === 'Overdue') {
+        // If admin explicitly set status, honor it unless severely overdue (>40d)
+        if (daysLeft !== null && daysLeft < -40) {
+          dynamicStatus = 'Inactive';
+        } else {
+          dynamicStatus = s.status;
+        }
       } else if (daysLeft !== null && daysLeft > 5) {
         // Due date is in future (>5 days), student is paid and Active
         dynamicStatus = 'Active';
@@ -405,12 +414,15 @@ export class StudentModel {
         name: finalResult.name
       }).catch(() => {});
     }
+    const resolvedStatus = (updates.status !== undefined) ? updates.status : finalResult.status;
+    const finalStatus = isInactive ? 'Inactive' : (resolvedStatus || 'Active');
+
     return {
       ...finalResult,
       id: finalResult.id || String(finalResult._id),
       seatNo: isInactive ? '-' : finalResult.seatNo,
-      status: isInactive ? 'Inactive' : (finalResult.status === 'Inactive' && daysLeft !== null && daysLeft >= 0 ? 'Active' : finalResult.status),
-      feeStatus: isInactive ? 'INACTIVE' : computeFeeStatus(finalResult.nextDueDate, finalResult.dueAmount)
+      status: finalStatus,
+      feeStatus: finalStatus === 'Inactive' ? 'INACTIVE' : computeFeeStatus(finalResult.nextDueDate, finalResult.dueAmount, finalStatus)
     };
   }
 

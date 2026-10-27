@@ -21,7 +21,11 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ defa
 const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage').then(m => ({ default: m.StudentDashboardPage })));
 const StudentAttendancePage = lazy(() => import('./pages/StudentAttendancePage').then(m => ({ default: m.StudentAttendancePage })));
 const StudentReferralPage = lazy(() => import('./pages/StudentReferralPage').then(m => ({ default: m.StudentReferralPage })));
+const StudentTestsPage = lazy(() => import('./pages/StudentTestsPage').then(m => ({ default: m.StudentTestsPage })));
+const StudentLiveTestPage = lazy(() => import('./pages/StudentLiveTestPage').then(m => ({ default: m.StudentLiveTestPage })));
+const StudentTestResultPage = lazy(() => import('./pages/StudentTestResultPage').then(m => ({ default: m.StudentTestResultPage })));
 const AdminReferralsPage = lazy(() => import('./pages/AdminReferralsPage').then(m => ({ default: m.AdminReferralsPage })));
+const AdminMockTestsPage = lazy(() => import('./pages/AdminMockTestsPage').then(m => ({ default: m.AdminMockTestsPage })));
 
 // Sleek lightweight spinner for route transitions
 const PageLoader = () => (
@@ -93,6 +97,30 @@ export default function App() {
                   </ProtectedStudentRoute>
                 }
               />
+              <Route
+                path="/student/tests"
+                element={
+                  <ProtectedStudentRoute>
+                    <StudentTestsPage />
+                  </ProtectedStudentRoute>
+                }
+              />
+              <Route
+                path="/student/test/:id"
+                element={
+                  <ProtectedStudentRoute>
+                    <StudentLiveTestPage />
+                  </ProtectedStudentRoute>
+                }
+              />
+              <Route
+                path="/student/test-result/:attemptId"
+                element={
+                  <ProtectedStudentRoute>
+                    <StudentTestResultPage />
+                  </ProtectedStudentRoute>
+                }
+              />
 
               {/* Direct top-level route redirects */}
               <Route path="/students" element={<Navigate to="/admin/students" replace />} />
@@ -104,6 +132,7 @@ export default function App() {
               <Route path="/referrals" element={<Navigate to="/admin/referrals" replace />} />
               <Route path="/reports" element={<Navigate to="/admin/reports" replace />} />
               <Route path="/receipts" element={<Navigate to="/admin/receipts" replace />} />
+              <Route path="/mock-tests" element={<Navigate to="/admin/mock-tests" replace />} />
 
               {/* Admin Dashboard using Layout & React Router <Outlet /> */}
               <Route
@@ -123,6 +152,7 @@ export default function App() {
                 <Route path="fees" element={<FeesPage />} />
                 <Route path="attendance" element={<AttendancePage />} />
                 <Route path="referrals" element={<AdminReferralsPage />} />
+                <Route path="mock-tests" element={<AdminMockTestsPage />} />
                 <Route
                   path="books"
                   element={

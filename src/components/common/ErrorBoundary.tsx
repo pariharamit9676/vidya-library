@@ -22,6 +22,21 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Unhandled React Error:', error, errorInfo);
+
+    // Auto-recover from dynamic module load failure (e.g. server restarted or offline)
+    const isChunkLoadError =
+      error?.message?.includes('Failed to fetch dynamically imported module') ||
+      error?.message?.includes('Loading chunk') ||
+      error?.message?.includes('error loading dynamically imported module');
+
+    if (isChunkLoadError) {
+      const lastRetry = sessionStorage.getItem('chunk_retry_time');
+      const now = Date.now();
+      if (!lastRetry || now - parseInt(lastRetry, 10) > 8000) {
+        sessionStorage.setItem('chunk_retry_time', now.toString());
+        window.location.reload();
+      }
+    }
   }
 
   private handleReload = () => {

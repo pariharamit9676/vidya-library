@@ -3,6 +3,7 @@ import { SeatLayoutMongo } from '../models/schemas/SeatSchema.js';
 import { CategoryMongo } from '../models/schemas/CategorySchema.js';
 import { PaymentMongo } from '../models/schemas/PaymentSchema.js';
 import { UserMongo } from '../models/schemas/UserSchema.js';
+import { MockTestMongo } from '../models/schemas/MockTestSchema.js';
 
 import { readJsonFile } from './fileStorage.js';
 
@@ -34,6 +35,16 @@ export const seedMongoIfEmpty = async () => {
       }
     }
 
+    // 4. Seed Mock Tests (if none exist)
+    const mockTestCount = await MockTestMongo.countDocuments();
+    if (mockTestCount === 0) {
+      const initialTests = readJsonFile('mock_tests.json', []);
+      if (Array.isArray(initialTests) && initialTests.length > 0) {
+        const sanitized = initialTests.map(({ _id, id, ...rest }) => rest);
+        await MockTestMongo.insertMany(sanitized);
+        console.log(`🍃 [MongoDB] Seeded ${sanitized.length} competitive mock tests into Atlas.`);
+      }
+    }
 
     // 5. Seed Admin
     const userCount = await UserMongo.countDocuments();

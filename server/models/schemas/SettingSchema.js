@@ -44,7 +44,10 @@ export const SettingSchema = new mongoose.Schema({
   geofenceEnabled: { type: Boolean, default: false },
   libraryLatitude: { type: Number, default: 26.2250 },
   libraryLongitude: { type: Number, default: 78.1950 },
-  geofenceRadius: { type: Number, default: 100 }
+  geofenceRadius: { type: Number, default: 100 },
+
+  // Student Portal Feature Controls
+  showMockTests: { type: Boolean, default: true }
 }, {
   timestamps: true
 });
