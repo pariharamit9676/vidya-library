@@ -25,78 +25,7 @@ export class StudentModel {
     }
 
     // Dynamic fee status and student status calculation
-    const processed = students.map((s) => {
-      const isDemo = s.studentType === 'Demo' || s.plan?.includes('Demo');
-      const dueAmt = Number(s.dueAmount) || 0;
-      const dueDate = s.nextDueDate || s.nextFeeDueDate;
-      const daysLeft = getDaysUntilDue(dueDate);
-
-      let dynamicStatus = s.status || 'Active';
-      if (s.status === 'Inactive') {
-        dynamicStatus = 'Inactive';
-      } else if (isDemo || s.status === 'Demo') {
-        dynamicStatus = 'Demo';
-      } else if (s.status === 'Active' || s.status === 'Due Soon' || s.status === 'Overdue') {
-        // If admin explicitly set status, honor it unless severely overdue (>40d)
-        if (daysLeft !== null && daysLeft < -40) {
-          dynamicStatus = 'Inactive';
-        } else {
-          dynamicStatus = s.status;
-        }
-      } else if (daysLeft !== null && daysLeft > 5) {
-        // Due date is in future (>5 days), student is paid and Active
-        dynamicStatus = 'Active';
-      } else if (daysLeft !== null && daysLeft >= 0 && daysLeft <= 5) {
-        dynamicStatus = 'Due Soon';
-      } else if (daysLeft !== null && daysLeft < -40) {
-        // Due for more than 40 days -> Inactive
-        dynamicStatus = 'Inactive';
-      } else if (daysLeft !== null && daysLeft < 0) {
-        dynamicStatus = 'Overdue';
-      } else {
-        dynamicStatus = 'Active';
-      }
-
-      let feeStatus = isDemo ? 'PAID' : computeFeeStatus(dueDate, dueAmt, dynamicStatus);
-
-      // If student is Inactive, their seat MUST automatically be unassigned
-      let currentSeatNo = s.seatNo;
-      if (dynamicStatus === 'Inactive' || (s.status === 'Inactive' && daysLeft !== null && daysLeft < 0)) {
-        dynamicStatus = 'Inactive';
-        feeStatus = 'INACTIVE';
-        if (currentSeatNo && currentSeatNo !== '-') {
-          const oldSeat = currentSeatNo;
-          currentSeatNo = '-';
-          // Auto-unassign seat from student in Mongo & file
-          if (isMongoConnected() && s._id) {
-            StudentMongo.updateOne({ _id: s._id }, { $set: { seatNo: '-', status: 'Inactive' } }).catch(() => {});
-          }
-          const localList = readJsonFile(FILE_NAME, []);
-          const matchLocal = localList.find(x => x.studentId === s.studentId || String(x._id) === String(s._id));
-          if (matchLocal && matchLocal.seatNo !== '-') {
-            matchLocal.seatNo = '-';
-            matchLocal.status = 'Inactive';
-            writeJsonFile(FILE_NAME, localList);
-          }
-          SeatModel.unassignByStudent({
-            id: s.id || (s._id ? String(s._id) : undefined),
-            studentId: s.studentId,
-            seatNo: oldSeat,
-            phone: s.phone,
-            name: s.name
-          }).catch(() => {});
-        }
-      }
-
-      return {
-        ...s,
-        id: s.id || String(s._id),
-        status: dynamicStatus,
-        seatNo: dynamicStatus === 'Inactive' ? '-' : currentSeatNo,
-        dueAmount: dueAmt,
-        feeStatus: feeStatus
-      };
-    });
+    const processed = students.map((s) => this.processStudentRecord(s));
 
     let result = processed;
 
@@ -116,7 +45,11 @@ export class StudentModel {
     }
 
     if (filters.status && filters.status !== 'All') {
-      result = result.filter((s) => s.status === filters.status);
+      if (filters.status === 'Active') {
+        result = result.filter((s) => s.status === 'Active' || s.status === 'Due Soon');
+      } else {
+        result = result.filter((s) => s.status === filters.status);
+      }
     }
 
     if (filters.shift && filters.shift !== 'All') {
@@ -128,6 +61,131 @@ export class StudentModel {
     }
 
     return result;
+  }
+
+  /**
+   * Processes a student record: dynamically evaluates lifecycle status (Active, Due Soon, Overdue, Inactive),
+   * fee status, unassigns seat if overdue >40d/inactive, and syncs status back to MongoDB if changed.
+   */
+  static processStudentRecord(s) {
+    if (!s) return null;
+    const isDemo = s.studentType === 'Demo' || s.plan?.includes('Demo');
+    const dueAmt = Number(s.dueAmount) || 0;
+    const dueDate = s.nextDueDate || s.nextFeeDueDate;
+    const daysLeft = getDaysUntilDue(dueDate);
+
+    let dynamicStatus = s.status || 'Active';
+    if (s.status === 'Inactive') {
+      dynamicStatus = 'Inactive';
+    } else if (isDemo || s.status === 'Demo') {
+      dynamicStatus = 'Demo';
+    } else if (daysLeft !== null && daysLeft < -40) {
+      // Due for more than 40 days -> Inactive
+      dynamicStatus = 'Inactive';
+    } else if (daysLeft !== null && daysLeft < 0) {
+      // Past renewal date -> Overdue
+      dynamicStatus = 'Overdue';
+    } else if (daysLeft !== null && daysLeft <= 5) {
+      // Renewal date is within 5 days -> Due Soon
+      dynamicStatus = 'Due Soon';
+    } else if (daysLeft !== null && daysLeft > 5) {
+      // Renewal date is in future (>5 days) -> Active
+      dynamicStatus = 'Active';
+    } else {
+      dynamicStatus = s.status || 'Active';
+    }
+
+    let feeStatus = isDemo ? 'PAID' : computeFeeStatus(dueDate, dueAmt, dynamicStatus);
+
+    // If student is Inactive, their seat MUST automatically be unassigned
+    let currentSeatNo = s.seatNo;
+    if (dynamicStatus === 'Inactive' || (s.status === 'Inactive' && daysLeft !== null && daysLeft < 0)) {
+      dynamicStatus = 'Inactive';
+      feeStatus = 'INACTIVE';
+      if (currentSeatNo && currentSeatNo !== '-') {
+        const oldSeat = currentSeatNo;
+        currentSeatNo = '-';
+        // Auto-unassign seat from student in Mongo & file
+        if (isMongoConnected() && s._id) {
+          StudentMongo.updateOne({ _id: s._id }, { $set: { seatNo: '-', status: 'Inactive' } }).catch(() => {});
+        }
+        const localList = readJsonFile(FILE_NAME, []);
+        const matchLocal = localList.find(x => x.studentId === s.studentId || String(x._id) === String(s._id));
+        if (matchLocal && matchLocal.seatNo !== '-') {
+          matchLocal.seatNo = '-';
+          matchLocal.status = 'Inactive';
+          writeJsonFile(FILE_NAME, localList);
+        }
+        SeatModel.unassignByStudent({
+          id: s.id || (s._id ? String(s._id) : undefined),
+          studentId: s.studentId,
+          seatNo: oldSeat,
+          phone: s.phone,
+          name: s.name
+        }).catch(() => {});
+      }
+    }
+
+    // Auto-sync dynamic status change back to MongoDB Atlas in background
+    if (isMongoConnected() && s._id && dynamicStatus !== s.status) {
+      StudentMongo.updateOne({ _id: s._id }, { $set: { status: dynamicStatus } }).catch(() => {});
+    }
+
+    return {
+      ...s,
+      id: s.id || String(s._id),
+      status: dynamicStatus,
+      seatNo: dynamicStatus === 'Inactive' ? '-' : currentSeatNo,
+      dueAmount: dueAmt,
+      feeStatus: feeStatus
+    };
+  }
+
+  /**
+   * Scans and syncs all student lifecycle statuses across MongoDB Atlas based on due dates
+   */
+  static async syncAllStatuses() {
+    if (isMongoConnected()) {
+      try {
+        const students = await StudentMongo.find({}).lean();
+        const bulkOps = [];
+        for (const s of students) {
+          if (s.status === 'Inactive') continue;
+          const isDemo = s.studentType === 'Demo' || s.plan?.includes('Demo');
+          if (isDemo || s.status === 'Demo') continue;
+
+          const dueDate = s.nextDueDate || s.nextFeeDueDate;
+          const daysLeft = getDaysUntilDue(dueDate);
+          if (daysLeft === null) continue;
+
+          let targetStatus = s.status || 'Active';
+          if (daysLeft < -40) {
+            targetStatus = 'Inactive';
+          } else if (daysLeft < 0) {
+            targetStatus = 'Overdue';
+          } else if (daysLeft <= 5) {
+            targetStatus = 'Due Soon';
+          } else {
+            targetStatus = 'Active';
+          }
+
+          if (targetStatus !== s.status) {
+            bulkOps.push({
+              updateOne: {
+                filter: { _id: s._id },
+                update: { $set: { status: targetStatus } }
+              }
+            });
+          }
+        }
+        if (bulkOps.length > 0) {
+          await StudentMongo.bulkWrite(bulkOps);
+          console.log(`🍃 [Status Sync] Synced ${bulkOps.length} student statuses in MongoDB Atlas.`);
+        }
+      } catch (err) {
+        console.error('🍃 [Status Sync Error]:', err.message);
+      }
+    }
   }
 
   static async getById(id) {
@@ -151,10 +209,7 @@ export class StudentModel {
         }
         const found = await StudentMongo.findOne({ $or: orConditions }).lean();
         if (found) {
-          return {
-            ...found,
-            id: found.id || String(found._id)
-          };
+          return this.processStudentRecord(found);
         }
       } catch (err) {
         console.warn('Mongo getById fallback to getAll:', err.message);

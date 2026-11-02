@@ -333,22 +333,10 @@
       "isSeat": true,
       "seatNumber": 21,
       "category": "Normal",
-      "status": "Occupied",
+      "status": "Available",
       "monthlyFee": 600,
       "addedOn": "12 Aug 2026, 10:30 AM",
-      "assignedStudent": {
-        "id": "6ad730dc71dfe9aab1455cf8",
-        "_id": "6ad730dc71dfe9aab1455cf8",
-        "studentId": "#STU024",
-        "name": "Lavkush",
-        "phone": "8815931698",
-        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Lavkush",
-        "admissionDate": "01 Sept 2026",
-        "nextFeeDueDate": "01 Oct 2026",
-        "plan": "Monthly",
-        "isCheckedIn": false,
-        "currentCheckInTime": null
-      }
+      "assignedStudent": null
     },
     {
       "id": "cell-2-9-1792061054368-7ncp",
@@ -585,10 +573,22 @@
       "isSeat": true,
       "seatNumber": 35,
       "category": "Normal",
-      "status": "Available",
+      "status": "Occupied",
       "monthlyFee": 600,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": null
+      "assignedStudent": {
+        "id": "6ae33fe149bd4820ae3eb6e4",
+        "_id": "6ae33fe149bd4820ae3eb6e4",
+        "studentId": "#STU074",
+        "name": "Aakanksha",
+        "phone": "7987041467",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Aakanksha",
+        "admissionDate": "26 Oct 2026",
+        "nextFeeDueDate": "26 Nov 2026",
+        "plan": "Monthly",
+        "isCheckedIn": false,
+        "currentCheckInTime": null
+      }
     },
     {
       "id": "cell-3-10-1792061054570-cyci",
@@ -741,22 +741,10 @@
       "isSeat": true,
       "seatNumber": 44,
       "category": "Normal",
-      "status": "Occupied",
+      "status": "Available",
       "monthlyFee": 600,
       "addedOn": "12 Aug 2026, 10:30 AM",
-      "assignedStudent": {
-        "id": "6adaf2776e6a6d04dea0c674",
-        "_id": "6adaf2776e6a6d04dea0c674",
-        "studentId": "#STU064",
-        "name": "Durgesh singh",
-        "phone": "8871927814",
-        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Durgesh",
-        "admissionDate": "11 Sept 2026",
-        "nextFeeDueDate": "11 Oct 2026",
-        "plan": "Monthly",
-        "isCheckedIn": false,
-        "currentCheckInTime": null
-      }
+      "assignedStudent": null
     },
     {
       "id": "cell-4-6",
@@ -1029,10 +1017,22 @@
       "isSeat": true,
       "seatNumber": 59,
       "category": "Normal",
-      "status": "Available",
+      "status": "Occupied",
       "monthlyFee": 600,
       "addedOn": "12 Aug 2026, 10:30 AM",
-      "assignedStudent": null
+      "assignedStudent": {
+        "id": "6ae1e87549bd4820ae3eb6d1",
+        "_id": "6ae1e87549bd4820ae3eb6d1",
+        "studentId": "#STU070",
+        "name": "Sunil kaurav",
+        "phone": "9039858365",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Sunil%20kaurav",
+        "admissionDate": "31 Oct 2026",
+        "nextFeeDueDate": "30 Nov 2026",
+        "plan": "Monthly",
+        "isCheckedIn": false,
+        "currentCheckInTime": null
+      }
     },
     {
       "id": "cell-5-8",
@@ -1113,22 +1113,10 @@
       "isSeat": true,
       "seatNumber": 64,
       "category": "Normal",
-      "status": "Occupied",
+      "status": "Available",
       "monthlyFee": 600,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": {
-        "id": "6ad745c771dfe9aab1455d32",
-        "_id": "6ad745c771dfe9aab1455d32",
-        "studentId": "#STU053",
-        "name": "Shalini rajput",
-        "phone": "8871927810",
-        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Shalini%20rajput",
-        "admissionDate": "21 Sept 2026",
-        "nextFeeDueDate": "21 Oct 2026",
-        "plan": "Monthly",
-        "isCheckedIn": false,
-        "currentCheckInTime": null
-      }
+      "assignedStudent": null
     },
     {
       "id": "cell-5-13-1792061059580-ggjy",
@@ -1473,22 +1461,10 @@
       "isSeat": true,
       "seatNumber": 84,
       "category": "Normal",
-      "status": "Occupied",
+      "status": "Available",
       "monthlyFee": 600,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": {
-        "id": "6ad743ae71dfe9aab1455d2a",
-        "_id": "6ad743ae71dfe9aab1455d2a",
-        "studentId": "#STU049",
-        "name": "Dushyant gurjar",
-        "phone": "6265609772",
-        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Dushyant%20gurjar",
-        "admissionDate": "20 Oct 2026",
-        "nextFeeDueDate": "20 Nov 2026",
-        "plan": "Monthly",
-        "isCheckedIn": false,
-        "currentCheckInTime": null
-      }
+      "assignedStudent": null
     },
     {
       "id": "cell-7-7-1792051910326-bwki",
@@ -1557,10 +1533,22 @@
       "isSeat": true,
       "seatNumber": 89,
       "category": "Normal",
-      "status": "Available",
+      "status": "Occupied",
       "monthlyFee": 600,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": null
+      "assignedStudent": {
+        "id": "6ae33e1449bd4820ae3eb6de",
+        "_id": "6ae33e1449bd4820ae3eb6de",
+        "studentId": "#STU071",
+        "name": "Jayashahay sharma",
+        "phone": "7697985083",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Jayashahay%20sharma",
+        "admissionDate": "02 Oct 2026",
+        "nextFeeDueDate": "02 Nov 2026",
+        "plan": "Monthly",
+        "isCheckedIn": false,
+        "currentCheckInTime": null
+      }
     },
     {
       "id": "cell-7-12-1792061054987-r5d0",
@@ -1701,10 +1689,22 @@
       "isSeat": true,
       "seatNumber": 98,
       "category": "Normal",
-      "status": "Available",
+      "status": "Occupied",
       "monthlyFee": 600,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": null
+      "assignedStudent": {
+        "id": "6ae33f0149bd4820ae3eb6e0",
+        "_id": "6ae33f0149bd4820ae3eb6e0",
+        "studentId": "#STU072",
+        "name": "Rinky hinnoliya",
+        "phone": "8349482941",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Rinky%20hinnoliya",
+        "admissionDate": "26 Oct 2026",
+        "nextFeeDueDate": "26 Nov 2026",
+        "plan": "Monthly",
+        "isCheckedIn": false,
+        "currentCheckInTime": null
+      }
     },
     {
       "id": "cell-8-8-1792051910917-hizu",
@@ -2173,14 +2173,14 @@
       "monthlyFee": 700,
       "addedOn": "15 Oct 2026",
       "assignedStudent": {
-        "id": "6ad70bc171dfe9aab1455ce2",
-        "_id": "6ad70bc171dfe9aab1455ce2",
-        "studentId": "#STU014",
-        "name": "abhishek bhadoriya",
-        "phone": "8349070558",
-        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=abhishek%20bhadoriya",
-        "admissionDate": "10 Oct 2026",
-        "nextFeeDueDate": "10 Nov 2026",
+        "id": "6ae09c466e6a6d04dea0c689",
+        "_id": "6ae09c466e6a6d04dea0c689",
+        "studentId": "#STU069",
+        "name": "Priya hinnoliya",
+        "phone": "8103721431",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Priya%20hinnoliya",
+        "admissionDate": "26 Oct 2026",
+        "nextFeeDueDate": "26 Nov 2026",
         "plan": "Monthly",
         "isCheckedIn": false,
         "currentCheckInTime": null
@@ -2205,10 +2205,22 @@
       "isSeat": true,
       "seatNumber": 129,
       "category": "Locker",
-      "status": "Available",
+      "status": "Occupied",
       "monthlyFee": 700,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": null
+      "assignedStudent": {
+        "id": "6ad70bc171dfe9aab1455ce2",
+        "_id": "6ad70bc171dfe9aab1455ce2",
+        "studentId": "#STU014",
+        "name": "abhishek bhadoriya",
+        "phone": "8349070558",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=abhishek%20bhadoriya",
+        "admissionDate": "10 Oct 2026",
+        "nextFeeDueDate": "10 Nov 2026",
+        "plan": "Monthly",
+        "isCheckedIn": false,
+        "currentCheckInTime": null
+      }
     },
     {
       "id": "cell-10-13-1792061059582-qut0",
@@ -2469,10 +2481,22 @@
       "isSeat": true,
       "seatNumber": 145,
       "category": "Locker",
-      "status": "Available",
+      "status": "Occupied",
       "monthlyFee": 700,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": null
+      "assignedStudent": {
+        "id": "6ae33f4449bd4820ae3eb6e2",
+        "_id": "6ae33f4449bd4820ae3eb6e2",
+        "studentId": "#STU073",
+        "name": "Ajay singh",
+        "phone": "7715061518",
+        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Ajay%20singh",
+        "admissionDate": "28 Oct 2026",
+        "nextFeeDueDate": "28 Nov 2026",
+        "plan": "Monthly",
+        "isCheckedIn": false,
+        "currentCheckInTime": null
+      }
     },
     {
       "id": "cell-12-3-1792061051084-qm5w",
@@ -2553,22 +2577,10 @@
       "isSeat": true,
       "seatNumber": 152,
       "category": "Locker",
-      "status": "Occupied",
+      "status": "Available",
       "monthlyFee": 700,
       "addedOn": "15 Oct 2026",
-      "assignedStudent": {
-        "id": "6ad73d4271dfe9aab1455d1a",
-        "_id": "6ad73d4271dfe9aab1455d1a",
-        "studentId": "#STU041",
-        "name": "Alok sharma",
-        "phone": "7987387987",
-        "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Alok%20sharma",
-        "admissionDate": "14 Sept 2026",
-        "nextFeeDueDate": "14 Oct 2026",
-        "plan": "Monthly",
-        "isCheckedIn": false,
-        "currentCheckInTime": null
-      }
+      "assignedStudent": null
     },
     {
       "id": "cell-12-10-1792061054572-pfmg",

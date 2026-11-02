@@ -7,8 +7,8 @@ export const mockTestController = {
    */
   async getAllTests(req, res) {
     try {
-      const { exam, subject } = req.query;
-      const tests = await MockTestModel.getAll({ exam, subject });
+      const { exam, subject, studentId } = req.query;
+      const tests = await MockTestModel.getAll({ exam, subject, studentId });
       
       // Return summaries (strip questions to keep payload small)
       const summaries = tests.map(t => ({
@@ -27,6 +27,7 @@ export const mockTestController = {
         negativeMarks: t.negativeMarks,
         questionsCount: t.questionsCount || (t.questions ? t.questions.length : 0),
         createdBy: t.createdBy,
+        createdById: t.createdById,
         isAiGenerated: t.isAiGenerated,
         attemptsCount: t.attemptsCount || 0,
         createdAt: t.createdAt
@@ -96,24 +97,26 @@ export const mockTestController = {
         topic = 'General',
         difficulty = 'Medium',
         count = 10,
-        language = 'Hindi',
+        language = 'Bilingual',
         studentName = 'Student',
         studentId = null
       } = req.body;
 
       const questionCount = Math.min(Math.max(Number(count) || 10, 5), 100);
-      const testTitle = questionCount === 100
-        ? `${exam} Full Mock Paper: 100 Questions (${topic || subject})`
+      const hasSpecificExam = exam && !exam.includes('General') && !exam.includes('All Exams') && exam !== 'Other';
+      const examPrefix = hasSpecificExam ? `[${exam}] ` : '';
+      const testTitle = questionCount >= 100
+        ? `${examPrefix}Full Mock Paper: 100 Questions (${topic || subject})`
         : questionCount >= 50
-        ? `${exam} Half Mock: ${questionCount} Questions (${topic || subject})`
-        : `${exam} Special: ${topic || subject} Practice Test`;
+        ? `${examPrefix}Practice Test: ${questionCount} Questions (${topic || subject})`
+        : `${topic || subject} Practice Test (${subject})`;
 
       // 1. Fetch recent questions from DB to ensure brand-new, never-repeated questions
       const recentQuestions = await MockTestModel.getRecentQuestions({
         exam,
         subject,
         topic,
-        limit: 40
+        limit: Math.min(questionCount * 2, 25)
       });
 
       // 2. Generate brand-new, unique questions via AI with anti-repetition filter
@@ -126,6 +129,13 @@ export const mockTestController = {
         language,
         excludeQuestions: recentQuestions
       });
+
+      if (!questions || questions.length === 0) {
+        return res.status(500).json({
+          success: false,
+          message: `Unable to compile practice questions for "${topic || subject}". Please try again.`
+        });
+      }
 
       const marksPerQuestion = 2;
       const negativeMarks = 0.5;

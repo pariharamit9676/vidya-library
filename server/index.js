@@ -51,6 +51,11 @@ const startServer = async () => {
     } catch (resetErr) {
       console.error('🍃 [Attendance Reset Error]:', resetErr.message);
     }
+    try {
+      await StudentModel.syncAllStatuses();
+    } catch (syncErr) {
+      console.error('🍃 [Status Sync Error]:', syncErr.message);
+    }
   }
 
   // Always migrate any student missing a referral code (MongoDB and local store)
@@ -59,6 +64,15 @@ const startServer = async () => {
   } catch (migErr) {
     console.error('🍃 [Referral Migration Error]:', migErr.message);
   }
+
+  // Periodic hourly sync of student lifecycle statuses so transitions to Overdue happen automatically
+  setInterval(async () => {
+    try {
+      await StudentModel.syncAllStatuses();
+    } catch (e) {
+      console.error('Periodic status sync error:', e.message);
+    }
+  }, 60 * 60 * 1000);
 
   const server = app.listen(ENV.PORT, () => {
     console.log(`===============================================`);

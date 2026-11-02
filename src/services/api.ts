@@ -258,10 +258,11 @@ export const referralApiService = {
 
 // 9. Mock Test Service
 export const mockTestService = {
-  getAll: (params?: { exam?: string; subject?: string }) => {
+  getAll: (params?: { exam?: string; subject?: string; studentId?: string }) => {
     const q = new URLSearchParams();
     if (params?.exam && params.exam !== 'All') q.append('exam', params.exam);
     if (params?.subject && params.subject !== 'All') q.append('subject', params.subject);
+    if (params?.studentId) q.append('studentId', params.studentId);
     const qs = q.toString();
     return request<any[]>(`/mock-tests${qs ? `?${qs}` : ''}`);
   },

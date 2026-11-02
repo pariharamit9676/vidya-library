@@ -21,7 +21,7 @@ export const MockTestSchema = new mongoose.Schema({
   exam: { type: String, required: true, default: 'SSC' }, // 'SSC', 'Railways', 'MP Police', 'Banking', 'UPSC', 'General'
   subject: { type: String, default: 'General Studies' },
   topic: { type: String, default: 'General' },
-  difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'], default: 'Medium' },
+  difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard', 'Very Hard', 'Ultra Hard'], default: 'Medium' },
   language: { type: String, enum: ['Hindi', 'English', 'Bilingual'], default: 'Hindi' },
   durationMinutes: { type: Number, required: true, default: 20 },
   totalMarks: { type: Number, required: true, default: 40 },

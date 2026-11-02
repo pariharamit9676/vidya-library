@@ -106,7 +106,11 @@ export const StudentsPage: React.FC = () => {
 
       // 2. Status filter
       if (filters.status !== 'All') {
-        if (s.status !== filters.status) return false;
+        if (filters.status === 'Active') {
+          if (s.status !== 'Active' && s.status !== 'Due Soon') return false;
+        } else if (s.status !== filters.status) {
+          return false;
+        }
       }
 
       // 3. Plan filter

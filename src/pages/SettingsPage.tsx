@@ -988,7 +988,7 @@ export const SettingsPage: React.FC = () => {
                     Controls visibility of the Mock Tests banner on the student home dashboard and the practice test link in the student profile menu.
                   </p>
                   <p className="text-[11px] text-[#8F9BB3] mt-1 m-0">
-                    Target Exams: SSC, MP Police, Railways & Banking test generator with instant solutions.
+                    Subject & topic-wise practice test generator across Reasoning, Math, Science & GK.
                   </p>
                 </div>
               </div>
@@ -1047,14 +1047,14 @@ export const SettingsPage: React.FC = () => {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs sm:text-sm font-black tracking-tight">
-                          Competitive Exam Mock Tests & CBT
+                          Online CBT Mock Tests & Chapter Practice Hub
                         </span>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">
-                          AI Generator
+                          All Subjects
                         </span>
                       </div>
                       <p className="text-[11px] text-indigo-100/80 mt-0.5 truncate m-0">
-                        SSC, MP Police, Railways & Banking practice tests. Custom topic tests with instant solutions!
+                        Practice Reasoning, Math, Science & GK chapter-wise or take full mock papers!
                       </p>
                     </div>
                   </div>

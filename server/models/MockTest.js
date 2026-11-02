@@ -21,6 +21,12 @@ export class MockTestModel {
         if (filter.subject && filter.subject !== 'All') {
           query.subject = filter.subject;
         }
+        if (filter.studentId) {
+          query.$or = [
+            { createdById: filter.studentId },
+            { createdBy: { $regex: filter.studentId, $options: 'i' } }
+          ];
+        }
         const list = await MockTestMongo.find(query).sort({ createdAt: -1 }).lean();
         return list.map(item => ({
           ...item,
@@ -36,6 +42,12 @@ export class MockTestModel {
       if (item.isPublished === false) return false;
       if (filter.exam && filter.exam !== 'All' && item.exam !== filter.exam) return false;
       if (filter.subject && filter.subject !== 'All' && item.subject !== filter.subject) return false;
+      if (filter.studentId) {
+        const matchesStudent =
+          String(item.createdById) === String(filter.studentId) ||
+          (item.createdBy && String(item.createdBy).includes(String(filter.studentId)));
+        if (!matchesStudent) return false;
+      }
       return true;
     });
   }
@@ -64,19 +76,24 @@ export class MockTestModel {
   /**
    * Fetch recent question strings to prevent duplicates in newly generated tests
    */
-  static async getRecentQuestions({ exam, subject, topic, limit = 40 } = {}) {
+  static async getRecentQuestions({ exam, subject, topic, limit = 300 } = {}) {
     const questionSnippets = new Set();
+    const cleanSub = String(subject || '').toLowerCase().trim();
+    const cleanTopic = String(topic || '').toLowerCase().trim();
 
     // 1. Fetch from Mongo if connected
     if (isMongoConnected()) {
       try {
         const query = {};
-        if (subject && subject !== 'All') {
-          query.subject = subject;
+        if (cleanSub && cleanSub !== 'all' && !cleanSub.includes('full')) {
+          query.subject = new RegExp(cleanSub.replace(/[^a-z0-9]/gi, '.*'), 'i');
+        }
+        if (cleanTopic && cleanTopic !== 'all' && !cleanTopic.includes('general')) {
+          query.topic = new RegExp(cleanTopic.replace(/[^a-z0-9]/gi, '.*'), 'i');
         }
         const recentTests = await MockTestMongo.find(query)
           .sort({ createdAt: -1 })
-          .limit(10)
+          .limit(30)
           .select('questions')
           .lean();
 
@@ -100,7 +117,18 @@ export class MockTestModel {
     if (questionSnippets.size < limit) {
       const localList = readJsonFile(MOCK_TESTS_FILE, []);
       for (const test of localList) {
-        if (subject && subject !== 'All' && test.subject !== subject) continue;
+        const testSub = String(test.subject || '').toLowerCase().trim();
+        const testTopic = String(test.topic || '').toLowerCase().trim();
+
+        const matchSub = !cleanSub || cleanSub === 'all' || cleanSub.includes('full') ||
+                         (testSub && (testSub.includes(cleanSub) || cleanSub.includes(testSub)));
+        const matchTopic = !cleanTopic || cleanTopic === 'general' ||
+                           (testTopic && (testTopic.includes(cleanTopic) || cleanTopic.includes(testTopic)));
+
+        if (!matchSub && !matchTopic) {
+          continue;
+        }
+
         if (Array.isArray(test.questions)) {
           for (const q of test.questions) {
             if (q?.question && typeof q.question === 'string') {

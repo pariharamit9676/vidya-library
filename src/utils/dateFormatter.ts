@@ -77,9 +77,42 @@ export const addMonthsFormatted = (startDate: string | Date = new Date(), months
 };
 
 /**
+ * Safely parses any date string (including DD MMM YYYY, Sept/Sep, DD-MM-YYYY, YYYY-MM-DD, ISO) into a valid Date object.
+ */
+export const parseDateSafely = (dateVal?: string | Date | number | null): Date | null => {
+  if (!dateVal) return null;
+  if (dateVal instanceof Date) {
+    return isNaN(dateVal.getTime()) ? null : new Date(dateVal.getTime());
+  }
+
+  const str = String(dateVal).trim();
+  if (!str || str === '-' || str === 'null' || str === 'undefined') return null;
+
+  // Handle DD/MM/YYYY or DD-MM-YYYY
+  if (/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/.test(str)) {
+    const parts = str.split(/[-/]/).map(Number);
+    const d = new Date(parts[2], parts[1] - 1, parts[0]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Handle YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const [y, m, d] = str.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return isNaN(dateObj.getTime()) ? null : dateObj;
+  }
+
+  // Normalize 4-letter "Sept" to standard 3-letter "Sep" for cross-browser reliability
+  const normalizedStr = str.replace(/\bSept\b/gi, 'Sep');
+  const d = new Date(normalizedStr);
+  return isNaN(d.getTime()) ? null : d;
+};
+
+/**
  * Calculates days remaining until a due date.
  * Returns null if invalid date.
- * Negative number = days overdue.
+ * Negative number = days overdue (e.g. -1 means 1 day overdue).
+ * 0 = due today.
  * Positive number = days until due.
  */
 export const getDaysUntilDue = (dueDateStr?: string | Date | number | null): number | null => {
@@ -87,8 +120,8 @@ export const getDaysUntilDue = (dueDateStr?: string | Date | number | null): num
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const due = new Date(dueDateStr);
-  if (isNaN(due.getTime())) return null;
+  const due = parseDateSafely(dueDateStr);
+  if (!due || isNaN(due.getTime())) return null;
   due.setHours(0, 0, 0, 0);
 
   const diffTime = due.getTime() - today.getTime();
@@ -118,10 +151,10 @@ export const computeFeeStatus = (
  * Computes student lifecycle status:
  * - 'Demo': Demo student
  * - 'Inactive': Overdue by more than 40 days (daysLeft < -40) or marked Inactive
- * - 'Overdue': Past renewal date (0 to 40 days overdue)
- * - 'Due Soon': Next renewal due within 5 days (daysLeft <= 5)
- * - 'Active': Regular, paid up-to-date
- * Note: Having a partial pending balance due does NOT set status to 'Due Soon'.
+ * - 'Overdue': Past renewal date (daysLeft < 0, 0 to 40 days overdue)
+ * - 'Due Soon': Next renewal due within 5 days (0 <= daysLeft <= 5)
+ * - 'Active': Regular, paid up-to-date (daysLeft > 5)
+ * Note: If renewal date has passed (daysLeft < 0), status is strictly Overdue.
  */
 export const computeStudentStatus = (student: {
   studentType?: string;
@@ -142,7 +175,7 @@ export const computeStudentStatus = (student: {
     return 'Demo';
   }
 
-  // Explicit status set by Admin takes precedence
+  // Explicit status set by Admin to Inactive takes precedence
   if (student.status === 'Inactive') {
     return 'Inactive';
   }
@@ -150,36 +183,31 @@ export const computeStudentStatus = (student: {
   const dueDate = student.nextDueDate || student.nextFeeDueDate;
   const daysLeft = getDaysUntilDue(dueDate);
 
-  // If explicitly set to Active by Admin, honor it if not heavily overdue (>40d)
-  if (student.status === 'Active' && (daysLeft === null || daysLeft >= -40)) {
+  // If no due date is available, fallback to stored status or Active
+  if (daysLeft === null) {
+    if (student.status === 'Overdue' || student.status === 'Due Soon' || student.status === 'Active') {
+      return student.status as any;
+    }
     return 'Active';
-  }
-
-  if (student.status === 'Overdue' || student.status === 'Due Soon') {
-    return student.status;
-  }
-
-  // Fallback to dynamic computation based on renewal dates
-  if (daysLeft !== null && daysLeft > 5) {
-    return 'Active';
-  }
-
-  // Renewal due within 5 days -> Due Soon
-  if (daysLeft !== null && daysLeft >= 0 && daysLeft <= 5) {
-    return 'Due Soon';
   }
 
   // Overdue by more than 40 days -> Inactive
-  if (daysLeft !== null && daysLeft < -40) {
+  if (daysLeft < -40) {
     return 'Inactive';
   }
 
-  // Past due by 0 to 40 days -> Overdue
-  if (daysLeft !== null && daysLeft < 0) {
+  // Past renewal date (0 to 40 days overdue) -> Overdue
+  if (daysLeft < 0) {
     return 'Overdue';
   }
 
-  return (student.status as any) || 'Active';
+  // Renewal due within 5 days (0 to 5 days remaining) -> Due Soon
+  if (daysLeft <= 5) {
+    return 'Due Soon';
+  }
+
+  // Due date is > 5 days in the future -> Active
+  return 'Active';
 };
 
 /**

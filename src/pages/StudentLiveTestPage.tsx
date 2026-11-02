@@ -268,7 +268,7 @@ export const StudentLiveTestPage: React.FC = () => {
               {test.title}
             </h1>
             <div className="flex items-center gap-2 text-[10px] text-[#8F9BB3] font-medium">
-              <span>{test.exam}</span>
+              <span>{test.subject || test.exam || 'Practice Test'}</span>
               <span>•</span>
               <span>Marks: +{test.marksPerQuestion || 2}, -{test.negativeMarks || 0.5}</span>
             </div>
@@ -340,7 +340,7 @@ export const StudentLiveTestPage: React.FC = () => {
           {/* Question Text & Options */}
           <div className="p-5 sm:p-7 flex-1 overflow-y-auto space-y-6">
             {/* Question Text */}
-            <div className="text-sm sm:text-base font-bold text-[#192038] leading-relaxed">
+            <div className="text-sm sm:text-base font-bold text-[#192038] leading-relaxed whitespace-pre-line">
               {currentQ?.question}
             </div>
 
@@ -367,7 +367,7 @@ export const StudentLiveTestPage: React.FC = () => {
                     >
                       {opt.id}
                     </div>
-                    <span className="text-xs sm:text-sm font-medium text-[#192038] leading-snug">
+                    <span className="text-xs sm:text-sm font-medium text-[#192038] leading-snug whitespace-pre-line">
                       {opt.text}
                     </span>
                   </div>
@@ -435,7 +435,7 @@ export const StudentLiveTestPage: React.FC = () => {
             <div className="min-w-0 flex-1">
               <div className="text-xs font-black text-[#192038] truncate">{studentName || 'Student'}</div>
               <div className="text-[10px] text-[#8F9BB3] font-semibold truncate">
-                Roll No: {studentRollNo || 'CBT-01'} • {test.exam}
+                Roll No: {studentRollNo || 'CBT-01'} • {test.subject || test.exam || 'Practice'}
               </div>
             </div>
           </div>

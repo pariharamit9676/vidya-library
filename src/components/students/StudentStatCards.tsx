@@ -9,7 +9,7 @@ interface StudentStatCardsProps {
 export const StudentStatCards: React.FC<StudentStatCardsProps> = ({ students = [] }) => {
   const metrics = useMemo(() => {
     const total = students.length;
-    const active = students.filter((s) => s.status === 'Active').length;
+    const active = students.filter((s) => s.status === 'Active' || s.status === 'Due Soon').length;
     const inactive = students.filter((s) => s.status === 'Inactive').length;
     const dueStudents = students.filter((s) => s.status === 'Due Soon' || s.status === 'Overdue');
     const totalDueAmount = dueStudents.reduce(

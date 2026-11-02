@@ -624,7 +624,7 @@ export const StudentDashboardPage: React.FC = () => {
                         className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#192038] hover:bg-[#EEF0FD] hover:text-[#544bec] rounded-xl transition-colors cursor-pointer text-left"
                       >
                         <Sparkles size={15} className="text-[#544bec]" />
-                        <span>Mock Tests & CBT (AI Practice)</span>
+                        <span>Online CBT Mock Tests & Practice</span>
                       </button>
                     )}
 
@@ -1128,14 +1128,14 @@ export const StudentDashboardPage: React.FC = () => {
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs sm:text-sm font-black tracking-tight">
-                    Competitive Exam Mock Tests & CBT
+                    Online CBT Mock Tests & Chapter Practice Hub
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">
-                    AI Generator
+                    All Subjects
                   </span>
                 </div>
                 <p className="text-[11px] text-indigo-100/80 mt-0.5 truncate m-0">
-                  SSC, MP Police, Railways & Banking practice tests. Custom topic tests with instant solutions!
+                  Practice Reasoning, Math, Science & GK chapter-wise or take full mock papers!
                 </p>
               </div>
             </div>

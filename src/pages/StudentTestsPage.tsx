@@ -5,97 +5,135 @@ import { useLibrary } from '../context/LibraryContext';
 import { mockTestService } from '../services/api';
 import { formatDisplayDate } from '../utils/dateFormatter';
 import {
-  BookOpen,
   Sparkles,
   ArrowLeft,
-  Clock,
   Award,
-  CheckCircle2,
-  AlertCircle,
   Play,
   RotateCcw,
-  BarChart2,
   Search,
-  Filter,
   Brain,
-  Zap,
-  HelpCircle,
   FileText,
   ChevronRight,
   TrendingUp,
   X,
-  Plus
+  Shield,
+  Clock
 } from 'lucide-react';
 
-const EXAM_PRESETS = [
-  'All',
-  'SSC',
-  'MP Police',
-  'Railways',
-  'Banking',
-  'General Studies'
+const EXAM_OPTIONS = [
+  'General Practice / All Exams',
+  'MP Police (Constable / SI)',
+  'SSC (CGL, CHSL, GD, MTS)',
+  'Railway (RRB NTPC, Group D)',
+  'State Exams / Other'
 ];
 
 const SUBJECT_OPTIONS = [
-  'Full Syllabus Mock (All 4 Sections)',
-  'Quantitative Aptitude',
   'Reasoning Ability',
-  'Indian Polity',
-  'MP General Knowledge',
-  'General Science',
-  'Indian History',
-  'Geography',
-  'Current Affairs',
-  'General Studies'
+  'Simple Arithmetic / Mathematics',
+  'General Knowledge & Current Affairs',
+  'General Science (Physics, Chemistry, Biology)',
+  'Indian Polity & Constitution',
+  'MP General Knowledge (Special)',
+  'Full Syllabus Mock Paper (100 Questions)'
 ];
 
 const SUBJECT_TOPIC_PRESETS: Record<string, { defaultTopic: string; suggestions: string[] }> = {
-  'Full Syllabus Mock (All 4 Sections)': {
-    defaultTopic: 'Full Mock Paper: Math + Reasoning + Science + GK',
-    suggestions: ['Complete 100 Qs Exam Paper', 'TCS Speed Test Pattern', 'Previous Year Paper Mix', 'Official Syllabus Breakdown']
-  },
-  'Quantitative Aptitude': {
-    defaultTopic: 'Percentage, Profit & Loss and Ratio',
-    suggestions: ['Percentage & Profit/Loss', 'Ratio & Proportion', 'Time, Speed & Distance', 'Simple & Compound Interest', 'Number System', 'Averages & Age']
-  },
   'Reasoning Ability': {
-    defaultTopic: 'Coding-Decoding, Series & Analogy',
-    suggestions: ['Coding-Decoding', 'Number Series', 'Blood Relations', 'Syllogism', 'Direction Sense', 'Seating Arrangement']
+    defaultTopic: 'Coding-Decoding',
+    suggestions: [
+      'Coding-Decoding',
+      'Number & Letter Series',
+      'Blood Relations',
+      'Direction & Distance Sense',
+      'Venn Diagrams & Syllogism',
+      'Analogy & Classification'
+    ]
   },
-  'Indian Polity': {
-    defaultTopic: 'Constitution, Articles & Fundamental Rights',
-    suggestions: ['Fundamental Rights & Articles', 'Preamble & Amendments', 'Parliament & President', 'Supreme Court & Judiciary', 'Panchayati Raj']
+  'Simple Arithmetic / Mathematics': {
+    defaultTopic: 'Number System',
+    suggestions: [
+      'Number System',
+      'LCM and HCF',
+      'Simplification',
+      'Power, Indices and Surds',
+      'Average',
+      'Ratio and Proportion',
+      'Alligation or Mixture',
+      'Percentage',
+      'Profit and Loss',
+      'Discount',
+      'Simple Interest',
+      'Compound Interest',
+      'Time and Work',
+      'Pipe and Cistern',
+      'Time and Distance',
+      'Boat and Stream',
+      'Sequence and Series',
+      'Algebra',
+      'Trigonometry',
+      'Geometry',
+      'Mensuration',
+      'Statistics & Data Interpretation',
+      'Statistics & Probability',
+      'Miscellaneous'
+    ]
   },
-  'General Science': {
-    defaultTopic: 'Physics, Chemistry & Biology Basics',
-    suggestions: ['Human Body & Diseases', 'Physics Laws & SI Units', 'Chemical Compounds & Acids', 'Electricity & Optics', 'Cell Biology']
+  'General Knowledge & Current Affairs': {
+    defaultTopic: 'Indian Constitution, Articles & Rights',
+    suggestions: [
+      'Indian Constitution, Articles & Rights',
+      'Modern Indian History & 1857 Revolt',
+      'Indian Geography & River Systems',
+      'National & International Current Affairs',
+      'Static GK & Awards'
+    ]
   },
-  'MP General Knowledge': {
+  'General Science (Physics, Chemistry, Biology)': {
+    defaultTopic: 'Physics: SI Units, Motion & Optics',
+    suggestions: [
+      'Physics: SI Units, Motion & Optics',
+      'Chemistry: Acids, Bases, Salts & Formulas',
+      'Biology: Human Body, Blood Groups & Nutrition',
+      'Diseases, Vitamins & Human Physiology'
+    ]
+  },
+  'Indian Polity & Constitution': {
+    defaultTopic: 'Fundamental Rights & Constitutional Articles',
+    suggestions: [
+      'Fundamental Rights & Constitutional Articles',
+      'Parliament, President & Prime Minister',
+      'Supreme Court & High Courts',
+      'Election Commission & Amendments'
+    ]
+  },
+  'MP General Knowledge (Special)': {
     defaultTopic: 'MP Geography, Rivers & National Parks',
-    suggestions: ['Rivers & Dams of MP', 'National Parks & Wildlife', 'MP History & Forts', 'Folk Dance & Festivals', 'MP Districts & Census']
+    suggestions: [
+      'MP Geography, Rivers & Waterfalls',
+      'MP National Parks & Wildlife (Kuno Cheetahs)',
+      'MP History, Forts & Freedom Fighters (Tantya Bhil)',
+      'MP Tribes, Culture & Festivals (Bhagoria Haat)',
+      'MP Minerals, Energy Capital (Singrauli) & Admin'
+    ]
   },
-  'Indian History': {
-    defaultTopic: 'Modern History & 1857 Revolt',
-    suggestions: ['1857 Revolt & Freedom Struggle', 'Mughal Empire', 'Indus Valley & Vedic Period', 'Maurya & Gupta Dynasty', 'Gandhi Era & Movements']
-  },
-  'Geography': {
-    defaultTopic: 'Indian Geography, Mountains & Rivers',
-    suggestions: ['Rivers & Waterfalls of India', 'Himalayas & Physical Features', 'Climate & Monsoon', 'Soil & Crops', 'Minerals & Industries']
-  },
-  'Current Affairs': {
-    defaultTopic: 'Recent National & International Events',
-    suggestions: ['Sports & Awards', 'Government Schemes', 'Appointments & Summits', 'Defense & Exercises', 'Economy & Budget']
-  },
-  'General Studies': {
-    defaultTopic: 'Mixed GK, Polity, History & Science',
-    suggestions: ['Static GK & Headquarters', 'Indian Constitution', 'Famous Battles & History', 'Science in Everyday Life']
+  'Full Syllabus Mock Paper (100 Questions)': {
+    defaultTopic: 'Full 100 Questions Mock Paper (GK + Reasoning + Science + Math)',
+    suggestions: [
+      'Full 100 Qs Mock Paper (Mixed Syllabus)',
+      'MP Police 100 Qs Pattern',
+      'SSC GD / Railway 100 Qs Pattern',
+      'Comprehensive Speed Test'
+    ]
   }
 };
 
 const DIFFICULTY_OPTIONS = [
   { id: 'Easy', label: 'Easy (Basic Practice)' },
-  { id: 'Medium', label: 'Medium (Standard Exam Level)' },
-  { id: 'Hard', label: 'Hard (TCS/NTA Tough Shifts)' }
+  { id: 'Medium', label: 'Medium (Standard Competitive Level)' },
+  { id: 'Hard', label: 'Hard (Challenging Shift Level)' },
+  { id: 'Very Hard', label: '🔥 Very Hard (Advanced / CGL Mains / SI Ranker Level)' },
+  { id: 'Ultra Hard', label: '⚡ Ultra Hard (Extreme / CAT & SSC CGL Tier-2 Hard Level)' }
 ];
 
 export const StudentTestsPage: React.FC = () => {
@@ -105,11 +143,9 @@ export const StudentTestsPage: React.FC = () => {
 
   const studentId = user?.studentId || (user as any)?._id || user?.id || 'STU';
   const studentName = user?.name || 'Student';
-  const studentRollNo = user?.studentId || '-';
 
-  // Tabs: 'catalog' | 'history'
-  const [activeTab, setActiveTab] = useState<'catalog' | 'history'>('catalog');
-  const [selectedExam, setSelectedExam] = useState<string>('All');
+  // Tabs: 'my-tests' | 'history' (Only student's tests, no global library test bank)
+  const [activeTab, setActiveTab] = useState<'my-tests' | 'history'>('my-tests');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Tests & Attempts data
@@ -122,20 +158,20 @@ export const StudentTestsPage: React.FC = () => {
   const [generating, setGenerating] = useState<boolean>(false);
   const [genStep, setGenStep] = useState<string>('');
 
-  // Form Fields
-  const [formExam, setFormExam] = useState<string>('SSC');
-  const [formSubject, setFormSubject] = useState<string>('Indian Polity');
-  const [formTopic, setFormTopic] = useState<string>('Fundamental Rights & Articles');
+  // Form Fields (Dynamic: user selects subject and topic, bilingual by default)
+  const [formExam, setFormExam] = useState<string>('General Practice / All Exams');
+  const [formSubject, setFormSubject] = useState<string>('Reasoning Ability');
+  const [formTopic, setFormTopic] = useState<string>('Coding-Decoding');
   const [formDifficulty, setFormDifficulty] = useState<string>('Medium');
   const [formCount, setFormCount] = useState<number>(10);
-  const [formLanguage, setFormLanguage] = useState<string>('Hindi');
+  const formLanguage = 'Bilingual';
 
-  // Load Data
+  // Load Data for logged-in student ONLY (Show ALL tests created by student)
   const loadData = async () => {
     try {
       setLoading(true);
       const [testsRes, attemptsRes] = await Promise.all([
-        mockTestService.getAll({ exam: selectedExam }),
+        mockTestService.getAll({ studentId }),
         mockTestService.getMyAttempts(studentId)
       ]);
 
@@ -155,27 +191,27 @@ export const StudentTestsPage: React.FC = () => {
 
   useEffect(() => {
     loadData();
-  }, [selectedExam]);
+  }, [studentId]);
 
-  // Handle AI Custom Test Generation
+  // Handle MP Police Test Generation
   const handleGenerateCustomTest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTopic.trim()) {
-      showToast('Please specify a topic for the test', 'warning');
+      showToast('Please specify a topic or chapter', 'warning');
       return;
     }
 
     try {
       setGenerating(true);
-      setGenStep('1. Analyzing syllabus & latest TCS exam pattern...');
+      setGenStep('1. Analyzing selected subject & topic syllabus...');
 
       const stepTimer1 = setTimeout(() => {
-        setGenStep('2. Formulating questions & confusing MCQ options...');
-      }, 1500);
+        setGenStep('2. Compiling subject-accurate MCQs & plausible options...');
+      }, 1200);
 
       const stepTimer2 = setTimeout(() => {
-        setGenStep('3. Adding step-by-step Hindi/English explanations...');
-      }, 3000);
+        setGenStep('3. Adding step-by-step detailed explanations...');
+      }, 2500);
 
       const res = await mockTestService.generateTest({
         exam: formExam,
@@ -192,27 +228,24 @@ export const StudentTestsPage: React.FC = () => {
       clearTimeout(stepTimer2);
 
       if (res.success && res.data) {
-        showToast('Your custom practice test is ready!', 'success');
+        showToast('Your practice test is ready!', 'success');
         setIsGeneratorOpen(false);
-        // Refresh list
         loadData();
-        // Automatically start the test
         const newTestId = res.data.id || res.data._id;
         navigate(`/student/test/${newTestId}`);
       } else {
-        showToast(res.message || 'Failed to generate custom test', 'error');
+        showToast(res.message || 'Unable to generate test. Please try again.', 'error');
       }
     } catch (err: any) {
-      showToast(err.message || 'Failed to generate test. Please try again.', 'error');
+      showToast(err.message || 'Failed to generate test.', 'error');
     } finally {
       setGenerating(false);
       setGenStep('');
     }
   };
 
-  // Filtered Tests
+  // Filtered Tests for search
   const filteredTests = tests.filter((t: any) => {
-    if (selectedExam !== 'All' && t.exam !== selectedExam) return false;
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       const matchTitle = t.title?.toLowerCase().includes(q);
@@ -237,16 +270,17 @@ export const StudentTestsPage: React.FC = () => {
               <ArrowLeft size={18} />
             </button>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-black text-[#192038] tracking-tight m-0">
-                  Mock Test & CBT Exam Hub
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-base sm:text-lg font-black text-[#192038] tracking-tight m-0 flex items-center gap-2">
+                  <Brain size={18} className="text-[#544bec]" />
+                  Online CBT Mock Test & Practice Hub
                 </h1>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#544bec]/10 text-[#544bec]">
-                  Self-Practice
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20">
+                  Bilingual CBT
                 </span>
               </div>
               <p className="text-[11px] text-[#8F9BB3] m-0">
-                AI Custom Exam Generator • Real TCS/NTA Pattern • Detailed Solutions
+                Practice topic-wise tests and full-length papers with instant bilingual solutions
               </p>
             </div>
           </div>
@@ -256,7 +290,7 @@ export const StudentTestsPage: React.FC = () => {
             className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#544bec] to-[#6d64f7] hover:from-[#4338ca] hover:to-[#544bec] text-white text-xs font-black shadow-md shadow-[#544bec]/25 transition-all cursor-pointer active:scale-95"
           >
             <Sparkles size={14} className="animate-pulse" />
-            <span>Create Custom Test</span>
+            <span>Create Practice Test</span>
           </button>
         </div>
       </header>
@@ -264,10 +298,9 @@ export const StudentTestsPage: React.FC = () => {
       {/* Main Container */}
       <main className="max-w-6xl mx-auto px-4 sm:px-8 pt-5 space-y-5">
         {/* ======================================================== */}
-        {/* HERO BANNER: AI ON-DEMAND TEST GENERATOR                 */}
+        {/* HERO BANNER: GENERAL CBT PRACTICE HUB                    */}
         {/* ======================================================== */}
         <div className="bg-gradient-to-br from-[#1E1B4B] via-[#312E81] to-[#4338CA] rounded-3xl p-5 sm:p-7 text-white shadow-xl shadow-indigo-950/15 relative overflow-hidden">
-          {/* Ambient shapes */}
           <div className="absolute -right-12 -top-12 w-64 h-64 bg-[#544bec]/30 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute left-1/3 -bottom-10 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl pointer-events-none" />
 
@@ -275,16 +308,16 @@ export const StudentTestsPage: React.FC = () => {
             <div className="max-w-xl space-y-2.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-bold text-amber-300">
                 <Brain size={14} />
-                <span>Personalized AI Exam Engine</span>
+                <span>Interactive CBT Practice Hub</span>
               </div>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight m-0">
-                Choose Your Exam & Topic.<br />
+                Master Any Subject with Targeted Practice.<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-emerald-200 to-indigo-200">
-                  Generate Your Own Mock Test in 5s.
+                  Select Your Subject & Topic to Start Practicing.
                 </span>
               </h2>
               <p className="text-xs sm:text-sm text-indigo-100/80 m-0 leading-relaxed">
-                Ab kisi coaching ya fixed test ka wait mat karo. Jo topic kamzor lage (jaise Polity Articles, Blood Relations, MP GK), uska instant test banao aur live exam hall ki tarah solve karo!
+                Choose any subject and chapter to generate high-yield, topic-pure practice tests with detailed bilingual explanations and authentic CBT exam timing!
               </p>
             </div>
 
@@ -294,45 +327,57 @@ export const StudentTestsPage: React.FC = () => {
                 className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-[#1E1B4B] text-xs font-black shadow-lg shadow-black/20 hover:shadow-xl transition-all cursor-pointer active:scale-95 group"
               >
                 <Sparkles size={16} className="text-[#544bec] group-hover:rotate-12 transition-transform" />
-                <span>Create Test with AI</span>
+                <span>Create Practice Test</span>
               </button>
             </div>
           </div>
 
-          {/* Quick Exam Pills inside Hero */}
+          {/* Quick Topic Pills inside Hero */}
           <div className="mt-6 pt-5 border-t border-white/10 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none text-[11px] font-semibold text-white/90">
-            <span className="text-white/60 shrink-0 font-medium">Popular Exams:</span>
-            {['SSC CGL / GD', 'MP Police Constable', 'Railway NTPC', 'Banking PO', 'Indian Polity (PYQ)'].map((tag) => (
+            <span className="text-white/60 shrink-0 font-medium">Quick Topics:</span>
+            {[
+              { label: 'Coding-Decoding', sub: 'Reasoning Ability', count: 10 },
+              { label: 'Percentage & Profit/Loss', sub: 'Simple Arithmetic / Mathematics', count: 10 },
+              { label: 'Number & Letter Series', sub: 'Reasoning Ability', count: 10 },
+              { label: 'Simple & Compound Interest', sub: 'Simple Arithmetic / Mathematics', count: 10 },
+              { label: 'Blood Relations', sub: 'Reasoning Ability', count: 10 },
+              { label: 'Direction & Distance Sense', sub: 'Reasoning Ability', count: 10 },
+              { label: 'Indian Constitution & Rights', sub: 'General Knowledge & Current Affairs', count: 10 },
+              { label: 'Physics: SI Units & Motion', sub: 'General Science (Physics, Chemistry, Biology)', count: 10 },
+              { label: 'Full 100 Qs Mock Paper', sub: 'Full Syllabus Mock Paper (100 Questions)', count: 100 }
+            ].map((pill) => (
               <button
-                key={tag}
+                key={pill.label}
                 onClick={() => {
-                  setFormTopic(tag);
+                  setFormSubject(pill.sub);
+                  setFormTopic(pill.label);
+                  setFormCount(pill.count);
                   setIsGeneratorOpen(true);
                 }}
                 className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/10 shrink-0 transition-colors cursor-pointer"
               >
-                + {tag}
+                + {pill.label}
               </button>
             ))}
           </div>
         </div>
 
         {/* ======================================================== */}
-        {/* TABS & SEARCH CONTROLS                                   */}
+        {/* TABS & SEARCH CONTROLS (ONLY STUDENT'S OWN TESTS)        */}
         {/* ======================================================== */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
           {/* Main Tab Toggle */}
           <div className="bg-white p-1 rounded-2xl border border-[#EDF1F7] shadow-2xs flex items-center gap-1 w-full sm:w-auto">
             <button
-              onClick={() => setActiveTab('catalog')}
+              onClick={() => setActiveTab('my-tests')}
               className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'catalog'
+                activeTab === 'my-tests'
                   ? 'bg-[#544bec] text-white shadow-xs'
                   : 'text-[#6B778C] hover:text-[#192038] hover:bg-[#F8FAFD]'
               }`}
             >
-              <BookOpen size={14} />
-              <span>Library Tests ({tests.length})</span>
+              <FileText size={14} />
+              <span>My Tests ({tests.length})</span>
             </button>
 
             <button
@@ -344,48 +389,29 @@ export const StudentTestsPage: React.FC = () => {
               }`}
             >
               <TrendingUp size={14} />
-              <span>My Test Attempts ({myAttempts.length})</span>
+              <span>My Attempts & Results ({myAttempts.length})</span>
             </button>
           </div>
 
           {/* Search Box */}
-          {activeTab === 'catalog' && (
+          {activeTab === 'my-tests' && tests.length > 0 && (
             <div className="relative w-full sm:w-64">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8F9BB3]" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search test by topic or exam..."
+                placeholder="Search by topic or subject..."
                 className="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white border border-[#EDF1F7] text-xs font-medium text-[#192038] placeholder:text-[#8F9BB3] focus:outline-none focus:border-[#544bec] transition-all shadow-2xs"
               />
             </div>
           )}
         </div>
 
-        {/* Exam Filter Chips (Only for Catalog Tab) */}
-        {activeTab === 'catalog' && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            {EXAM_PRESETS.map((exam) => (
-              <button
-                key={exam}
-                onClick={() => setSelectedExam(exam)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                  selectedExam === exam
-                    ? 'bg-[#192038] text-white shadow-xs'
-                    : 'bg-white border border-[#EDF1F7] text-[#6B778C] hover:text-[#192038] hover:bg-slate-50'
-                }`}
-              >
-                {exam}
-              </button>
-            ))}
-          </div>
-        )}
-
         {/* ======================================================== */}
-        {/* TAB 1: LIBRARY TEST BANK                                 */}
+        {/* TAB 1: MY TESTS (ONLY STUDENT'S OWN TESTS)               */}
         {/* ======================================================== */}
-        {activeTab === 'catalog' && (
+        {activeTab === 'my-tests' && (
           <div>
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -410,10 +436,20 @@ export const StudentTestsPage: React.FC = () => {
                         {/* Header Badges */}
                         <div className="flex items-center justify-between gap-2">
                           <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black tracking-wide uppercase bg-[#EEF0FD] text-[#544bec] border border-[#544bec]/20">
-                            {test.exam || 'General'}
+                            {test.subject || test.exam || 'Practice Test'}
                           </span>
-                          <span className="text-[10px] font-bold text-slate-400">
-                            {test.difficulty || 'Medium'}
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
+                            test.difficulty === 'Ultra Hard'
+                              ? 'bg-red-50 text-red-700 border-red-300 shadow-sm'
+                              : test.difficulty === 'Very Hard'
+                              ? 'bg-purple-50 text-purple-700 border-purple-200'
+                              : test.difficulty === 'Hard'
+                              ? 'bg-rose-50 text-rose-700 border-rose-200'
+                              : test.difficulty === 'Easy'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                          }`}>
+                            {test.difficulty === 'Ultra Hard' ? '⚡ Ultra Hard' : test.difficulty === 'Very Hard' ? '🔥 Very Hard' : (test.difficulty || 'Medium')}
                           </span>
                         </div>
 
@@ -453,14 +489,14 @@ export const StudentTestsPage: React.FC = () => {
                       {/* Footer Actions */}
                       <div className="pt-4 mt-2 border-t border-[#EDF1F7] flex items-center justify-between gap-3">
                         <span className="text-[10px] text-[#8F9BB3] truncate">
-                          {test.isAiGenerated ? '✨ AI Generated' : '🏛️ Library Seed'}
+                          {formatDisplayDate(test.createdAt)}
                         </span>
 
                         <button
                           onClick={() => navigate(`/student/test/${testId}`)}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-xs transition-all cursor-pointer active:scale-95 shrink-0"
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-sm shadow-[#544bec]/20 transition-all cursor-pointer active:scale-95 shrink-0"
                         >
-                          <Play size={12} fill="currentColor" />
+                          <Play size={13} fill="currentColor" />
                           <span>Start Test</span>
                         </button>
                       </div>
@@ -469,21 +505,24 @@ export const StudentTestsPage: React.FC = () => {
                 })}
               </div>
             ) : (
-              <div className="bg-white rounded-3xl border border-[#EDF1F7] p-8 text-center space-y-4 max-w-md mx-auto shadow-xs">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-[#EEF0FD] text-[#544bec] flex items-center justify-center">
-                  <Brain size={28} />
+              <div className="bg-white rounded-3xl border border-[#EDF1F7] p-8 sm:p-12 text-center space-y-4 max-w-lg mx-auto shadow-xs">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-[#544bec] flex items-center justify-center mx-auto">
+                  <Brain size={32} />
                 </div>
-                <div>
-                  <h3 className="text-base font-black text-[#192038] m-0">No tests found in this category</h3>
-                  <p className="text-xs text-[#8F9BB3] mt-1 m-0">
-                    Aap apna manchaha test AI se abhi 5 second me generate kar sakte hain!
+                <div className="space-y-1">
+                  <h3 className="text-base sm:text-lg font-black text-[#192038] m-0">
+                    You haven't created any practice tests yet
+                  </h3>
+                  <p className="text-xs text-[#8F9BB3] m-0 max-w-sm mx-auto">
+                    Prepare by selecting any subject and chapter to generate a customized practice test or full mock paper.
                   </p>
                 </div>
                 <button
                   onClick={() => setIsGeneratorOpen(true)}
-                  className="px-5 py-2.5 rounded-xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-md shadow-[#544bec]/20 cursor-pointer"
+                  className="px-6 py-3 rounded-2xl bg-[#544bec] hover:bg-[#4338ca] text-white text-xs font-black shadow-md shadow-[#544bec]/25 transition-all inline-flex items-center gap-2 cursor-pointer active:scale-95"
                 >
-                  Create Custom Test Now
+                  <Sparkles size={16} />
+                  <span>Create Practice Test</span>
                 </button>
               </div>
             )}
@@ -491,22 +530,22 @@ export const StudentTestsPage: React.FC = () => {
         )}
 
         {/* ======================================================== */}
-        {/* TAB 2: MY TEST ATTEMPTS & SCORES                         */}
+        {/* TAB 2: MY ATTEMPTS & TEST HISTORY                        */}
         {/* ======================================================== */}
         {activeTab === 'history' && (
           <div>
             {myAttempts.length > 0 ? (
-              <div className="bg-white rounded-3xl border border-[#EDF1F7] shadow-xs overflow-hidden">
+              <div className="bg-white rounded-2xl border border-[#EDF1F7] shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
                       <tr className="border-b border-[#EDF1F7] text-[#8F9BB3] bg-[#F8FAFD]">
-                        <th className="py-3.5 px-4 font-bold">Exam / Test Title</th>
+                        <th className="py-3.5 px-4 font-bold">Test Title</th>
                         <th className="py-3.5 px-4 font-bold">Date</th>
                         <th className="py-3.5 px-4 font-bold">Score</th>
                         <th className="py-3.5 px-4 font-bold">Accuracy</th>
                         <th className="py-3.5 px-4 font-bold">Correct / Wrong</th>
-                        <th className="py-3.5 px-4 font-bold text-right">Actions</th>
+                        <th className="py-3.5 px-4 font-bold text-right">Solutions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#EDF1F7]">
@@ -518,7 +557,7 @@ export const StudentTestsPage: React.FC = () => {
                             <td className="py-3.5 px-4 font-black text-[#192038]">
                               <div className="flex items-center gap-2">
                                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EEF0FD] text-[#544bec]">
-                                  {att.exam || 'Test'}
+                                  {att.exam || 'MP Police'}
                                 </span>
                                 <span className="line-clamp-1">{att.testTitle}</span>
                               </div>
@@ -552,7 +591,7 @@ export const StudentTestsPage: React.FC = () => {
                                 onClick={() => navigate(`/student/test-result/${attId}`)}
                                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#EEF0FD] hover:bg-[#544bec] text-[#544bec] hover:text-white text-[11px] font-black transition-colors cursor-pointer"
                               >
-                                <span>Solutions</span>
+                                <span>View Solutions</span>
                                 <ChevronRight size={12} />
                               </button>
                             </td>
@@ -569,16 +608,16 @@ export const StudentTestsPage: React.FC = () => {
                   <Award size={28} />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-[#192038] m-0">No test attempts yet!</h3>
+                  <h3 className="text-base font-black text-[#192038] m-0">No test attempts yet</h3>
                   <p className="text-xs text-[#8F9BB3] mt-1 m-0">
-                    Aapne abhi tak koi test nahi diya hai. Library test bank me se koi bhi test select karke shuru karein.
+                    Create a test to start practicing. Your scores, accuracy, and detailed solutions will appear here.
                   </p>
                 </div>
                 <button
-                  onClick={() => setActiveTab('catalog')}
+                  onClick={() => setIsGeneratorOpen(true)}
                   className="px-5 py-2.5 rounded-xl bg-[#544bec] text-white text-xs font-black shadow-md shadow-[#544bec]/20 cursor-pointer"
                 >
-                  Browse Practice Tests
+                  Create Practice Test
                 </button>
               </div>
             )}
@@ -587,7 +626,7 @@ export const StudentTestsPage: React.FC = () => {
       </main>
 
       {/* ======================================================== */}
-      {/* MODAL: AI CUSTOM TEST GENERATOR DIALOG                    */}
+      {/* MODAL: MP POLICE TEST GENERATOR DIALOG                    */}
       {/* ======================================================== */}
       {isGeneratorOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
@@ -596,14 +635,14 @@ export const StudentTestsPage: React.FC = () => {
             <div className="bg-gradient-to-r from-[#1E1B4B] to-[#312E81] text-white p-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                  <Sparkles size={20} className="text-amber-300 animate-pulse" />
+                  <Brain size={20} className="text-amber-300" />
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base font-black tracking-tight m-0">
-                    Create Custom Exam with AI
+                    Create Practice Test
                   </h3>
                   <p className="text-[11px] text-white/70 m-0">
-                    Generate questions tailored specifically to your weak areas
+                    Select any subject and topic for high-yield bilingual practice
                   </p>
                 </div>
               </div>
@@ -627,45 +666,22 @@ export const StudentTestsPage: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   <h4 className="text-base font-black text-[#192038] m-0">
-                    AI Examiner is Crafting Your Test...
+                    Generating Practice Test...
                   </h4>
                   <p className="text-xs font-semibold text-[#544bec] animate-pulse m-0">
-                    {genStep || 'Generating authentic TCS-pattern questions...'}
+                    {genStep || `Compiling questions for ${formSubject} (${formTopic})...`}
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-[#F8FAFD] border border-[#EDF1F7] text-[11px] text-[#8F9BB3]">
-                  💡 Har question ke saath detail solution aur exam reference save ho raha hai.
+                  💡 Each question includes detailed explanations in both English and Hindi.
                 </div>
               </div>
             ) : (
               <form onSubmit={handleGenerateCustomTest} className="p-5 sm:p-6 space-y-4">
-                {/* 1. Exam Target */}
+                {/* 1. Subject Selection */}
                 <div>
                   <label className="block text-xs font-bold text-[#192038] mb-1.5">
-                    Target Competitive Exam
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['SSC', 'MP Police', 'Railways', 'Banking', 'UPSC / State', 'Vyapam'].map((ex) => (
-                      <button
-                        type="button"
-                        key={ex}
-                        onClick={() => setFormExam(ex)}
-                        className={`py-2 px-2.5 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center truncate ${
-                          formExam === ex
-                            ? 'bg-[#EEF0FD] border-[#544bec] text-[#544bec] shadow-xs'
-                            : 'bg-white border-[#EDF1F7] text-[#6B778C] hover:bg-[#F8FAFD]'
-                        }`}
-                      >
-                        {ex}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2. Subject */}
-                <div>
-                  <label className="block text-xs font-bold text-[#192038] mb-1.5">
-                    Subject / Area
+                    Select Subject
                   </label>
                   <select
                     value={formSubject}
@@ -674,6 +690,9 @@ export const StudentTestsPage: React.FC = () => {
                       setFormSubject(newSub);
                       if (SUBJECT_TOPIC_PRESETS[newSub]) {
                         setFormTopic(SUBJECT_TOPIC_PRESETS[newSub].defaultTopic);
+                      }
+                      if (newSub.includes('100') || newSub.includes('Full Mock')) {
+                        setFormCount(100);
                       }
                     }}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#EDF1F7] text-xs font-bold text-[#192038] focus:outline-none focus:border-[#544bec]"
@@ -684,42 +703,58 @@ export const StudentTestsPage: React.FC = () => {
                   </select>
                 </div>
 
-                {/* 3. Specific Topic Input & Quick Chips */}
+                {/* 2. Target Exam (Optional) */}
+                <div>
+                  <label className="block text-xs font-bold text-[#192038] mb-1.5">
+                    Target Exam (Optional)
+                  </label>
+                  <select
+                    value={formExam}
+                    onChange={(e) => setFormExam(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-[#EDF1F7] text-xs font-medium text-[#192038] focus:outline-none focus:border-[#544bec]"
+                  >
+                    {EXAM_OPTIONS.map((ex) => (
+                      <option key={ex} value={ex}>{ex}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 3. Specific Topic or Chapter Dropdown */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-bold text-[#192038]">
                       Specific Topic or Chapter
                     </label>
-                    <span className="text-[10px] text-[#8F9BB3]">Click suggestion below or type custom</span>
+                    <span className="text-[10px] text-[#8F9BB3]">
+                      {SUBJECT_TOPIC_PRESETS[formSubject]?.suggestions
+                        ? `${SUBJECT_TOPIC_PRESETS[formSubject].suggestions.length} Chapters Available`
+                        : 'Select Chapter'}
+                    </span>
                   </div>
-                  <input
-                    type="text"
-                    required
-                    value={formTopic}
-                    onChange={(e) => setFormTopic(e.target.value)}
-                    placeholder="Enter chapter name or topic to practice..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#EDF1F7] text-xs font-medium text-[#192038] focus:outline-none focus:border-[#544bec]"
-                  />
 
-                  {/* Suggestion Chips */}
-                  {SUBJECT_TOPIC_PRESETS[formSubject]?.suggestions && (
-                    <div className="flex items-center gap-1.5 flex-wrap pt-2">
-                      <span className="text-[10px] text-[#8F9BB3] font-medium">Quick Topics:</span>
-                      {SUBJECT_TOPIC_PRESETS[formSubject].suggestions.map((sug) => (
-                        <button
-                          type="button"
-                          key={sug}
-                          onClick={() => setFormTopic(sug)}
-                          className={`px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-colors cursor-pointer ${
-                            formTopic === sug
-                              ? 'bg-[#EEF0FD] text-[#544bec] border-[#544bec]'
-                              : 'bg-[#F8FAFD] text-[#6B778C] border-[#EDF1F7] hover:bg-slate-100 hover:text-[#192038]'
-                          }`}
-                        >
-                          + {sug}
-                        </button>
+                  {SUBJECT_TOPIC_PRESETS[formSubject]?.suggestions ? (
+                    <select
+                      value={formTopic}
+                      onChange={(e) => setFormTopic(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#EDF1F7] text-xs font-bold text-[#192038] focus:outline-none focus:border-[#544bec] cursor-pointer shadow-sm"
+                    >
+                      {SUBJECT_TOPIC_PRESETS[formSubject].suggestions.map((topicName, idx) => (
+                        <option key={topicName} value={topicName}>
+                          {formSubject.includes('Arithmetic') || formSubject.includes('Mathematics')
+                            ? `${idx + 1}. ${topicName}`
+                            : topicName}
+                        </option>
                       ))}
-                    </div>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      required
+                      value={formTopic}
+                      onChange={(e) => setFormTopic(e.target.value)}
+                      placeholder="Enter chapter or topic name..."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#EDF1F7] text-xs font-medium text-[#192038] focus:outline-none focus:border-[#544bec]"
+                    />
                   )}
                 </div>
 
@@ -735,13 +770,13 @@ export const StudentTestsPage: React.FC = () => {
                       className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#EDF1F7] text-xs font-bold text-[#192038] focus:outline-none focus:border-[#544bec]"
                     >
                       <option value={10}>10 Questions (Quick Practice • 12 Mins)</option>
-                      <option value={25}>25 Questions (Section Test • 30 Mins)</option>
+                      <option value={20}>20 Questions (Topic Test • 25 Mins)</option>
                       <option value={50}>50 Questions (Half Mock • 60 Mins)</option>
                       <option value={100}>🔥 100 Questions (Full Mock Paper • 90 Mins)</option>
                     </select>
                     {formCount === 100 && (
                       <span className="block mt-1 text-[10px] font-bold text-[#544bec]">
-                        ⚡ Official 100 Qs Paper: 90 Mins • 200 Marks
+                        ⚡ Full Mock Paper: 100 Questions • 90 Mins
                       </span>
                     )}
                   </div>
@@ -762,28 +797,6 @@ export const StudentTestsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 5. Language */}
-                <div>
-                  <label className="block text-xs font-bold text-[#192038] mb-1.5">
-                    Question Language
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Hindi', 'English'].map((lang) => (
-                      <button
-                        type="button"
-                        key={lang}
-                        onClick={() => setFormLanguage(lang)}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer text-center ${
-                          formLanguage === lang
-                            ? 'bg-[#EEF0FD] border-[#544bec] text-[#544bec]'
-                            : 'bg-white border-[#EDF1F7] text-[#6B778C]'
-                        }`}
-                      >
-                        {lang}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Actions */}
                 <div className="pt-3 border-t border-[#EDF1F7] flex items-center justify-end gap-2.5">

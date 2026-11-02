@@ -336,7 +336,7 @@ export const StudentTestResultPage: React.FC = () => {
                   </div>
 
                   {/* Question Text */}
-                  <h3 className="text-sm sm:text-base font-bold text-[#192038] leading-relaxed m-0">
+                  <h3 className="text-sm sm:text-base font-bold text-[#192038] leading-relaxed m-0 whitespace-pre-line">
                     {q.questionText}
                   </h3>
 
@@ -370,7 +370,7 @@ export const StudentTestResultPage: React.FC = () => {
                             >
                               {opt.id}
                             </span>
-                            <span className="truncate">{opt.text}</span>
+                            <span className="whitespace-pre-line leading-snug break-words">{opt.text}</span>
                           </div>
 
                           {/* Status Tags */}
@@ -398,7 +398,7 @@ export const StudentTestResultPage: React.FC = () => {
                       <span className="text-xs font-black text-[#544bec] block">
                         Detailed Solution Explanation:
                       </span>
-                      <p className="text-xs text-slate-700 leading-relaxed m-0">
+                      <p className="text-xs text-slate-700 leading-relaxed m-0 whitespace-pre-line">
                         {q.explanation || 'No detailed explanation provided for this question.'}
                       </p>
                     </div>

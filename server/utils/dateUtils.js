@@ -45,10 +45,44 @@ export const addMonthsToDate = (startDate = new Date(), monthsToAdd = 1) => {
 };
 
 /**
+ * Safely parses any date string (including DD MMM YYYY, Sept/Sep, DD-MM-YYYY, YYYY-MM-DD, ISO) into a valid Date object.
+ * @param {string|Date|number} dateVal 
+ * @returns {Date|null}
+ */
+export const parseDateSafely = (dateVal) => {
+  if (!dateVal) return null;
+  if (dateVal instanceof Date) {
+    return isNaN(dateVal.getTime()) ? null : new Date(dateVal.getTime());
+  }
+
+  const str = String(dateVal).trim();
+  if (!str || str === '-' || str === 'null' || str === 'undefined') return null;
+
+  // Handle DD/MM/YYYY or DD-MM-YYYY
+  if (/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/.test(str)) {
+    const parts = str.split(/[-/]/).map(Number);
+    const d = new Date(parts[2], parts[1] - 1, parts[0]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Handle YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const [y, m, d] = str.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    return isNaN(dateObj.getTime()) ? null : dateObj;
+  }
+
+  // Normalize 4-letter "Sept" to standard 3-letter "Sep" for cross-browser reliability
+  const normalizedStr = str.replace(/\bSept\b/gi, 'Sep');
+  const d = new Date(normalizedStr);
+  return isNaN(d.getTime()) ? null : d;
+};
+
+/**
  * Computes fee status based on next due date (DUE_SOON if <= 5 days)
  * @param {string|Date} dueDateStr 
  * @param {number} dueAmount
- * @returns {'PAID' | 'DUE_SOON' | 'OVERDUE'}
+ * @returns {'PAID' | 'DUE_SOON' | 'OVERDUE' | 'INACTIVE'}
  */
 export const computeFeeStatus = (dueDateStr, dueAmount = 0, studentStatus = null) => {
   if (studentStatus === 'Inactive') return 'INACTIVE';
@@ -57,8 +91,8 @@ export const computeFeeStatus = (dueDateStr, dueAmount = 0, studentStatus = null
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const due = new Date(dueDateStr);
-  if (isNaN(due.getTime())) return 'PAID';
+  const due = parseDateSafely(dueDateStr);
+  if (!due || isNaN(due.getTime())) return 'PAID';
   due.setHours(0, 0, 0, 0);
 
   const diffTime = due.getTime() - today.getTime();
@@ -73,7 +107,8 @@ export const computeFeeStatus = (dueDateStr, dueAmount = 0, studentStatus = null
 /**
  * Calculates days remaining until a due date.
  * Returns null if invalid date.
- * Negative number = days overdue (e.g. -45 means 45 days overdue).
+ * Negative number = days overdue (e.g. -1 means 1 day overdue).
+ * 0 = due today.
  * Positive number = days until due.
  */
 export const getDaysUntilDue = (dueDateStr) => {
@@ -81,8 +116,8 @@ export const getDaysUntilDue = (dueDateStr) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const due = new Date(dueDateStr);
-  if (isNaN(due.getTime())) return null;
+  const due = parseDateSafely(dueDateStr);
+  if (!due || isNaN(due.getTime())) return null;
   due.setHours(0, 0, 0, 0);
 
   const diffTime = due.getTime() - today.getTime();

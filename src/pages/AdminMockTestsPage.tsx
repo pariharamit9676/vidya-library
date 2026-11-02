@@ -335,6 +335,8 @@ export const AdminMockTestsPage: React.FC = () => {
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
                     <option value="Hard">Hard (TCS Level)</option>
+                    <option value="Very Hard">🔥 Very Hard (Advanced / CGL Mains Level)</option>
+                    <option value="Ultra Hard">⚡ Ultra Hard (Extreme / CAT & CGL Tier-2 Level)</option>
                   </select>
                 </div>
               </div>
