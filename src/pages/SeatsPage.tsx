@@ -567,83 +567,54 @@ export const SeatsPage: React.FC = () => {
   };
 
   return (
-    <>
-      {/* 1. Mobile Screen Notice (Seat Management is hidden on Mobile) */}
-      <div className="lg:hidden flex flex-col items-center justify-center min-h-[65vh] text-center p-6 bg-white rounded-2xl border border-[#EDF1F7] shadow-xs">
-        <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 ring-8 ring-amber-50/50">
-          <Monitor size={32} />
-        </div>
-        <h3 className="text-base sm:text-lg font-black text-[#192038] m-0">
-          Desktop Only Feature
-        </h3>
-        <p className="text-xs text-[#8F9BB3] max-w-xs mt-2 leading-relaxed">
-          The interactive seating layout editor is optimized for larger displays. Please open this page on a desktop or laptop computer.
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header with Title */}
+      <div>
+        <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight text-[#192038] m-0">
+          Seat Management
+        </h2>
+        <p className="text-xs sm:text-sm text-[#8F9BB3] mt-0.5 sm:mt-1 m-0">
+          Design and manage your library seat layout, categories and occupancy.
         </p>
-        <div className="flex items-center gap-2.5 mt-6">
-          <Link
-            to="/admin"
-            className="px-4 py-2.5 rounded-xl bg-[#F7F9FC] border border-[#EDF1F7] text-xs font-bold text-[#6B778C] hover:bg-[#EDF1F7] transition-all"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/admin/students"
-            className="px-4 py-2.5 rounded-xl bg-[#544bec] text-white text-xs font-extrabold shadow-sm shadow-[#544bec]/30 transition-all"
-          >
-            Go to Students
-          </Link>
-        </div>
       </div>
 
-      {/* 2. Desktop / Laptop Interface (Hidden on mobile) */}
-      <div className="hidden lg:block space-y-6">
-        {/* Header with Title */}
-        <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#192038] m-0">
-            Seat Management
-          </h2>
-          <p className="text-sm text-[#8F9BB3] mt-1 m-0">
-            Design and manage your library seat layout, categories and occupancy.
-          </p>
+      {/* Top Summary KPI Cards */}
+      <SeatStatCards
+        totalSeats={metrics.total}
+        availableCount={metrics.available}
+        occupiedCount={metrics.occupied}
+        maintenanceCount={metrics.maintenance}
+      />
+
+      {/* Category Filter Buttons & Status Legend */}
+      <SeatCategoryLegend
+        selectedCategory={selectedCategoryFilter}
+        onSelectCategory={setSelectedCategoryFilter}
+        counts={metrics.counts}
+      />
+
+      {/* Main Responsive Two-Column Layout (Seat Map and Seat Details) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
+        {/* Visual Seat Map (Spans full width on mobile, 8 cols on desktop) */}
+        <div className="col-span-1 lg:col-span-8">
+          <VisualSeatMap
+            cells={cells}
+            rows={rows}
+            cols={cols}
+            selectedCell={selectedCell}
+            onSelectCell={(cell) => setSelectedCellId(cell.id)}
+            isEditMode={isEditMode}
+            onStartEdit={handleStartEdit}
+            onSaveEdit={handleSaveEdit}
+            onCancelEdit={handleCancelEdit}
+            onUpdateGridDimensions={handleUpdateGridDimensions}
+            onUpdateCell={(id, up) => handleSaveSeatUpdates(id, up)}
+            categoryFilter={selectedCategoryFilter}
+          />
         </div>
 
-        {/* Top Summary KPI Cards */}
-        <SeatStatCards
-          totalSeats={metrics.total}
-          availableCount={metrics.available}
-          occupiedCount={metrics.occupied}
-          maintenanceCount={metrics.maintenance}
-        />
-
-        {/* Category Filter Buttons & Status Legend */}
-        <SeatCategoryLegend
-          selectedCategory={selectedCategoryFilter}
-          onSelectCategory={setSelectedCategoryFilter}
-          counts={metrics.counts}
-        />
-
-        {/* Main Two-Column Layout (Seat Map on left, Seat Details on right) */}
-        <div className="grid grid-cols-12 gap-5 items-start">
-          {/* Visual Seat Map (Spans 8 cols) */}
-          <div className="col-span-8">
-            <VisualSeatMap
-              cells={cells}
-              rows={rows}
-              cols={cols}
-              selectedCell={selectedCell}
-              onSelectCell={(cell) => setSelectedCellId(cell.id)}
-              isEditMode={isEditMode}
-              onStartEdit={handleStartEdit}
-              onSaveEdit={handleSaveEdit}
-              onCancelEdit={handleCancelEdit}
-              onUpdateGridDimensions={handleUpdateGridDimensions}
-              onUpdateCell={(id, up) => handleSaveSeatUpdates(id, up)}
-              categoryFilter={selectedCategoryFilter}
-            />
-          </div>
-
-          {/* Seat Details Panel (Spans 4 cols) */}
-          <div className="col-span-4 sticky top-6">
+        {/* Seat Details Panel (Spans full width on mobile, 4 cols on desktop) */}
+        <div className="col-span-1 lg:col-span-4 sticky top-4 lg:top-6">
             <SeatDetailPanel
               cell={selectedCell}
               isEditMode={isEditMode}
@@ -658,7 +629,6 @@ export const SeatsPage: React.FC = () => {
               onQuickChangeCategory={handleQuickChangeCategory}
               categoryCounts={metrics.counts}
             />
-          </div>
         </div>
       </div>
 
@@ -698,7 +668,7 @@ export const SeatsPage: React.FC = () => {
         onConfirm={adminAuthModal.onAuthorize}
         onCancel={() => setAdminAuthModal((prev) => ({ ...prev, isOpen: false }))}
       />
-    </>
+    </div>
   );
 };
 

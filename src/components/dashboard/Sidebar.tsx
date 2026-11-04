@@ -33,7 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
     { id: 'students', label: 'Students', icon: Users, path: '/admin/students' },
-    { id: 'seats', label: 'Seat Management', icon: Armchair, path: '/admin/seats', hideOnMobile: true },
+    { id: 'seats', label: 'Seat Management', icon: Armchair, path: '/admin/seats' },
     { id: 'fees', label: 'Fees & Payments', icon: CreditCard, path: '/admin/fees' },
     { id: 'attendance', label: 'Attendance', icon: Calendar, path: '/admin/attendance' },
     { id: 'mock-tests', label: 'Mock Tests (CBT)', icon: BookOpen, path: '/admin/mock-tests' },
