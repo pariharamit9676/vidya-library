@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Download, MessageSquare, CheckCircle, Printer, FileText, Edit2, Check, Plus } from 'lucide-react';
+import { X, Download, MessageSquare, CheckCircle, Printer, FileText, Edit2, Check, Plus, Share2 } from 'lucide-react';
 import { formatDateOnly } from '../../utils/storage';
-import { downloadReceiptPDF, shareReceiptOnWhatsApp, createReceiptPDF } from '../../utils/pdfReceiptGenerator';
+import { downloadReceiptPDF, shareReceiptOnWhatsApp, shareReceiptPDFFile, createReceiptPDF } from '../../utils/pdfReceiptGenerator';
 
 export const FeeReceiptModal = ({
   isOpen,
@@ -94,6 +94,15 @@ export const FeeReceiptModal = ({
 
     await shareReceiptOnWhatsApp(
       { ...receipt, phone, notes: currentNote },
+      settings,
+      { showRemainingDue: includeRemainingDue }
+    );
+  };
+
+  // 3. Share raw PDF file directly via OS share sheet
+  const handleSharePDF = async () => {
+    await shareReceiptPDFFile(
+      { ...receipt, notes: currentNote },
       settings,
       { showRemainingDue: includeRemainingDue }
     );
@@ -353,40 +362,50 @@ export const FeeReceiptModal = ({
               <span>Download Receipt (PDF)</span>
             </button>
           ) : (
-            /* Admin View: PDF, Print, WhatsApp */
-            <div className="grid grid-cols-3 gap-1.5">
-              {/* Download PDF Button */}
-              <button
-                type="button"
-                onClick={handleDownload}
-                className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
-                title="Download official PDF file"
-              >
-                <Download size={13} className="text-[#544bec]" />
-                <span>PDF</span>
-              </button>
-
-              {/* Print Button */}
-              <button
-                type="button"
-                onClick={handlePrint}
-                className="py-2.5 px-2 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
-                title="Print or Save as PDF"
-              >
-                <Printer size={13} className="text-[#6B778C]" />
-                <span>Print</span>
-              </button>
-
-              {/* WhatsApp Share PDF Button */}
+            <div className="space-y-2">
+              {/* Primary Direct WhatsApp Chat Button */}
               <button
                 type="button"
                 onClick={handleWhatsApp}
-                className="py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer shadow-[#25D366]/20"
-                title="Send PDF Receipt on WhatsApp"
+                className="w-full py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-xs inline-flex items-center justify-center gap-2 transition-all shadow-md shadow-[#25D366]/25 cursor-pointer"
+                title="Open Student's WhatsApp Chat directly"
               >
-                <MessageSquare size={13} />
-                <span>WhatsApp</span>
+                <MessageSquare size={15} />
+                <span>WhatsApp (Direct Chat)</span>
               </button>
+
+              {/* Secondary actions: Download PDF, Share PDF File, Print */}
+              <div className="grid grid-cols-3 gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleDownload}
+                  className="py-2 px-1.5 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
+                  title="Download official PDF file"
+                >
+                  <Download size={13} className="text-[#544bec]" />
+                  <span>Download</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSharePDF}
+                  className="py-2 px-1.5 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
+                  title="Share PDF file directly to apps"
+                >
+                  <Share2 size={13} className="text-[#25D366]" />
+                  <span>Share PDF</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="py-2 px-1.5 rounded-xl border border-[#EDF1F7] bg-white hover:bg-[#F8FAFD] text-[#192038] font-bold text-xs inline-flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer"
+                  title="Print or Save as PDF"
+                >
+                  <Printer size={13} className="text-[#6B778C]" />
+                  <span>Print</span>
+                </button>
+              </div>
             </div>
           )}
 

@@ -406,12 +406,39 @@ export const shareReceiptOnWhatsApp = async (
 
   const shareText = `*🧾 FEE PAYMENT RECEIPT - ${libraryName.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━\n*Receipt No:* ${receipt.receiptNo}\n*Student:* ${receipt.studentName}\n*Seat:* ${receipt.seatNo ? 'Seat #' + receipt.seatNo : 'Unassigned'}\n*Amount Paid:* Rs. ${Number(receipt.amount || 0).toLocaleString('en-IN')}\n*Next Due Date:* ${receipt.newDueDate || receipt.nextDueDate || '-'}${dueLine}\n━━━━━━━━━━━━━━━━━━━\nOfficial digital PDF receipt attached. Thank you for studying with us!`;
 
-  const pdfFile = getReceiptPDFFile(receipt, settings, options);
   const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  // 2. Mobile devices: native Web Share if supported (shares PDF directly into WhatsApp)
+  // Automatically download the official PDF file to their computer / device
+  downloadReceiptPDF(receipt, settings, options);
+
+  const encodedText = encodeURIComponent(shareText);
+
+  // WhatsApp deep-link URLs:
+  // - Mobile: https://api.whatsapp.com/send?phone=... directly opens native WhatsApp app to the student's chat window!
+  // - Desktop: https://web.whatsapp.com/send/?phone=... (WITH trailing slash) opens WhatsApp Web directly into the student's chat window!
+  //   If no phone, falls back to universal api.whatsapp.com
+  const waUrl = isMobile
+    ? (waPhone ? `https://api.whatsapp.com/send?phone=${waPhone}&text=${encodedText}` : `https://api.whatsapp.com/send?text=${encodedText}`)
+    : (waPhone ? `https://web.whatsapp.com/send/?phone=${waPhone}&text=${encodedText}` : `https://web.whatsapp.com/send/?text=${encodedText}`);
+
+  if (isMobile) {
+    window.location.href = waUrl;
+  } else {
+    window.open(waUrl, '_blank');
+  }
+};
+
+/**
+ * Shares the actual PDF document file via Web Share API
+ * Note: When sharing a file, WhatsApp prompts the user to select the recipient contact.
+ */
+export const shareReceiptPDFFile = async (
+  receipt: ReceiptData,
+  settings: LibrarySettings = {},
+  options: ReceiptPdfOptions = {}
+): Promise<boolean> => {
+  const pdfFile = getReceiptPDFFile(receipt, settings, options);
   if (
-    isMobile &&
     typeof navigator !== 'undefined' &&
     navigator.canShare &&
     navigator.canShare({ files: [pdfFile] })
@@ -419,29 +446,16 @@ export const shareReceiptOnWhatsApp = async (
     try {
       await navigator.share({
         files: [pdfFile],
-        title: `Fee Receipt - ${receipt.receiptNo}`,
-        text: shareText
+        title: `Fee Receipt - ${receipt.receiptNo}`
       });
-      return;
+      return true;
     } catch (shareErr: any) {
-      if (shareErr.name === 'AbortError') return;
-      console.warn('Native share cancelled or failed, falling back to direct WhatsApp link:', shareErr);
+      if (shareErr.name === 'AbortError') return false;
+      console.warn('Native share cancelled or failed:', shareErr);
     }
   }
 
-  // 3. Desktop / Standard:
-  // Automatically download the official PDF file to their computer
+  // Fallback: download PDF directly
   downloadReceiptPDF(receipt, settings, options);
-
-  const encodedText = encodeURIComponent(shareText);
-
-  // WhatsApp deep-link URLs:
-  // - Mobile: https://api.whatsapp.com/send?phone=... directly opens native WhatsApp app to chat!
-  // - Desktop: https://web.whatsapp.com/send/?phone=... (WITH trailing slash) opens WhatsApp Web directly into chat!
-  //   If no phone, falls back to universal api.whatsapp.com
-  const waUrl = isMobile
-    ? (waPhone ? `https://api.whatsapp.com/send?phone=${waPhone}&text=${encodedText}` : `https://api.whatsapp.com/send?text=${encodedText}`)
-    : (waPhone ? `https://web.whatsapp.com/send/?phone=${waPhone}&text=${encodedText}` : `https://web.whatsapp.com/send/?text=${encodedText}`);
-
-  window.open(waUrl, '_blank');
+  return false;
 };
