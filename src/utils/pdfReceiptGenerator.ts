@@ -329,19 +329,73 @@ export const getReceiptPDFFile = (
 };
 
 /**
+ * Standardizes phone numbers to WhatsApp international format (e.g. 919876543210)
+ */
+export const formatWhatsAppNumber = (phone?: string | number | null): string => {
+  if (!phone) return '';
+  let digits = String(phone).replace(/\D/g, '');
+  if (!digits) return '';
+
+  // If 11 digits starting with 0 (e.g. 09876543210), strip leading 0
+  if (digits.length === 11 && digits.startsWith('0')) {
+    digits = digits.slice(1);
+  }
+
+  // If standard 10-digit Indian mobile number, add India country code 91
+  if (digits.length === 10) {
+    return `91${digits}`;
+  }
+
+  // If already 12 digits starting with 91 (e.g. 919876543210)
+  if (digits.length === 12 && digits.startsWith('91')) {
+    return digits;
+  }
+
+  return digits;
+};
+
+/**
  * Share PDF Receipt on WhatsApp
- * If Web Share API supports file sharing: shares the actual PDF directly to WhatsApp.
- * On desktop / standard browsers: downloads the official PDF and opens WhatsApp chat with clear instructions.
+ * Opens direct chat window with pre-filled receipt details and downloads official PDF.
  */
 export const shareReceiptOnWhatsApp = async (
   receipt: ReceiptData,
   settings: LibrarySettings = {},
   options: ReceiptPdfOptions = {}
 ): Promise<void> => {
-  const cleanName = (receipt.studentName || 'student').replace(/\s+/g, '_');
-  const fileName = `Receipt_${receipt.receiptNo || 'REC'}_${cleanName}.pdf`;
-  const rawPhone = (receipt.phone || '').replace(/\D/g, '');
-  const waPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone;
+  // 1. Resolve student phone number from receipt, cache, or prompt
+  let rawPhone = receipt.phone || (receipt as any).studentPhone || (receipt as any).mobile || (receipt as any).contact || '';
+
+  if (!rawPhone && typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('viya_library_students');
+      if (stored) {
+        const students = JSON.parse(stored);
+        if (Array.isArray(students)) {
+          const match = students.find((s: any) =>
+            (receipt.studentId && (s.id === receipt.studentId || s.studentId === receipt.studentId)) ||
+            (receipt.studentName && s.name?.toLowerCase().trim() === receipt.studentName?.toLowerCase().trim())
+          );
+          if (match?.phone) {
+            rawPhone = match.phone;
+          }
+        }
+      }
+    } catch {}
+  }
+
+  // If phone is still not found, prompt the admin directly so the chat window will definitely open
+  if (!rawPhone && typeof window !== 'undefined') {
+    const entered = window.prompt(
+      `"${receipt.studentName || 'Student'}" ka 10-digit WhatsApp number enter karein:`,
+      ''
+    );
+    if (entered) {
+      rawPhone = entered.trim();
+    }
+  }
+
+  const waPhone = formatWhatsAppNumber(rawPhone);
   const libraryName = settings.libraryName || 'Vidya Library';
   const showRemainingDue = options.showRemainingDue !== undefined ? options.showRemainingDue : true;
   const dueVal = Number(receipt.dueAmount || 0);
@@ -353,9 +407,11 @@ export const shareReceiptOnWhatsApp = async (
   const shareText = `*🧾 FEE PAYMENT RECEIPT - ${libraryName.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━\n*Receipt No:* ${receipt.receiptNo}\n*Student:* ${receipt.studentName}\n*Seat:* ${receipt.seatNo ? 'Seat #' + receipt.seatNo : 'Unassigned'}\n*Amount Paid:* Rs. ${Number(receipt.amount || 0).toLocaleString('en-IN')}\n*Next Due Date:* ${receipt.newDueDate || receipt.nextDueDate || '-'}${dueLine}\n━━━━━━━━━━━━━━━━━━━\nOfficial digital PDF receipt attached. Thank you for studying with us!`;
 
   const pdfFile = getReceiptPDFFile(receipt, settings, options);
+  const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  // 1. Check if native Web Share with Files is supported (Mobile / supported desktop browsers)
+  // 2. Mobile devices: native Web Share if supported (shares PDF directly into WhatsApp)
   if (
+    isMobile &&
     typeof navigator !== 'undefined' &&
     navigator.canShare &&
     navigator.canShare({ files: [pdfFile] })
@@ -368,25 +424,24 @@ export const shareReceiptOnWhatsApp = async (
       });
       return;
     } catch (shareErr: any) {
-      if (shareErr.name === 'AbortError') return; // User closed share sheet
-      console.warn('Native share failed, falling back to download + WhatsApp Web:', shareErr);
+      if (shareErr.name === 'AbortError') return;
+      console.warn('Native share cancelled or failed, falling back to direct WhatsApp link:', shareErr);
     }
   }
 
-  // 2. Fallback for Desktop WhatsApp Web:
+  // 3. Desktop / Standard:
   // Automatically download the official PDF file to their computer
   downloadReceiptPDF(receipt, settings, options);
 
-  // Open WhatsApp Web with student pre-selected
-  const waUrl = waPhone
-    ? `https://web.whatsapp.com/send?phone=${waPhone}&text=${encodeURIComponent(shareText)}`
-    : `https://web.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+  const encodedText = encodeURIComponent(shareText);
 
-  // Also support mobile fallback if web.whatsapp fails
-  const fallbackUrl = waPhone
-    ? `https://wa.me/${waPhone}?text=${encodeURIComponent(shareText)}`
-    : `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+  // WhatsApp deep-link URLs:
+  // - Mobile: https://api.whatsapp.com/send?phone=... directly opens native WhatsApp app to chat!
+  // - Desktop: https://web.whatsapp.com/send/?phone=... (WITH trailing slash) opens WhatsApp Web directly into chat!
+  //   If no phone, falls back to universal api.whatsapp.com
+  const waUrl = isMobile
+    ? (waPhone ? `https://api.whatsapp.com/send?phone=${waPhone}&text=${encodedText}` : `https://api.whatsapp.com/send?text=${encodedText}`)
+    : (waPhone ? `https://web.whatsapp.com/send/?phone=${waPhone}&text=${encodedText}` : `https://web.whatsapp.com/send/?text=${encodedText}`);
 
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  window.open(isMobile ? fallbackUrl : waUrl, '_blank');
+  window.open(waUrl, '_blank');
 };

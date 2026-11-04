@@ -50,18 +50,49 @@ const DEFAULT_PAYMENTS = [
 
 export class PaymentModel {
   static async getAll() {
+    let rawPayments = [];
     if (isMongoConnected()) {
       try {
         const docs = await PaymentMongo.find({}).sort({ createdAt: -1 }).lean();
-        return (docs || []).map((d) => ({
+        rawPayments = (docs || []).map((d) => ({
           ...d,
           id: d.id || String(d._id)
         }));
       } catch (err) {
         console.error('Mongo read payments error, fallback to JSON:', err.message);
+        rawPayments = readJsonFile(FILE_NAME, []);
       }
+    } else {
+      rawPayments = readJsonFile(FILE_NAME, []);
     }
-    return readJsonFile(FILE_NAME, []);
+
+    // Auto-enrich phone from Student if missing
+    try {
+      const studentMap = new Map();
+      if (isMongoConnected()) {
+        const { StudentMongo } = await import('./schemas/StudentSchema.js');
+        const students = await StudentMongo.find({}, { studentId: 1, name: 1, phone: 1 }).lean();
+        students.forEach((s) => {
+          if (s.phone) {
+            studentMap.set(String(s._id), s.phone);
+            if (s.studentId) studentMap.set(String(s.studentId).toLowerCase(), s.phone);
+            if (s.name) studentMap.set(String(s.name).toLowerCase(), s.phone);
+          }
+        });
+      }
+      return rawPayments.map((p) => {
+        const resolvedPhone = p.phone ||
+          studentMap.get(String(p.studentId || '').toLowerCase()) ||
+          studentMap.get(String(p.studentName || '').toLowerCase()) ||
+          '';
+        return {
+          ...p,
+          phone: resolvedPhone
+        };
+      });
+    } catch {
+      return rawPayments;
+    }
   }
 
   static async getById(id) {
@@ -117,6 +148,7 @@ export class PaymentModel {
       receiptNo,
       studentId: paymentData.studentId,
       studentName: paymentData.studentName,
+      phone: paymentData.phone || '',
       seatNo: paymentData.seatNo || '-',
       date: paymentData.date || formatDate(),
       amount: Number(paymentData.amount) || 0,

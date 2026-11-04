@@ -68,6 +68,7 @@ export class FeeController {
       const receipt = await PaymentModel.create({
         studentId: student.id,
         studentName: student.name,
+        phone: student.phone || '',
         seatNo: finalSeatNo,
         amount: Number(amount),
         mode: mode || 'Cash',

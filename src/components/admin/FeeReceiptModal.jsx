@@ -77,7 +77,26 @@ export const FeeReceiptModal = ({
 
   // 2. Share PDF on WhatsApp
   const handleWhatsApp = async () => {
-    await shareReceiptOnWhatsApp({ ...receipt, notes: currentNote }, settings, { showRemainingDue: includeRemainingDue });
+    let phone = receipt.phone || receipt.studentPhone || receipt.mobile || '';
+    if (!phone) {
+      try {
+        const stored = localStorage.getItem('viya_library_students');
+        if (stored) {
+          const list = JSON.parse(stored);
+          const match = (list || []).find((s) =>
+            (receipt.studentId && (s.id === receipt.studentId || s.studentId === receipt.studentId)) ||
+            (receipt.studentName && s.name?.toLowerCase().trim() === receipt.studentName?.toLowerCase().trim())
+          );
+          if (match?.phone) phone = match.phone;
+        }
+      } catch {}
+    }
+
+    await shareReceiptOnWhatsApp(
+      { ...receipt, phone, notes: currentNote },
+      settings,
+      { showRemainingDue: includeRemainingDue }
+    );
   };
 
   // 3. Direct Print PDF
