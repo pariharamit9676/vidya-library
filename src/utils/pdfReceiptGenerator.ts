@@ -397,29 +397,15 @@ export const shareReceiptOnWhatsApp = async (
 
   const waPhone = formatWhatsAppNumber(rawPhone);
   const libraryName = settings.libraryName || 'Vidya Library';
-  const showRemainingDue = options.showRemainingDue !== undefined ? options.showRemainingDue : true;
-  const dueVal = Number(receipt.dueAmount || 0);
-
-  const dueLine = (dueVal > 0 && showRemainingDue)
-    ? `\n*Remaining Due:* Rs. ${dueVal}${receipt.balanceDueDate ? ' (by ' + receipt.balanceDueDate + ')' : ''}`
-    : '';
-
-  const shareText = `*🧾 FEE PAYMENT RECEIPT - ${libraryName.toUpperCase()}*\n━━━━━━━━━━━━━━━━━━━\n*Receipt No:* ${receipt.receiptNo}\n*Student:* ${receipt.studentName}\n*Seat:* ${receipt.seatNo ? 'Seat #' + receipt.seatNo : 'Unassigned'}\n*Amount Paid:* Rs. ${Number(receipt.amount || 0).toLocaleString('en-IN')}\n*Next Due Date:* ${receipt.newDueDate || receipt.nextDueDate || '-'}${dueLine}\n━━━━━━━━━━━━━━━━━━━\nOfficial digital PDF receipt attached. Thank you for studying with us!`;
-
   const isMobile = typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   // Automatically download the official PDF file to their computer / device
   downloadReceiptPDF(receipt, settings, options);
 
-  const encodedText = encodeURIComponent(shareText);
-
-  // WhatsApp deep-link URLs:
-  // - Mobile: https://api.whatsapp.com/send?phone=... directly opens native WhatsApp app to the student's chat window!
-  // - Desktop: https://web.whatsapp.com/send/?phone=... (WITH trailing slash) opens WhatsApp Web directly into the student's chat window!
-  //   If no phone, falls back to universal api.whatsapp.com
+  // WhatsApp deep-link URLs (chat window opens directly to student with NO prefilled text):
   const waUrl = isMobile
-    ? (waPhone ? `https://api.whatsapp.com/send?phone=${waPhone}&text=${encodedText}` : `https://api.whatsapp.com/send?text=${encodedText}`)
-    : (waPhone ? `https://web.whatsapp.com/send/?phone=${waPhone}&text=${encodedText}` : `https://web.whatsapp.com/send/?text=${encodedText}`);
+    ? (waPhone ? `https://api.whatsapp.com/send?phone=${waPhone}` : `https://api.whatsapp.com/send`)
+    : (waPhone ? `https://web.whatsapp.com/send/?phone=${waPhone}` : `https://web.whatsapp.com/`);
 
   if (isMobile) {
     window.location.href = waUrl;
