@@ -7,7 +7,7 @@ export const ReferralSchema = new mongoose.Schema({
   referrerCode: { type: String, required: true, uppercase: true },
   refereeId: { type: String, required: true },
   refereeName: { type: String, required: true },
-  refereePhone: { type: String, required: true },
+  refereePhone: { type: String, required: true, unique: true },
   rewardAmount: { type: Number, default: 100 },
   refereeDiscount: { type: Number, default: 50 },
   status: { type: String, enum: ['Pending', 'Approved', 'Redeemed', 'Rejected'], default: 'Pending' },

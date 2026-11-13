@@ -279,8 +279,49 @@ export class StudentModel {
     }
   }
 
+  static async findByPhone(phone) {
+    const raw = String(phone || '').replace(/\D/g, '');
+    const clean = raw.length >= 10 ? raw.slice(-10) : raw;
+    if (!clean) return null;
+    if (isMongoConnected()) {
+      try {
+        const s = await StudentMongo.findOne({ phone: { $regex: clean + '$' } }).lean();
+        if (s) return s;
+      } catch (e) {}
+    }
+    const students = readJsonFile(FILE_NAME, []);
+    return students.find((s) => s.phone && String(s.phone).replace(/\D/g, '').endsWith(clean)) || null;
+  }
+
   static async create(studentData) {
     const students = readJsonFile(FILE_NAME, DEFAULT_STUDENTS);
+
+    // Strict validation: Mobile number must be unique across all students
+    const rawPhoneDigits = String(studentData.phone || '').replace(/\D/g, '');
+    const cleanPhoneDigits = rawPhoneDigits.length >= 10 ? rawPhoneDigits.slice(-10) : rawPhoneDigits;
+    if (cleanPhoneDigits && cleanPhoneDigits.length === 10) {
+      let existingMatch = null;
+      if (isMongoConnected()) {
+        try {
+          existingMatch = await StudentMongo.findOne({
+            phone: { $regex: cleanPhoneDigits + '$' }
+          }).lean();
+        } catch (err) {
+          console.error('Mongo check duplicate student phone error:', err.message);
+        }
+      }
+      if (!existingMatch) {
+        existingMatch = students.find((s) => s.phone && String(s.phone).replace(/\D/g, '').endsWith(cleanPhoneDigits));
+      }
+
+      if (existingMatch) {
+        const err = new Error(`Student with mobile number ${studentData.phone} is already registered (${existingMatch.name} - ${existingMatch.studentId}). Ek student 2 baar register nahi ho sakta.`);
+        err.statusCode = 400;
+        err.status = 400;
+        throw err;
+      }
+    }
+
     const generatedId = await this.getNextStudentId();
 
     const planMonths = Math.max(1, Number(studentData.planMonths) || 1);

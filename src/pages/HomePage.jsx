@@ -421,6 +421,12 @@ export const HomePage = () => {
           createdStudent = res.data;
         }
       } catch (err) {
+        const errorMsg = err?.response?.data?.message || err?.message || '';
+        if (err?.response?.status === 400 || errorMsg.includes('registered') || errorMsg.includes('already') || errorMsg.includes('pehle se')) {
+          if (showToast) showToast(errorMsg || 'Ye mobile number pehle se registered hai!', 'error');
+          setIsSubmittingTrial(false);
+          return;
+        }
         if (createStudent) {
           createdStudent = createStudent(studentPayload);
         }

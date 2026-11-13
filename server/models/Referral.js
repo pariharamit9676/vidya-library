@@ -28,6 +28,38 @@ export class ReferralModel {
    * Create a new referral lead
    */
   static async createLead(data) {
+    const rawRefereePhone = String(data.refereePhone || '').replace(/\D/g, '');
+    const cleanRefereePhone = rawRefereePhone.length >= 10 ? rawRefereePhone.slice(-10) : rawRefereePhone;
+
+    // Strict deduplication: A referee (phone number or ID) can NEVER be referred more than once
+    if (cleanRefereePhone && cleanRefereePhone.length === 10) {
+      if (isMongoConnected()) {
+        try {
+          const existing = await ReferralMongo.findOne({
+            $or: [
+              { refereePhone: { $regex: cleanRefereePhone + '$' } },
+              ...(data.refereeId ? [{ refereeId: String(data.refereeId) }] : [])
+            ]
+          }).lean();
+          if (existing) {
+            console.log(`⚠️ Referral for referee phone ${cleanRefereePhone} already exists (${existing.referrerName} -> ${existing.refereeName}). Skipping duplicate.`);
+            return { ...existing, id: String(existing._id) };
+          }
+        } catch (err) {
+          console.error('Mongo check duplicate referral error:', err.message);
+        }
+      }
+
+      const localList = readJsonFile(REFERRALS_FILE, []);
+      const matchLocal = localList.find(r => 
+        (r.refereePhone && String(r.refereePhone).replace(/\D/g, '').endsWith(cleanRefereePhone)) ||
+        (data.refereeId && r.refereeId === String(data.refereeId))
+      );
+      if (matchLocal) {
+        return matchLocal;
+      }
+    }
+
     const newRecord = {
       referrerId: String(data.referrerId || '').trim(),
       referrerName: String(data.referrerName || '').trim(),
@@ -35,7 +67,7 @@ export class ReferralModel {
       referrerCode: String(data.referrerCode || '').trim().toUpperCase(),
       refereeId: String(data.refereeId || '').trim(),
       refereeName: String(data.refereeName || '').trim(),
-      refereePhone: String(data.refereePhone || '').replace(/\D/g, ''),
+      refereePhone: cleanRefereePhone || rawRefereePhone,
       rewardAmount: Number(data.rewardAmount) || 100,
       refereeDiscount: Number(data.refereeDiscount) || 50,
       status: data.status || 'Pending',

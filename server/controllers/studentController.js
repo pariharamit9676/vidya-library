@@ -72,6 +72,19 @@ export class StudentController {
         });
       }
 
+      // Check if student with this mobile number already exists
+      const rawPhoneDigits = String(phone).replace(/\D/g, '');
+      const cleanPhoneDigits = rawPhoneDigits.length >= 10 ? rawPhoneDigits.slice(-10) : rawPhoneDigits;
+      if (cleanPhoneDigits.length === 10) {
+        const existingStudent = await StudentModel.findByPhone(cleanPhoneDigits);
+        if (existingStudent) {
+          return res.status(400).json({
+            success: false,
+            message: `Ye mobile number (${phone}) pehle se registered hai (${existingStudent.name} - ${existingStudent.studentId}). Ek student 2 baar register nahi ho sakta.`
+          });
+        }
+      }
+
       // Check if Regular student and seat assignment requested
       let assignedCell = null;
       if (studentType === 'Regular' && seatNo && seatNo !== '-' && seatNo !== 'Unassigned') {

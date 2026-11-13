@@ -394,6 +394,20 @@ export const StudentModal: React.FC<StudentModalProps> = ({
         return;
       }
 
+      // Strict uniqueness check: Do not allow registering same mobile number twice
+      if (existingStudents && existingStudents.length > 0) {
+        const cleanDigits = phone.trim().replace(/\D/g, '').slice(-10);
+        const duplicate = existingStudents.find((s: any) => {
+          const sPhone = String(s.phone || '').replace(/\D/g, '').slice(-10);
+          return sPhone && sPhone === cleanDigits;
+        });
+        if (duplicate) {
+          setSubmitError(`Ye mobile number (${phone.trim()}) pehle se registered hai (${duplicate.name} - ${duplicate.studentId || ''}). Ek student do baar register nahi ho sakta.`);
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       const displayAdmissionDate = formatDisplayDate(admissionDate);
       const displayBalanceDueDate = balanceDueDate ? formatDisplayDate(balanceDueDate) : '';
 
